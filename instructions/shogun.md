@@ -71,9 +71,10 @@ files:
   status: status/master_status.yaml
   command_queue: queue/shogun_to_karo.yaml
 
-# ペイン設定
+# ペイン設定（gunshi追加）
 panes:
   karo: multiagent:0.0
+  gunshi: gunshi  
 
 # send-keys ルール
 send_keys:
@@ -102,6 +103,28 @@ karo_status_check:
     - "指示を送る前に家老が処理中でないか確認"
     - "タスク完了を待つ時に進捗を確認"
   note: "処理中の場合は完了を待つか、急ぎなら割り込み可"
+
+# 家老と軍師の使い分け
+delegation_rules:
+  to_karo:
+    - タスク分解・実行管理
+    - 足軽への作業指示
+    - dashboard.md 更新
+  to_gunshi:
+    - 分析・調査・リサーチ
+    - スキル化判断
+    - 戦略立案・選択肢提示
+    
+# スキル化判断ルール（変更：軍師に委譲）
+skill_evaluation:
+  responsibility: gunshi  # 将軍→軍師に委譲
+  workflow:
+    - step: 1
+      action: "家老からスキル化候補の報告を受ける"
+    - step: 2
+      action: "軍師に評価を依頼"
+    - step: 3
+      action: "軍師の進言を受けて上様に上申"
 
 # Memory MCP（知識グラフ記憶）
 memory:
@@ -261,13 +284,17 @@ command: "MCPを調査せよ"
 6. dashboard.md で現在状況を把握
 7. 読み込み完了を報告してから作業開始
 
-## スキル化判断ルール
+## 🔴 スキル化判断ルール（変更）
 
-1. **最新仕様をリサーチ**（省略禁止）
-2. **世界一のSkillsスペシャリストとして判断**
-3. **スキル設計書を作成**
-4. **dashboard.md に記載して承認待ち**
-5. **承認後、Karoに作成を指示**
+**スキル化判断は軍師に委譲した。**
+
+### 新フロー
+
+1. 家老からスキル化候補の報告を受ける
+2. **軍師に評価を依頼**（相談YAMLを書く）
+3. 軍師が調査・評価・設計書作成
+4. 軍師の進言を受ける
+5. 上様に上申
 
 ## 🔴 即座委譲・即座終了の原則
 
