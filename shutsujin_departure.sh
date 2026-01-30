@@ -132,7 +132,7 @@ ASHIGARU_EOF
     echo -e "\033[1;33m  ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\033[0m"
     echo -e "\033[1;33m  ┃\033[0m  \033[1;37m🏯 multi-agent-shogun\033[0m  〜 \033[1;36m戦国マルチエージェント統率システム\033[0m 〜           \033[1;33m┃\033[0m"
     echo -e "\033[1;33m  ┃\033[0m                                                                           \033[1;33m┃\033[0m"
-    echo -e "\033[1;33m  ┃\033[0m    \033[1;35m将軍\033[0m: プロジェクト統括    \033[1;31m家老\033[0m: タスク管理    \033[1;34m足軽\033[0m: 実働部隊×8      \033[1;33m┃\033[0m"
+    echo -e "\033[1;33m  ┃\033[0m  \033[1;35m将軍\033[0m: 統括  \033[1;36m軍師\033[0m: 参謀  \033[1;31m家老\033[0m: タスク管理  \033[1;34m足軽\033[0m: 実働×8    \033[1;33m┃\033[0m"
     echo -e "\033[1;33m  ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\033[0m"
     echo ""
 }
@@ -148,6 +148,7 @@ echo ""
 # ═══════════════════════════════════════════════════════════════════════════════
 log_info "🧹 既存の陣を撤収中..."
 tmux kill-session -t multiagent 2>/dev/null && log_info "  └─ multiagent陣、撤収完了" || log_info "  └─ multiagent陣は存在せず"
+tmux kill-session -t gunshi 2>/dev/null && log_info "  └─ gunshi陣、撤収完了" || log_info "  └─ gunshi陣は存在せず"
 tmux kill-session -t shogun 2>/dev/null && log_info "  └─ shogun本陣、撤収完了" || log_info "  └─ shogun本陣は存在せず"
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -167,6 +168,19 @@ done
 # キューファイルリセット
 cat > ./queue/shogun_to_karo.yaml << 'EOF'
 queue: []
+EOF
+
+# 軍師用キューファイルリセット
+cat > ./queue/shogun_to_gunshi.yaml << 'EOF'
+consultation: null
+EOF
+
+cat > ./queue/reports/gunshi_report.yaml << 'EOF'
+report_type: null
+timestamp: ""
+consultation_id: null
+summary: null
+awaiting: null
 EOF
 
 cat > ./queue/karo_to_ashigaru.yaml << 'EOF'
@@ -332,6 +346,17 @@ log_success "  └─ 将軍の本陣、構築完了"
 echo ""
 
 # ═══════════════════════════════════════════════════════════════════════════════
+# STEP 5.5: gunshiセッション作成（1ペイン）
+# ═══════════════════════════════════════════════════════════════════════════════
+log_war "🧠 軍師の陣を構築中..."
+tmux new-session -d -s gunshi
+tmux send-keys -t gunshi "cd $(pwd) && export PS1='(\[\033[1;36m\]軍師\[\033[0m\]) \[\033[1;32m\]\w\[\033[0m\]\$ ' && clear" Enter
+tmux select-pane -t gunshi:0.0 -P 'bg=#1a1a2e'  # 軍師の深い青
+
+log_success "  └─ 軍師の陣、構築完了"
+echo ""
+
+# ═══════════════════════════════════════════════════════════════════════════════
 # STEP 6: Claude Code 起動（--setup-only でスキップ）
 # ═══════════════════════════════════════════════════════════════════════════════
 if [ "$SETUP_ONLY" = false ]; then
@@ -341,6 +366,14 @@ if [ "$SETUP_ONLY" = false ]; then
     tmux send-keys -t shogun "MAX_THINKING_TOKENS=0 claude --model opus --dangerously-skip-permissions"
     tmux send-keys -t shogun Enter
     log_info "  └─ 将軍、召喚完了"
+
+    # 少し待機（安定のため）
+    sleep 1
+
+    # 軍師
+    tmux send-keys -t gunshi "claude --dangerously-skip-permissions"
+    tmux send-keys -t gunshi Enter
+    log_info "  └─ 軍師、召喚完了"
 
     # 少し待機（安定のため）
     sleep 1
@@ -435,6 +468,13 @@ NINJA_EOF
     sleep 0.5
     tmux send-keys -t shogun Enter
 
+    # 軍師に指示書を読み込ませる
+    sleep 2
+    log_info "  └─ 軍師に指示書を伝達中..."
+    tmux send-keys -t gunshi "instructions/gunshi.md を読んで役割を理解せよ。"
+    sleep 0.5
+    tmux send-keys -t gunshi Enter
+
     # 家老に指示書を読み込ませる
     sleep 2
     log_info "  └─ 家老に指示書を伝達中..."
@@ -475,6 +515,11 @@ echo "     ┌──────────────────────
 echo "     │  Pane 0: 将軍 (SHOGUN)      │  ← 総大将・プロジェクト統括"
 echo "     └─────────────────────────────┘"
 echo ""
+echo "     【gunshiセッション】軍師の陣"
+echo "     ┌─────────────────────────────┐"
+echo "     │  Pane 0: 軍師 (GUNSHI)      │  ← 参謀・分析・戦略立案"
+echo "     └─────────────────────────────┘"
+echo ""
 echo "     【multiagentセッション】家老・足軽の陣（3x3 = 9ペイン）"
 echo "     ┌─────────┬─────────┬─────────┐"
 echo "     │  karo   │ashigaru3│ashigaru6│"
@@ -502,6 +547,9 @@ if [ "$SETUP_ONLY" = true ]; then
     echo "  │  # 将軍を召喚                                            │"
     echo "  │  tmux send-keys -t shogun 'claude --dangerously-skip-permissions' Enter │"
     echo "  │                                                          │"
+    echo "  │  # 軍師を召喚                                            │"
+    echo "  │  tmux send-keys -t gunshi 'claude --dangerously-skip-permissions' Enter │"
+    echo "  │                                                          │"
     echo "  │  # 家老・足軽を一斉召喚                                   │"
     echo "  │  for i in {0..8}; do \\                                   │"
     echo "  │    tmux send-keys -t multiagent:0.\$i \\                   │"
@@ -515,6 +563,9 @@ echo "  次のステップ:"
 echo "  ┌──────────────────────────────────────────────────────────┐"
 echo "  │  将軍の本陣にアタッチして命令を開始:                      │"
 echo "  │     tmux attach-session -t shogun   (または: css)        │"
+echo "  │                                                          │"
+echo "  │  軍師の陣を確認する:                                      │"
+echo "  │     tmux attach-session -t gunshi   (または: csg)        │"
 echo "  │                                                          │"
 echo "  │  家老・足軽の陣を確認する:                                │"
 echo "  │     tmux attach-session -t multiagent   (または: csm)    │"
@@ -536,7 +587,7 @@ if [ "$OPEN_TERMINAL" = true ]; then
 
     # Windows Terminal が利用可能か確認
     if command -v wt.exe &> /dev/null; then
-        wt.exe -w 0 new-tab wsl.exe -e bash -c "tmux attach-session -t shogun" \; new-tab wsl.exe -e bash -c "tmux attach-session -t multiagent"
+        wt.exe -w 0 new-tab wsl.exe -e bash -c "tmux attach-session -t shogun" \; new-tab wsl.exe -e bash -c "tmux attach-session -t gunshi" \; new-tab wsl.exe -e bash -c "tmux attach-session -t multiagent"
         log_success "  └─ ターミナルタブ展開完了"
     else
         log_info "  └─ wt.exe が見つかりません。手動でアタッチしてください。"

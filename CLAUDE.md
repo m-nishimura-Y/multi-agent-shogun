@@ -14,6 +14,7 @@ multi-agent-shogunは、Claude Code + tmux を使ったマルチエージェン�
 1. **自分のpane名を確認**: `tmux display-message -p '#W'`
 2. **対応する instructions を読む**:
    - shogun → instructions/shogun.md
+   - gunshi → instructions/gunshi.md
    - karo (multiagent:0.0) → instructions/karo.md
    - ashigaru (multiagent:0.1-8) → instructions/ashigaru.md
 3. **禁止事項を確認してから作業開始**
@@ -30,6 +31,13 @@ summaryの「次のステップ」を見てすぐ作業してはならぬ。ま�
 │   SHOGUN     │ ← 将軍（プロジェクト統括）
 │   (将軍)     │
 └──────┬───────┘
+       │
+       ├────────────────┐
+       │                ▼
+       │        ┌──────────────┐
+       │        │   GUNSHI     │ ← 軍師（参謀・分析・戦略）
+       │        │   (軍師)     │
+       │        └──────────────┘
        │ YAMLファイル経由
        ▼
 ┌──────────────┐
@@ -60,8 +68,10 @@ summaryの「次のステップ」を見てすぐ作業してはならぬ。ま�
 config/projects.yaml              # プロジェクト一覧
 status/master_status.yaml         # 全体進捗
 queue/shogun_to_karo.yaml         # Shogun → Karo 指示
+queue/shogun_to_gunshi.yaml       # Shogun → Gunshi 相談
 queue/tasks/ashigaru{N}.yaml      # Karo → Ashigaru 割当（各足軽専用）
 queue/reports/ashigaru{N}_report.yaml  # Ashigaru → Karo 報告
+queue/reports/gunshi_report.yaml  # Gunshi → Shogun 報告
 dashboard.md                      # 人間用ダッシュボード
 ```
 
@@ -72,6 +82,9 @@ dashboard.md                      # 人間用ダッシュボード
 
 ### shogunセッション（1ペイン）
 - Pane 0: SHOGUN（将軍）
+
+### gunshiセッション（1ペイン）
+- Pane 0: GUNSHI（軍師）
 
 ### multiagentセッション（9ペイン）
 - Pane 0: karo（家老）
@@ -103,6 +116,7 @@ language: ja  # ja, en, es, zh, ko, fr, de 等
 
 ## 指示書
 - instructions/shogun.md - 将軍の指示書
+- instructions/gunshi.md - 軍師の指示書
 - instructions/karo.md - 家老の指示書
 - instructions/ashigaru.md - 足軽の指示書
 
