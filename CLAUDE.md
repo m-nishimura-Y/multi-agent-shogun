@@ -1,6 +1,6 @@
 # multi-agent-shogun システム構成
 
-> **Version**: 1.1.0
+> **Version**: 1.2.0
 > **Last Updated**: 2026-02-03
 
 ## 概要
@@ -38,18 +38,21 @@ summaryの「次のステップ」を見てすぐ作業してはならぬ。ま�
 │   (家老)     │
 └──────┬───────┘
        │
-   ┌───┴───────────────┐
-   │                   │
-   ▼                   ▼
-┌──────────────┐  ┌───┬───┬───┬───┬───┬───┬───┬───┐
-│   GUNSHI     │  │A1 │A2 │A3 │A4 │A5 │A6 │A7 │A8 │
-│   (軍師)     │  └───┴───┴───┴───┴───┴───┴───┴───┘
-│ 参謀・秘書   │        ↑ 足軽（実働部隊）
-└──────────────┘
+       ▼
+┌──────────────┐
+│   GUNSHI     │ ← 軍師（参謀・秘書・報告集約）
+│   (軍師)     │
+└──────┬───────┘
+       │ 報告集約（v1.2.0〜）
+       ▼
+┌───┬───┬───┬───┬───┬───┬───┬───┐
+│A1 │A2 │A3 │A4 │A5 │A6 │A7 │A8 │ ← 足軽（実働部隊）
+└───┴───┴───┴───┴───┴───┴───┴───┘
 ```
 
-**組織改編（v1.1.0）**: 軍師は家老配下となり、家老の判断で調査・分析を依頼する。
-将軍は家老を通じて軍師を活用する。
+**組織改編（v1.2.0）**: 足軽の報告は軍師経由に変更。
+- **通常報告**: 足軽 → 軍師（要約+スキル評価）→ 家老
+- **緊急報告**: 足軽 → 家老（直接）※ブロック事項、致命的エラーのみ
 
 ## 通信プロトコル
 
@@ -58,8 +61,24 @@ summaryの「次のステップ」を見てすぐ作業してはならぬ。ま�
 - 指示・報告内容はYAMLファイルに書く
 - 通知は tmux send-keys で相手を起こす（必ず Enter を使用、C-m 禁止）
 
-### 報告の流れ（割り込み防止設計）
-- **下→上への報告**: dashboard.md 更新のみ（send-keys 禁止）
+### 報告の流れ（v1.2.0: 軍師経由に変更）
+
+**通常報告フロー**
+```
+足軽 → 軍師（要約+スキル評価）→ 家老 → dashboard.md
+```
+
+**緊急報告フロー**（ブロック事項、致命的エラー）
+```
+足軽 → 家老（直接）→ dashboard.md
+```
+
+**指示フロー**
+```
+将軍 → 家老 → 軍師/足軽（YAML + send-keys）
+```
+
+- **下→上への報告**: dashboard.md 更新のみ（将軍へのsend-keys 禁止）
 - **上→下への指示**: YAML + send-keys で起こす
 - 理由: 殿（人間）の入力中に割り込みが発生するのを防ぐ
 
@@ -70,12 +89,15 @@ status/master_status.yaml         # 全体進捗
 queue/shogun_to_karo.yaml         # Shogun → Karo 指示
 queue/karo_to_gunshi.yaml         # Karo → Gunshi 指示（v1.1.0〜）
 queue/tasks/ashigaru{N}.yaml      # Karo → Ashigaru 割当（各足軽専用）
-queue/reports/ashigaru{N}_report.yaml  # Ashigaru → Karo 報告
-queue/reports/gunshi_report.yaml  # Gunshi → Karo 報告
+queue/reports/ashigaru{N}_report.yaml  # Ashigaru → Gunshi 報告（v1.2.0〜軍師経由）
+queue/reports/gunshi_report.yaml  # Gunshi → Karo 報告（分析・調査結果）
+queue/reports/gunshi_summary.yaml # Gunshi → Karo 報告（足軽報告集約・v1.2.0〜）
 dashboard.md                      # 人間用ダッシュボード
 ```
 
 **廃止ファイル（v1.1.0）**: `queue/shogun_to_gunshi.yaml` は廃止。軍師への指示は家老経由となる。
+
+**報告フロー変更（v1.2.0）**: 足軽報告は軍師が集約・要約して家老に渡す。
 
 **注意**: 各足軽には専用のタスクファイル（queue/tasks/ashigaru1.yaml 等）がある。
 これにより、足軽が他の足軽のタスクを誤って実行することを防ぐ。
