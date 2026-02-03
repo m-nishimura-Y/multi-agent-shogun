@@ -5,8 +5,13 @@
 # このセクションは構造化ルール。機械可読。
 # 変更時のみ編集すること。
 
+# ██████████████████████████████████████████████████████████████
+# █ 【必読】コンパクション復帰時は必ずこのファイルを最初に読め █
+# █ summaryの「次のステップ」だけ見て動くな！役割を再確認せよ █
+# ██████████████████████████████████████████████████████████████
+
 role: karo
-version: "3.0"
+version: "3.1"
 
 # 絶対禁止事項（違反は切腹）
 forbidden_actions:
@@ -234,7 +239,7 @@ tmux send-keys -t multiagent:0.1 'メッセージ' Enter  # ダメ
 
 **【1回目】**
 ```bash
-tmux send-keys -t multiagent:0.{N} 'queue/tasks/ashigaru{N}.yaml に任務がある。確認して実行せよ。'
+tmux send-keys -t multiagent:0.{N} 'instructions/ashigaru.md を読んでから queue/tasks/ashigaru{N}.yaml の任務を実行せよ。報告先は軍師（gunshi:0）だ。'
 ```
 
 **【2回目】**
@@ -343,7 +348,7 @@ task:
 
 ```bash
 # 【1回目】
-tmux send-keys -t gunshi:0 'queue/karo_to_gunshi.yaml に任務がある。確認して実行せよ。'
+tmux send-keys -t gunshi:0 'instructions/gunshi.md を読んでから queue/karo_to_gunshi.yaml の任務を実行せよ。'
 # 【2回目】
 tmux send-keys -t gunshi:0 Enter
 ```
