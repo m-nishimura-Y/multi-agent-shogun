@@ -1,0 +1,251 @@
+# ============================================================
+# スキル評価基準 (Skill Evaluation Criteria)
+# ============================================================
+# 軍師がスキル化候補を評価する際の基準を定義する。
+# 評価時は必ずこのファイルを参照せよ。
+#
+# Version: 1.0
+# Last Updated: 2026-02-02
+# Author: 軍師 (Gunshi)
+# ============================================================
+
+# ------------------------------------------------------------
+# スコアリング基準
+# ------------------------------------------------------------
+scoring:
+  min_score: 14          # 推奨の最低スコア
+  max_score: 20          # 満点
+  pass_threshold: 14     # これ以上で「推奨」
+  conditional_threshold: 12  # 12-13点は「条件付き推奨」
+
+  categories:
+    - id: reusability
+      name: "再利用性"
+      weight: 5
+      description: "他のプロジェクトでも使えるか"
+      evaluation_guide:
+        5: "言語・フレームワーク問わず使える"
+        4: "特定言語だが広く使える（例：全.NETプロジェクト）"
+        3: "特定フレームワーク限定（例：ASP.NET Core のみ）"
+        2: "特定プロジェクトタイプ限定"
+        1: "ほぼ単一プロジェクト専用"
+
+    - id: complexity
+      name: "複雑性"
+      weight: 5
+      description: "適度な複雑性があるか（単純すぎず複雑すぎず）"
+      evaluation_guide:
+        5: "複数ステップ・判断ロジックがあり、スキル化の価値が高い"
+        4: "適度な複雑性、手順が明確"
+        3: "やや単純だがスキル化の意味はある"
+        2: "単純すぎる、または複雑すぎる"
+        1: "スキル化の意味がほぼない"
+
+    - id: stability
+      name: "安定性"
+      weight: 5
+      description: "頻繁に変わらない手順やルールか"
+      evaluation_guide:
+        5: "業界標準、長期間変わらない"
+        4: "比較的安定、年単位で変わる程度"
+        3: "時々更新が必要"
+        2: "頻繁に変わる可能性あり"
+        1: "すぐに陳腐化する"
+
+    - id: value
+      name: "価値"
+      weight: 5
+      description: "スキル化することで明確なメリットがあるか"
+      evaluation_guide:
+        5: "大幅な時間短縮、品質向上が見込める"
+        4: "明確なメリットあり"
+        3: "ある程度のメリットあり"
+        2: "メリットは限定的"
+        1: "ほぼメリットなし"
+
+# ------------------------------------------------------------
+# 却下基準 (Rejection Criteria)
+# ------------------------------------------------------------
+# 以下の基準に該当する場合、原則として却下または見送りを推奨する。
+# ただし、例外条件を満たす場合は検討可能。
+
+rejection_criteria:
+  - id: R001
+    name: "外部API認証必須"
+    severity: high
+    description: |
+      外部APIを呼び出すスキルで、認証情報（APIキー、サービスアカウント等）が
+      必要な場合、スキルの共有・配布に適さない。
+    reason: |
+      - 認証情報をスキルに含めるとセキュリティリスク
+      - 各ユーザー環境で認証設定が必要
+      - Claude Code Skills は「指示書」であり「実行ツール」ではない
+    exception: |
+      「ガイドスキル」として実装方法を教えるだけなら可。
+      実際のAPI呼び出しはユーザーが各環境で実装する。
+    example_rejected: "OCR請求書読取スキル（Document AI直接呼び出し）"
+    example_accepted: "document-ai-implementation-guide（実装方法を教える）"
+
+  - id: R002
+    name: "特定ベンダー固定（ロックイン）"
+    severity: medium
+    description: |
+      特定のクラウドベンダーやツールに強く依存し、
+      将来の移行を困難にするスキル。
+    reason: |
+      - ベンダー変更時にスキルが使えなくなる
+      - より良いサービスへの移行を阻害
+    exception: |
+      - マルチクラウド抽象化レイヤーがある場合
+      - ローカルファイル解析のみで、API呼び出しがない場合
+      - ベンダー固有だが、解析パターンとして価値がある場合
+    example_rejected: "Document AI専用OCRスキル（API固定）"
+    example_accepted: "gcp-config-analyzer（ローカルファイル解析のみ）"
+
+  - id: R003
+    name: "スコア14点未満"
+    severity: high
+    description: |
+      評価スコアが14点未満の場合、費用対効果が低いと判断する。
+    reason: |
+      - 実装工数に対してリターンが少ない
+      - 他の高スコアスキルを優先すべき
+    exception: |
+      - 殿（人間）が特に必要と判断した場合
+      - 将来的に高スコアになる見込みがある場合
+
+  - id: R004
+    name: "既存スキルと大幅重複"
+    severity: medium
+    description: |
+      既存のスキル（公式・カスタム問わず）と機能が大幅に重複する場合。
+    reason: |
+      - スキルの乱立を防ぐ
+      - メンテナンスコストの増加
+    exception: |
+      - 統合して1つのスキルにまとめる提案
+      - 既存スキルの改善提案
+
+  - id: R005
+    name: "機密情報の取り扱い"
+    severity: high
+    description: |
+      機密性の高いデータ（認証情報、個人情報、金融情報等）を
+      直接処理するスキル。
+    reason: |
+      - セキュリティリスク
+      - コンプライアンス上の問題
+    exception: |
+      - データを外部送信しないローカル処理のみ
+      - ガイドスキルとして注意点を教えるだけ
+
+# ------------------------------------------------------------
+# 推奨基準 (Recommendation Criteria)
+# ------------------------------------------------------------
+# 以下の条件を満たすスキルは積極的に推奨する。
+
+recommendation_criteria:
+  - id: P001
+    name: "ローカルファイル解析系"
+    description: |
+      リポジトリ内のファイルを解析するだけで、
+      外部API呼び出しが不要なスキル。
+    reason: |
+      - 認証不要
+      - 共有・配布が容易
+      - Claude Code Skills の本来の用途に合致
+    examples:
+      - "dotnet-project-summary"
+      - "repo-test-status-checker"
+      - "gcp-config-analyzer"
+
+  - id: P002
+    name: "言語横断・フレームワーク横断"
+    description: |
+      特定の言語やフレームワークに依存せず、
+      幅広いプロジェクトで使えるスキル。
+    reason: |
+      - 再利用性が高い
+      - 投資対効果が大きい
+    examples:
+      - "repo-test-status-checker（Python/JS/.NET/Go対応）"
+
+  - id: P003
+    name: "階層型スキルのL1（汎用版）"
+    description: |
+      「広く浅く」チェックする上位スキル。
+      詳細分析は言語別のL2スキルに委譲。
+    reason: |
+      - まずL1で全体像を把握
+      - 必要に応じてL2で深掘り
+      - 効率的なワークフロー
+    pattern: |
+      L1: repo-test-status-checker（言語横断・高速）
+      L2: dotnet-test-analyzer（.NET詳細分析）
+
+# ------------------------------------------------------------
+# 評価プロセス
+# ------------------------------------------------------------
+evaluation_process:
+  steps:
+    - step: 1
+      action: "最新仕様をリサーチ"
+      note: "省略禁止。Web検索で最新動向を確認"
+    - step: 2
+      action: "却下基準をチェック"
+      note: "R001-R005 に該当しないか確認"
+    - step: 3
+      action: "4項目でスコアリング"
+      note: "reusability, complexity, stability, value"
+    - step: 4
+      action: "推奨基準をチェック"
+      note: "P001-P003 に該当するか確認"
+    - step: 5
+      action: "既存スキルとの関係を分析"
+      note: "統合すべきか、補完関係か、独立か"
+    - step: 6
+      action: "優先順位を判断"
+      note: "スコア順 + 殿のニーズ"
+    - step: 7
+      action: "報告書を作成"
+      note: "queue/reports/gunshi_report.yaml"
+
+# ------------------------------------------------------------
+# 過去の評価実績（参考）
+# ------------------------------------------------------------
+evaluation_history:
+  - date: "2026-02-02"
+    skill: "dotnet-project-summary"
+    score: 18
+    result: approved
+    note: "dotnet-project-analyzer + dotnet-stack-analyzer を統合"
+
+  - date: "2026-02-02"
+    skill: "repo-test-status-checker"
+    score: 17
+    result: approved
+    note: "言語横断のL1スキル"
+
+  - date: "2026-02-02"
+    skill: "dotnet-test-analyzer"
+    score: 18
+    result: approved
+    note: ".NET専用のL2スキル"
+
+  - date: "2026-02-02"
+    skill: "gcp-config-analyzer"
+    score: 16
+    result: approved
+    note: "ローカルファイル解析系"
+
+  - date: "2026-02-02"
+    skill: "aspnet-structure-analyzer"
+    score: 14
+    result: conditional
+    note: "ASP.NET Core限定のため条件付き"
+
+  - date: "2026-02-02"
+    skill: "OCR請求書読取スキル"
+    score: 11
+    result: rejected
+    note: "R001（外部API認証必須）に該当"

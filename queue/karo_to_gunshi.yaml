@@ -1,0 +1,51 @@
+# ═══════════════════════════════════════════════════════════════
+# 家老→軍師 指示キュー
+# ═══════════════════════════════════════════════════════════════
+# 家老が軍師に依頼する際に使用
+#
+# 用途:
+#   - スキル評価依頼
+#   - Web検索・リサーチ依頼
+#   - 指示文面の作成依頼
+#   - 報告書の集約・整理依頼
+#
+# 通信プロトコル:
+#   - 家老が書き込み、軍師が読み取る
+#   - 家老は send-keys で軍師を起こす（gunshi:0）
+# ═══════════════════════════════════════════════════════════════
+
+queue:
+  - id: consult_003
+    timestamp: "2026-02-03T12:03:00"
+    type: task_decomposition
+    request: "ZeroTouchKitter リポジトリ解析のタスク分解・指示文面作成"
+    details:
+      target_repo: "/mnt/c/Users/000476nishimura/source/repos/Yuidea-DxG/ZeroTouchKitter"
+      github_url: "https://github.com/Yuidea-DxG/ZeroTouchKitter"
+
+      analysis_scope:
+        - プロジェクト概要（README.md, CLAUDE.md）
+        - 技術スタック（package.json, csproj, 等）
+        - ディレクトリ構造
+        - アーキテクチャ
+        - データベース設定
+        - デプロイ設定（Dockerfile, docker-compose.yml, CI/CD）
+
+      required_output: |
+        以下を作成して queue/reports/gunshi_report.yaml に報告せよ：
+
+        1. 足軽への割当案（ashigaru1-6、各担当領域）
+        2. 各足軽への指示文面（YAMLフォーマット）
+           - queue/tasks/ashigaru{N}.yaml に書き込む形式で
+        3. ZeroTouchKitter が .NET/C# プロジェクトの場合、
+           TypeScriptプロジェクトとは異なる解析観点を提示せよ
+
+      note: |
+        【新体制テスト】
+        これは v1.1.0 組織改編後の初の本格運用である。
+        軍師の「参謀・秘書」としての能力を発揮せよ。
+
+        家老は軍師の報告を受けて、判断・実行を行う。
+
+    priority: high
+    status: pending
