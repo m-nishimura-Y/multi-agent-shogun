@@ -1,0 +1,102 @@
+# ================================================================
+# Karo Context Cache（家老用ステータスキャッシュ）
+# ================================================================
+# v1.4.0: コンパクション復帰後の状況把握を高速化
+#
+# このファイルは家老がコンパクション復帰時に最初に読むべきファイル。
+# 1ファイルで現在の状況を即座に把握できる。
+#
+# 更新タイミング:
+#   - 家老がタスク受領時
+#   - 軍師から報告受信時
+#   - dashboard.md更新時
+# ================================================================
+
+# 最終更新
+last_updated: "2026-02-03T14:39:36"
+updated_by: karo
+
+# === 現在のフォーカス ===
+current_focus:
+  cmd: null  # 全タスク完了、待機中
+  description: "全タスク完了。殿の次の指示待ち"
+  started_at: null
+
+# === 保留中のcmd ===
+pending_cmds: []
+
+# === 殿の判断待ち ===
+awaiting_lord:
+  items:
+    - subject: "yuidea-publish セキュリティ問題対応"
+      details: |
+        - DBパスワードローテーション（本番/ステージング/開発）
+        - reCAPTCHAシークレットキー再発行
+        - git履歴から認証情報削除
+      added_at: "2026-02-03T13:30:00"
+      priority: CRITICAL
+
+    - subject: "スキル候補 2件【評価待ち】"
+      details: "bigquery-rag-analyzer, gcp-cloudrun-analyzer（cmd_031より）"
+      added_at: "2026-02-03T15:00:00"
+      priority: medium
+
+    - subject: "スキル改善提案 8件"
+      details: |
+        cmd_032検証結果より:
+        - cicd-health-checker: 4件
+        - security-audit-checker-v2: 4件
+      added_at: "2026-02-03T15:10:00"
+      priority: low
+
+# === 足軽稼働状況 ===
+ashigaru_status:
+  # 本隊（家老直轄・緊急時用）
+  honntai:
+    ashigaru1: idle
+    ashigaru2: idle
+    ashigaru3: idle
+    ashigaru4: idle
+  # 別働隊（軍師指揮）
+  betsudoutai:
+    ashigaru5: idle
+    ashigaru6: idle
+    ashigaru7: idle
+    ashigaru8: idle
+
+# === 軍師状況 ===
+gunshi_status:
+  current_task: null
+  pending_evaluations:
+    - bigquery-rag-analyzer
+    - gcp-cloudrun-analyzer
+
+# === 直近の完了cmd ===
+recent_completed:
+  - cmd: cmd_032
+    description: "スキル検証（cicd-health-checker, security-audit-checker-v2）検出率100%"
+    completed_at: "2026-02-03T15:10:00"
+  - cmd: cmd_031
+    description: "inquiry-rag-api解析（GCPサーバーレス、クリーン構成）"
+    completed_at: "2026-02-03T15:00:00"
+  - cmd: cmd_030
+    description: "スキル作成（cicd-health-checker, security-audit-checker-v2）"
+    completed_at: "2026-02-03T14:14:00"
+
+# === メモ（コンパクション復帰用）===
+notes: |
+  【現状サマリ】
+  - 全タスク完了、待機中
+  - 足軽8名全員 idle
+  - 軍師にスキル評価依頼中（bigquery-rag-analyzer, gcp-cloudrun-analyzer）
+
+  【殿への未報告事項】
+  - セキュリティ問題（CRITICAL）は dashboard.md に記載済み
+  - スキル改善提案8件は dashboard.md に記載済み
+
+  【コンパクション復帰時の手順】
+  1. このファイル（status/karo_context.yaml）を読む
+  2. current_focus で今何をしていたか確認
+  3. ashigaru_status で足軽の状態確認
+  4. awaiting_lord で殿の判断待ち事項確認
+  5. instructions/karo.md を読んで役割再確認

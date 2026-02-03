@@ -1,51 +1,65 @@
-# ═══════════════════════════════════════════════════════════════
-# 家老→軍師 指示キュー
-# ═══════════════════════════════════════════════════════════════
-# 家老が軍師に依頼する際に使用
-#
-# 用途:
-#   - スキル評価依頼
-#   - Web検索・リサーチ依頼
-#   - 指示文面の作成依頼
-#   - 報告書の集約・整理依頼
-#
-# 通信プロトコル:
-#   - 家老が書き込み、軍師が読み取る
-#   - 家老は send-keys で軍師を起こす（gunshi:0）
-# ═══════════════════════════════════════════════════════════════
+# ============================================================
+# 家老 → 軍師 指示書（cmd_032）
+# ============================================================
+task:
+  task_id: gunshi_cmd_032
+  parent_cmd: cmd_032
+  timestamp: "2026-02-03T14:18:30"
+  type: skill_validation
+  status: assigned
 
-queue:
-  - id: consult_003
-    timestamp: "2026-02-03T12:03:00"
-    type: task_decomposition
-    request: "ZeroTouchKitter リポジトリ解析のタスク分解・指示文面作成"
-    details:
-      target_repo: "/mnt/c/Users/000476nishimura/source/repos/Yuidea-DxG/ZeroTouchKitter"
-      github_url: "https://github.com/Yuidea-DxG/ZeroTouchKitter"
+  # ------------------------------------------------------------
+  # 指示概要
+  # ------------------------------------------------------------
+  command: "足軽7・8に新規スキルの検証を割り当てよ"
 
-      analysis_scope:
-        - プロジェクト概要（README.md, CLAUDE.md）
-        - 技術スタック（package.json, csproj, 等）
-        - ディレクトリ構造
-        - アーキテクチャ
-        - データベース設定
-        - デプロイ設定（Dockerfile, docker-compose.yml, CI/CD）
+  details:
+    background: "殿より「足軽7・8が空いている。リソースを遊ばせるな」との指示"
 
-      required_output: |
-        以下を作成して queue/reports/gunshi_report.yaml に報告せよ：
+    assignment:
+      - worker: ashigaru7
+        task: "cicd-health-checker スキルを yuidea-publish に適用して検証"
+        target_repo: "/mnt/c/Users/000476nishimura/source/repos/Yuidea-DxG/yuidea-publish"
+        purpose: |
+          - 新規作成したスキルの動作検証
+          - cmd_027 で発見した CI/CD 問題の詳細確認
+          - スキルの改善点があれば報告
 
-        1. 足軽への割当案（ashigaru1-6、各担当領域）
-        2. 各足軽への指示文面（YAMLフォーマット）
-           - queue/tasks/ashigaru{N}.yaml に書き込む形式で
-        3. ZeroTouchKitter が .NET/C# プロジェクトの場合、
-           TypeScriptプロジェクトとは異なる解析観点を提示せよ
+      - worker: ashigaru8
+        task: "security-audit-checker-v2 スキルを yuidea-publish に適用して検証"
+        target_repo: "/mnt/c/Users/000476nishimura/source/repos/Yuidea-DxG/yuidea-publish"
+        purpose: |
+          - 新規作成したスキルの動作検証
+          - cmd_027 で発見したセキュリティ問題の詳細確認
+          - スキルの改善点があれば報告
 
-      note: |
-        【新体制テスト】
-        これは v1.1.0 組織改編後の初の本格運用である。
-        軍師の「参謀・秘書」としての能力を発揮せよ。
+  # ------------------------------------------------------------
+  # 軍師への依頼事項
+  # ------------------------------------------------------------
+  instructions_to_gunshi: |
+    【任務】
+    ashigaru7 と ashigaru8 に新規スキルの検証を指示せよ（並列実行可）
 
-        家老は軍師の報告を受けて、判断・実行を行う。
+    【タスク配分】
+    - ashigaru7: cicd-health-checker を yuidea-publish に適用
+    - ashigaru8: security-audit-checker-v2 を yuidea-publish に適用
 
-    priority: high
-    status: pending
+    【検証観点】
+    1. スキルが正常に動作するか
+    2. cmd_027 で発見した問題を正しく検出できるか
+    3. 追加で発見された問題があるか
+    4. スキルの改善点があるか
+
+    【スキルファイル】
+    - ~/.claude/skills/cicd-health-checker/SKILL.md
+    - ~/.claude/skills/security-audit-checker-v2/SKILL.md
+
+    【ターゲットリポジトリ】
+    /mnt/c/Users/000476nishimura/source/repos/Yuidea-DxG/yuidea-publish
+
+    【注意】
+    - スキルの手順に従って解析を実行
+    - 結果をレポート形式で報告
+    - 改善提案があれば含めよ
+
+  priority: medium

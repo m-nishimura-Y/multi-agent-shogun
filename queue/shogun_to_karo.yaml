@@ -1,1 +1,16 @@
-queue: []
+queue:
+  - id: cmd_032
+    timestamp: "2026-02-03T14:18:14"
+    command: "足軽7・8に作業を割り当てよ"
+    details:
+      background: |
+        殿より「足軽7と8が空いている。他の作業をさせよ」との指示。
+        未完了のタスクや追加調査があれば割り当てよ。
+      suggestions:
+        - "未完了のスキル作成（cicd-health-checker, security-audit-checker-v2）があれば担当させよ"
+        - "未作成のIssue（セキュリティ懸念、CI/CD提案）があれば担当させよ"
+        - "解析結果の詳細調査が必要な箇所があれば担当させよ"
+        - "その他、家老の判断で有用な作業を割り当てよ"
+      note: "リソースを遊ばせるな"
+    priority: medium
+    status: pending
