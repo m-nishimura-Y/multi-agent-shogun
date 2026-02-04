@@ -1,65 +1,75 @@
 # ============================================================
-# 家老 → 軍師 指示書（cmd_032）
+# 家老 → 軍師 指示書（cmd_039）
 # ============================================================
 task:
-  task_id: gunshi_cmd_032
-  parent_cmd: cmd_032
-  timestamp: "2026-02-03T14:18:30"
-  type: skill_validation
-  status: assigned
+  task_id: gunshi_cmd_039
+  parent_cmd: cmd_039
+  timestamp: "2026-02-03T18:13:45"
+  type: task_distribution
+  status: completed
 
   # ------------------------------------------------------------
   # 指示概要
   # ------------------------------------------------------------
-  command: "足軽7・8に新規スキルの検証を割り当てよ"
+  command: "productivity-metrics リポジトリ解析を別働隊に配布せよ"
 
   details:
-    background: "殿より「足軽7・8が空いている。リソースを遊ばせるな」との指示"
+    background: |
+      将軍より productivity-metrics リポジトリの解析指示。
+      ローカルにクローン済み。
 
-    assignment:
-      - worker: ashigaru7
-        task: "cicd-health-checker スキルを yuidea-publish に適用して検証"
-        target_repo: "/mnt/c/Users/000476nishimura/source/repos/Yuidea-DxG/yuidea-publish"
-        purpose: |
-          - 新規作成したスキルの動作検証
-          - cmd_027 で発見した CI/CD 問題の詳細確認
-          - スキルの改善点があれば報告
+    target_repo:
+      url: "https://github.com/Yuidea-DxG/productivity-metrics"
+      local_path: "/mnt/c/Users/000476nishimura/source/repos/Yuidea-DxG/productivity-metrics"
 
-      - worker: ashigaru8
-        task: "security-audit-checker-v2 スキルを yuidea-publish に適用して検証"
-        target_repo: "/mnt/c/Users/000476nishimura/source/repos/Yuidea-DxG/yuidea-publish"
-        purpose: |
-          - 新規作成したスキルの動作検証
-          - cmd_027 で発見したセキュリティ問題の詳細確認
-          - スキルの改善点があれば報告
+    scope:
+      - アーキテクチャ分析
+      - 技術スタック特定
+      - セキュリティ懸念の洗い出し
+      - CI/CDの状態確認
+      - コード品質評価
+
+  # ------------------------------------------------------------
+  # タスク配分（v1.4.0 チーム分割）
+  # ------------------------------------------------------------
+  team_assignment:
+    # 別働隊（軍師指揮）- 専門解析を担当
+    betsudoutai:
+      - ashigaru_id: 5
+        task: "セキュリティ"
+        description: |
+          security-audit-checker-v2 スキルを参考に、
+          認証情報漏洩、脆弱性、設定ミス、EOL依存関係を検出せよ。
+          .env*、config/、credentials等を重点調査。
+        output: "queue/reports/ashigaru5_report.yaml"
+
+      - ashigaru_id: 6
+        task: "コード品質"
+        description: |
+          code-quality-analyzer スキルを参考に、
+          主要コードの品質を評価せよ。
+          - コーディング規約の遵守
+          - テストカバレッジ
+          - ドキュメント充実度
+          - 技術的負債
+        output: "queue/reports/ashigaru6_report.yaml"
 
   # ------------------------------------------------------------
   # 軍師への依頼事項
   # ------------------------------------------------------------
   instructions_to_gunshi: |
     【任務】
-    ashigaru7 と ashigaru8 に新規スキルの検証を指示せよ（並列実行可）
+    cmd_039: productivity-metrics解析（別働隊担当分）を足軽5-6に配布せよ
 
-    【タスク配分】
-    - ashigaru7: cicd-health-checker を yuidea-publish に適用
-    - ashigaru8: security-audit-checker-v2 を yuidea-publish に適用
+    【タスクファイル作成】
+    queue/tasks/ashigaru5.yaml, ashigaru6.yaml を作成
 
-    【検証観点】
-    1. スキルが正常に動作するか
-    2. cmd_027 で発見した問題を正しく検出できるか
-    3. 追加で発見された問題があるか
-    4. スキルの改善点があるか
+    【報告集約】
+    別働隊の報告を受けたら、本隊の報告と合わせて
+    gunshi_summary.yaml に集約し、家老に報告せよ。
 
-    【スキルファイル】
-    - ~/.claude/skills/cicd-health-checker/SKILL.md
-    - ~/.claude/skills/security-audit-checker-v2/SKILL.md
-
-    【ターゲットリポジトリ】
-    /mnt/c/Users/000476nishimura/source/repos/Yuidea-DxG/yuidea-publish
-
-    【注意】
-    - スキルの手順に従って解析を実行
-    - 結果をレポート形式で報告
-    - 改善提案があれば含めよ
+    【本隊の報告】
+    本隊（足軽1-4）は家老が直接指揮・報告受領する。
+    全6名完了後に統合レポートを作成すること。
 
   priority: medium

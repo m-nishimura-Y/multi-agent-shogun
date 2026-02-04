@@ -11,7 +11,7 @@
 # ██████████████████████████████████████████████████████████████
 
 role: gunshi
-version: "3.3"
+version: "3.5"
 
 # 階層構造（v1.4.0: チーム分割導入、別働隊を指揮）
 hierarchy: |
@@ -198,13 +198,20 @@ secretary_duties:
   - duty: "戦略立案"
     description: "プロジェクトの方向性を分析・提案"
 
-# スキル化判断（v1.4.0: 要対応記載権限追加）
+# スキル化判断（v1.4.2: 本隊からの転送評価を追加）
 skill_evaluation:
   enabled: true
-  responsibility: "軍師が判断を担当"
+  responsibility: "軍師が全スキル評価を一元担当"
   report_to: karo
   dashboard_write_allowed: true  # v1.4.0: 要対応セクションへの記載を許可
   criteria_file: "config/skill_evaluation_criteria.yaml"
+  # 評価依頼の受け方（v1.4.2）
+  evaluation_sources:
+    - source: betsudoutai
+      description: "別働隊（足軽5-8）から直接報告を受け取る"
+    - source: karo_forward
+      description: "家老から本隊のスキル候補を転送される"
+      message_format: "軍師、本隊報告にスキル候補あり。queue/reports/ashigaru{N}_report.yaml を評価せよ。"
   workflow:
     - step: 1
       action: "config/skill_evaluation_criteria.yaml を読む"
@@ -221,10 +228,16 @@ skill_evaluation:
     - step: 7
       action: "dashboard.md の「要対応」に直接記載（v1.4.0〜）"
     - step: 8
+      action: "14点以上なら自動承認、別働隊にスキル作成指示（v1.4.2〜）"
+    - step: 9
       action: "家老に報告"
   criteria:
     min_score: 14
     max_score: 20
+  auto_approval:
+    enabled: true
+    threshold: 14
+    action: "別働隊にスキル作成指示（殿の承認不要）"
   rejection_quick_ref:
     - "R001: 外部API認証必須 → 却下（ガイドスキルなら可）"
     - "R002: 特定ベンダー固定 → 要注意"

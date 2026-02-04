@@ -1,25 +1,18 @@
 # ================================================================
 # Karo Context Cache（家老用ステータスキャッシュ）
 # ================================================================
-# v1.4.0: コンパクション復帰後の状況把握を高速化
-#
-# このファイルは家老がコンパクション復帰時に最初に読むべきファイル。
-# 1ファイルで現在の状況を即座に把握できる。
-#
-# 更新タイミング:
-#   - 家老がタスク受領時
-#   - 軍師から報告受信時
-#   - dashboard.md更新時
+# v1.4.2: スキル候補転送ルール追加
+# 報告フロー: 本隊(1-4)→家老、別働隊(5-8)→軍師
+# スキル候補: 本隊報告で found:true → 軍師に転送評価依頼
 # ================================================================
 
-# 最終更新
-last_updated: "2026-02-03T14:39:36"
+last_updated: "2026-02-04T16:31:38"
 updated_by: karo
 
 # === 現在のフォーカス ===
 current_focus:
-  cmd: null  # 全タスク完了、待機中
-  description: "全タスク完了。殿の次の指示待ち"
+  cmd: null
+  description: "🏯 全軍休憩中（殿の指示）"
   started_at: null
 
 # === 保留中のcmd ===
@@ -28,75 +21,77 @@ pending_cmds: []
 # === 殿の判断待ち ===
 awaiting_lord:
   items:
-    - subject: "yuidea-publish セキュリティ問題対応"
+    - subject: "🔴 mobile-spec-app Slack Webhook URL【CRITICAL】→ ISSUE #1 作成済"
       details: |
-        - DBパスワードローテーション（本番/ステージング/開発）
-        - reCAPTCHAシークレットキー再発行
-        - git履歴から認証情報削除
-      added_at: "2026-02-03T13:30:00"
+        ISSUE #1 作成完了。
+        殿の対応が必要: Slack管理画面でWebhook無効化・再生成
+        URL: https://github.com/Yuidea-DxG/mobile-spec-app/issues/1
+      added_at: "2026-02-03T18:27:09"
       priority: CRITICAL
 
-    - subject: "スキル候補 2件【評価待ち】"
-      details: "bigquery-rag-analyzer, gcp-cloudrun-analyzer（cmd_031より）"
-      added_at: "2026-02-03T15:00:00"
-      priority: medium
+# === 対応完了 ===
+resolved:
+  - subject: "biblioMkII セキュリティ問題【中程度】"
+    resolution: "ISSUE #1 作成（テンプレート使用）"
+    resolved_at: "2026-02-03T18:09:34"
+    note: "HIGH 2件、MEDIUM 2件、LOW 1件。工数4-7人日"
 
-    - subject: "スキル改善提案 8件"
-      details: |
-        cmd_032検証結果より:
-        - cicd-health-checker: 4件
-        - security-audit-checker-v2: 4件
-      added_at: "2026-02-03T15:10:00"
-      priority: low
+  - subject: "pal-image-mng 重大リスク【CRITICAL】"
+    resolution: "ISSUE #420 作成 + 工数見積コメント追加"
+    resolved_at: "2026-02-03T18:07:00"
+    note: "改修作業は別途指示があるまで待機"
 
 # === 足軽稼働状況 ===
 ashigaru_status:
-  # 本隊（家老直轄・緊急時用）
   honntai:
     ashigaru1: idle
     ashigaru2: idle
     ashigaru3: idle
     ashigaru4: idle
-  # 別働隊（軍師指揮）
   betsudoutai:
-    ashigaru5: idle
-    ashigaru6: idle
+    ashigaru5: idle  # cmd_039 完了
+    ashigaru6: idle  # cmd_039 完了
     ashigaru7: idle
     ashigaru8: idle
 
 # === 軍師状況 ===
 gunshi_status:
   current_task: null
-  pending_evaluations:
-    - bigquery-rag-analyzer
-    - gcp-cloudrun-analyzer
+  pending_evaluations: []
 
 # === 直近の完了cmd ===
 recent_completed:
-  - cmd: cmd_032
-    description: "スキル検証（cicd-health-checker, security-audit-checker-v2）検出率100%"
-    completed_at: "2026-02-03T15:10:00"
-  - cmd: cmd_031
-    description: "inquiry-rag-api解析（GCPサーバーレス、クリーン構成）"
-    completed_at: "2026-02-03T15:00:00"
-  - cmd: cmd_030
-    description: "スキル作成（cicd-health-checker, security-audit-checker-v2）"
-    completed_at: "2026-02-03T14:14:00"
+  - cmd: cmd_041
+    description: "mobile-spec-app ISSUE #1 作成【CRITICAL】Webhook漏洩"
+    completed_at: "2026-02-03T18:27:09"
+  - cmd: cmd_040
+    description: "mobile-spec-app解析【CRITICAL】Webhook URLハードコード"
+    completed_at: "2026-02-03T18:21:39"
+  - cmd: cmd_039
+    description: "productivity-metrics解析【LOW】模範的TSプロジェクト"
+    completed_at: "2026-02-03T18:17:00"
 
-# === メモ（コンパクション復帰用）===
+# === スキル総数 ===
+total_skills: 15  # 12 + 3 (gcp-cloudrun-scaffolder, php-laravel-quality-analyzer, laravel-architecture-analyzer)
+
+# === メモ ===
 notes: |
-  【現状サマリ】
-  - 全タスク完了、待機中
-  - 足軽8名全員 idle
-  - 軍師にスキル評価依頼中（bigquery-rag-analyzer, gcp-cloudrun-analyzer）
+  【v1.4.2 スキル候補転送ルール】
+  - 本隊(1-4)報告で skill_candidate.found: true の場合
+  - 軍師に転送：「軍師、本隊報告にスキル候補あり。queue/reports/ashigaru{N}_report.yaml を評価せよ。」
+  - 軍師が14点以上なら自動承認・作成
 
-  【殿への未報告事項】
-  - セキュリティ問題（CRITICAL）は dashboard.md に記載済み
-  - スキル改善提案8件は dashboard.md に記載済み
+  【v1.4.1 報告フロー】
+  - 本隊(1-4): 家老に直接報告
+  - 別働隊(5-8): 軍師経由
 
-  【コンパクション復帰時の手順】
-  1. このファイル（status/karo_context.yaml）を読む
-  2. current_focus で今何をしていたか確認
-  3. ashigaru_status で足軽の状態確認
-  4. awaiting_lord で殿の判断待ち事項確認
-  5. instructions/karo.md を読んで役割再確認
+  【CRITICAL: pal-image-mng】
+  - PHP/Laravel/Vue全てEOL（5-6年経過）
+  - SQLi/XSS/コマンドインジェクション検出
+  - 品質評価 D (34%)
+  - 本番運用継続は重大リスク
+
+  【本日の成果】
+  - スキル12件生成（本日新規6件）
+  - リポジトリ解析3件（biblioMkII, inquiry-rag-api, pal-image-mng）
+  - v1.4.0/v1.4.1/v1.4.2 組織改編成功

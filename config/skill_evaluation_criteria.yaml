@@ -249,3 +249,21 @@ evaluation_history:
     score: 11
     result: rejected
     note: "R001（外部API認証必須）に該当"
+
+  - date: "2026-02-03"
+    skill: "gcp-cloudrun-scaffolder"
+    score: 15
+    result: auto_approved
+    note: "v1.4.1自動承認。gcp-cloudrun-analyzerの補完スキル"
+
+  - date: "2026-02-03"
+    skill: "php-laravel-quality-analyzer"
+    score: 15
+    result: auto_approved
+    note: "v1.4.1自動承認。PHP/Laravel品質解析"
+
+  - date: "2026-02-03"
+    skill: "laravel-architecture-analyzer"
+    score: 14
+    result: auto_approved
+    note: "v1.4.1自動承認。Laravelアーキテクチャ解析"

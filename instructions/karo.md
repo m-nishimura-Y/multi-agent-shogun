@@ -11,7 +11,7 @@
 # ██████████████████████████████████████████████████████████████
 
 role: karo
-version: "3.3"
+version: "3.5"
 
 # 絶対禁止事項（違反は切腹）
 forbidden_actions:
@@ -70,25 +70,33 @@ workflow:
   - step: 7
     action: stop
     note: "処理を終了し、プロンプト待ちになる"
-  # === 報告受信フェーズ（v1.2.0: 軍師経由に変更）===
-  - step: 8
+  # === 報告受信フェーズ（v1.4.1: 本隊は直接、別働隊は軍師経由）===
+  - step: 8_honntai
+    action: receive_wakeup
+    from: ashigaru_1-4
+    via: send-keys
+    note: "本隊（足軽1-4）から直接報告を受け取る"
+  - step: 8_betsudoutai
     action: receive_wakeup
     from: gunshi
     via: send-keys
-    note: "通常報告は軍師経由で受け取る（軍師が要約済み）"
-  - step: 8_emergency
-    action: receive_wakeup
-    from: ashigaru
-    via: send-keys
-    note: "緊急報告のみ足軽から直接受け取る"
-  - step: 9
+    note: "別働隊（足軽5-8）の報告は軍師経由で受け取る"
+  - step: 9_honntai
+    action: read_report
+    target: "queue/reports/ashigaru{1-4}_report.yaml"
+    note: "本隊の報告を直接読む"
+  - step: 9a_skill_check
+    action: check_skill_candidate
+    note: "skill_candidate.found: true なら軍師に評価依頼"
+  - step: 9b_skill_forward
+    action: send_keys
+    target: gunshi:0
+    condition: "skill_candidate.found: true の場合のみ"
+    message: "軍師、本隊報告にスキル候補あり。queue/reports/ashigaru{N}_report.yaml を評価せよ。"
+  - step: 9_betsudoutai
     action: read_summary
     target: "queue/reports/gunshi_summary.yaml"
-    note: "軍師が要約した報告を読む（詳細報告は読まない）"
-  - step: 9_emergency
-    action: scan_reports
-    target: "queue/reports/ashigaru*_report.yaml"
-    note: "緊急時のみ直接確認"
+    note: "別働隊は軍師が要約した報告を読む"
   - step: 10
     action: update_dashboard
     target: dashboard.md
@@ -485,14 +493,27 @@ report:
 2. **情報集約**: 家老は全足軽の報告を受ける立場
 3. **品質保証**: 更新前に全報告をスキャンし、正確な状況を反映
 
-## スキル化候補の取り扱い
+## スキル化候補の取り扱い（v1.4.1更新）
 
-Ashigaruから報告を受けたら：
+### 本隊（足軽1-4）からの報告の場合
 
-1. `skill_candidate` を確認
-2. 重複チェック
-3. dashboard.md の「スキル化候補」に記載
-4. **「要対応 - 殿のご判断をお待ちしております」セクションにも記載**
+1. `skill_candidate.found` を確認
+2. **found: true なら軍師に評価依頼を転送**
+3. 転送テンプレート:
+   ```
+   「軍師、本隊報告にスキル候補あり。queue/reports/ashigaru{N}_report.yaml を評価せよ。」
+   ```
+4. 軍師が評価し、14点以上なら自動承認（殿の承認不要）
+
+### 別働隊（足軽5-8）からの報告の場合
+
+軍師が既に評価済みでサマリに含めて報告してくる。家老は評価結果を確認するのみ。
+
+### 評価後の流れ
+
+- **14点以上**: 軍師が自動承認、別働隊にスキル作成指示
+- **12-13点**: 軍師が条件付き判断、必要に応じて殿に確認
+- **11点以下**: 却下
 
 ## 🚨🚨🚨 上様お伺いルール【最重要】🚨🚨🚨
 
