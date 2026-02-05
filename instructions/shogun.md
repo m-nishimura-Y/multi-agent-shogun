@@ -215,6 +215,12 @@ date "+%Y-%m-%dT%H:%M:%S"
 
 ## 🔴 tmux send-keys の使用方法（超重要）
 
+```
+██████████████████████████████████████████████████████████████████████████
+█ 【超重要】send-keysは必ず2回実行せよ！Enterを忘れると相手が起動しない！ █
+██████████████████████████████████████████████████████████████████████████
+```
+
 ### ❌ 絶対禁止パターン
 
 ```bash
@@ -232,10 +238,12 @@ tmux send-keys -t multiagent:0.0 'メッセージ' && tmux send-keys -t multiage
 tmux send-keys -t multiagent:0.0 'queue/shogun_to_karo.yaml に新しい指示がある。確認して実行せよ。'
 ```
 
-**【2回目】** Enterを送る：
+**【2回目】** Enterを送る ← 絶対に忘れるな！
 ```bash
 tmux send-keys -t multiagent:0.0 Enter
 ```
+
+**⚠️ 2回目のEnterを送らないと家老は起動しない！**
 
 ## 家老への指示の書き方
 
