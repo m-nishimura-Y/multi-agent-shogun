@@ -1,0 +1,174 @@
+# ============================================================
+# バグ管理台帳（bugs.yaml）
+# ============================================================
+# 【運用ルール】
+# 1) バグ発見時はここに追記（都度報告不要）
+# 2) 優先度: high / medium / low
+# 3) まとめて対処させる
+# 4) 修正完了したら status: fixed に更新
+# ============================================================
+
+last_updated: "2026-02-05T18:13:27"
+
+# === 未修正バグ ===
+open_bugs:
+  - id: BUG-001
+    priority: low
+    status: open
+    location: "backend/src/database/seeds/"
+    description: "画像サブ 2件不足"
+    detail: "Phase2レビューで指摘。軽微問題。"
+    reported_at: "2026-02-05T19:00:00"
+    reported_by: ashigaru8
+    assigned_to: null
+
+  - id: BUG-002
+    priority: medium
+    status: open
+    location: "backend/src/auth/auth.service.ts"
+    description: "bcrypt未使用（パスワードハードコード）"
+    detail: "モック用簡易実装。本番移行前に修正必須。殿裁定: 後回しでOK"
+    reported_at: "2026-02-05T18:20:00"
+    reported_by: ashigaru7
+    assigned_to: null
+
+# === 修正済みバグ ===
+fixed_bugs:
+  - id: BUG-F013
+    priority: high
+    status: fixed
+    location: "backend/src/app.module.ts"
+    description: "TypeOrmModule.forRoot()未設定（ProductRepository依存解決エラー）"
+    detail: "app.module.tsにTypeOrmModule.forRootAsync()を追加。DB接続設定（postgres, 環境変数読み込み）を追加。"
+    reported_at: "2026-02-05T18:13:27"
+    fixed_at: "2026-02-05T18:13:27"
+    fixed_by: karo
+
+  - id: BUG-F012
+    priority: high
+    status: fixed
+    location: "backend/src/app.module.ts"
+    description: "ProductModuleがimportされていない（404の真因）"
+    detail: "app.module.tsにProductModuleのimportとimports配列への追加が漏れていた。殿が原因特定。"
+    reported_at: "2026-02-05T18:10:51"
+    fixed_at: "2026-02-05T18:10:51"
+    fixed_by: karo
+
+  - id: BUG-F011
+    priority: high
+    status: fixed
+    location: "frontend/src/services/productService.ts"
+    description: "商品API 404エラー（FE/BEパス不一致）"
+    detail: "API_BASE_URL='/api/v1'が相対パスでFEサーバーに誤送信。'http://192.168.3.44:3000'に修正、パスを'/api/products'に変更"
+    reported_at: "2026-02-05T18:05:48"
+    fixed_at: "2026-02-05T18:15:00"
+    fixed_by: ashigaru1
+
+  - id: BUG-F001
+    priority: high
+    status: fixed
+    location: "backend/package.json"
+    description: "exceljsモジュール不足"
+    detail: "npm install exceljs で解決"
+    reported_at: "2026-02-05T19:20:00"
+    fixed_at: "2026-02-05T19:25:00"
+    fixed_by: ashigaru4
+
+  - id: BUG-F002
+    priority: high
+    status: fixed
+    location: "backend/src/manuscript/manuscript.controller.ts"
+    description: "Response import type エラー"
+    detail: "import { Response } → import type { Response } from 'express' に修正"
+    reported_at: "2026-02-05T19:20:00"
+    fixed_at: "2026-02-05T19:25:00"
+    fixed_by: ashigaru4
+
+  - id: BUG-F003
+    priority: high
+    status: fixed
+    location: "backend/src/manuscript/dto/"
+    description: "ManuscriptItem型不足"
+    detail: "プロパティ追加で解決"
+    reported_at: "2026-02-05T19:20:00"
+    fixed_at: "2026-02-05T19:25:00"
+    fixed_by: ashigaru4
+
+  - id: BUG-F004
+    priority: high
+    status: fixed
+    location: "backend/src/mark/mark.service.ts:93"
+    description: "mark null参照エラー"
+    detail: "filter + map + 型ガードパターンでnull安全に除外"
+    reported_at: "2026-02-05T19:15:00"
+    fixed_at: "2026-02-05T19:18:00"
+    fixed_by: ashigaru3
+
+  - id: BUG-F005
+    priority: high
+    status: fixed
+    location: "frontend/src/services/authService.ts"
+    description: "API接続先がlocalhost"
+    detail: "localhost → 192.168.3.44 に修正"
+    reported_at: "2026-02-05T18:35:00"
+    fixed_at: "2026-02-05T18:38:00"
+    fixed_by: ashigaru1
+
+  - id: BUG-F006
+    priority: high
+    status: fixed
+    location: "backend/src/auth/auth.module.ts:21"
+    description: "expiresIn型エラー"
+    detail: "数値指定に変更（86400秒 = 24時間）"
+    reported_at: "2026-02-05T18:40:00"
+    fixed_at: "2026-02-05T18:45:00"
+    fixed_by: ashigaru3
+
+  - id: BUG-F007
+    priority: high
+    status: fixed
+    location: "backend/src/product/product.service.ts:114"
+    description: "endDate型エラー"
+    detail: "スプレッド前に分離し、明示的にDate変換"
+    reported_at: "2026-02-05T18:40:00"
+    fixed_at: "2026-02-05T18:43:00"
+    fixed_by: ashigaru4
+
+  - id: BUG-F008
+    priority: high
+    status: fixed
+    location: "backend/src/main.ts"
+    description: "CORS未設定"
+    detail: "app.enableCors({ origin: true }) 追加"
+    reported_at: "2026-02-05T18:48:00"
+    fixed_at: "2026-02-05T18:50:00"
+    fixed_by: ashigaru3
+
+  - id: BUG-F009
+    priority: high
+    status: fixed
+    location: "backend/src/main.ts"
+    description: "listen が localhost のみ"
+    detail: "app.listen(3000, '0.0.0.0') に変更"
+    reported_at: "2026-02-05T18:52:00"
+    fixed_at: "2026-02-05T18:55:00"
+    fixed_by: ashigaru3
+
+  - id: BUG-F010
+    priority: medium
+    status: fixed
+    location: "frontend/src/App.tsx"
+    description: "商品詳細画面ルーティング不備"
+    detail: "ProductDetailPageのルート修正、ビルド成功確認"
+    reported_at: "2026-02-05T19:05:00"
+    fixed_at: "2026-02-05T19:10:00"
+    fixed_by: ashigaru2
+
+# === 統計 ===
+statistics:
+  total_reported: 15
+  open: 2
+  fixed: 13
+  high_priority_open: 0
+  medium_priority_open: 1
+  low_priority_open: 1

@@ -1,0 +1,89 @@
+# ============================================================
+# 提案管理台帳（proposals.yaml）
+# ============================================================
+# 【運用ルール】
+# 1) 足軽からの提案（スキル候補、改善案等）を蓄積
+# 2) 軍師は報告集約時に必ず更新
+# 3) dashboardの「📝 提案一覧」に要約表示
+# 4) 承認後は status: approved に更新
+# ============================================================
+
+last_updated: "2026-02-05T19:45:00"
+
+# === 未処理の提案 ===
+pending_proposals:
+  - id: PROP-001
+    from: ashigaru2
+    type: skill_candidate
+    name: "react-mui-crud-scaffold"
+    description: "MUI DataGrid + React Hook Form のCRUD画面雛形生成"
+    score: 18
+    status: approved
+    reviewed_by: gunshi
+    reviewed_at: "2026-02-05T18:15:00"
+    note: "作成完了（480行）"
+
+  - id: PROP-002
+    from: ashigaru5
+    type: skill_candidate
+    name: "entity-generator-from-spec"
+    description: "設計書からTypeORM Entity自動生成"
+    score: 17
+    status: approved
+    reviewed_by: gunshi
+    reviewed_at: "2026-02-05T18:20:00"
+    note: "作成完了（340行）"
+
+  - id: PROP-003
+    from: ashigaru6
+    type: skill_candidate
+    name: "typeorm-seeder-generator"
+    description: "TypeORM シードデータ自動生成"
+    score: 15
+    status: approved
+    reviewed_by: gunshi
+    reviewed_at: "2026-02-05T18:20:00"
+    note: "作成完了（350行）"
+
+  - id: PROP-004
+    from: ashigaru7
+    type: skill_candidate
+    name: "fe-be-consistency-checker"
+    description: "フロントエンド・バックエンド間の整合性チェック"
+    score: 17
+    status: approved
+    reviewed_by: gunshi
+    reviewed_at: "2026-02-05T18:25:00"
+    note: "作成完了（400行）"
+
+  - id: PROP-005
+    from: ashigaru7
+    type: skill_candidate
+    name: "nestjs-code-reviewer"
+    description: "NestJSコードの品質レビュー自動化"
+    score: 16
+    status: approved
+    reviewed_by: gunshi
+    reviewed_at: "2026-02-05T18:30:00"
+    note: "作成完了（400行）"
+
+  - id: PROP-006
+    from: ashigaru4
+    type: skill_candidate
+    name: "manuscript-export-generator"
+    description: "原稿データ出力機能の雛形生成（Excel/CSV/Tab）"
+    score: null
+    status: pending
+    reviewed_by: null
+    reviewed_at: null
+    note: "Phase2で報告あり、評価待ち"
+
+# === 統計 ===
+statistics:
+  total: 6
+  pending: 1
+  approved: 5
+  rejected: 0
+  skill_candidates: 6
+  improvements: 0
+  other: 0
