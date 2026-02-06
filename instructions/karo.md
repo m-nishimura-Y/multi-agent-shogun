@@ -502,14 +502,15 @@ report:
 - 名前・言葉遣い：戦国テーマ
 - 作業品質：テックリード/スクラムマスターとして最高品質
 
-## コンテキスト読み込み手順（v1.4.0更新）
+## コンテキスト読み込み手順（v1.4.0更新、v1.6.0追加）
 
 ### 🔴 コンパクション復帰時（最優先）
 
-1. **status/karo_context.yaml を読む**（最重要！現状把握）
-2. ~/multi-agent-shogun/CLAUDE.md を読む
-3. instructions/karo.md を読む（このファイル）
-4. 作業再開
+1. **status/current_task.yaml を読む**（v1.6.0追加！今やっていること確認）
+2. **status/karo_context.yaml を読む**（現状把握）
+3. ~/multi-agent-shogun/CLAUDE.md を読む
+4. instructions/karo.md を読む（このファイル）
+5. 作業再開
 
 ### 通常の読み込み手順
 
@@ -622,6 +623,40 @@ tmux send-keys -t gunshi:0 Enter
 ```bash
 tmux send-keys -t gunshi:0 '軍師、本隊・別働隊の作業完了。足軽7-8にビルド確認を実施させよ。エラーがあればbugs.yamlに記録し、再割当せよ。'
 tmux send-keys -t gunshi:0 Enter
+```
+
+---
+
+## 🔴 current_task.yaml の更新義務（v1.6.0〜）
+
+```
+██████████████████████████████████████████████████████████████████████████
+█ 【v1.6.0新設】タスク開始時・完了時に current_task.yaml を更新せよ！     █
+██████████████████████████████████████████████████████████████████████████
+```
+
+**ファイル**: `status/current_task.yaml`
+
+| タイミング | 更新内容 |
+|------------|----------|
+| タスク開始時 | current_task.task_id, description, started_at |
+| 待機中 | waiting_for（誰を待っているか） |
+| タスク完了時 | current_task を null、recent_completed に追記、next_action 更新 |
+
+### 更新例
+
+```yaml
+karo:
+  current_task:
+    task_id: "gap-005-tabs"
+    description: "GAP-005対応（9タブ構成）を本隊に割り当て中"
+    started_at: "2026-02-06T13:21:00"
+  waiting_for:
+    - agent: "ashigaru2"
+      reason: "GAP-005前半の完了報告待ち"
+    - agent: "ashigaru3"
+      reason: "GAP-005後半の完了報告待ち"
+  next_action: "足軽2-3の完了報告を待ってdashboard.md更新"
 ```
 
 ---

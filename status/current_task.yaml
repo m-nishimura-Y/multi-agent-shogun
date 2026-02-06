@@ -1,0 +1,97 @@
+# ============================================================
+# Current Task Status（現在タスク状況）
+# ============================================================
+# コンパクション復帰時に即座に状況把握するためのファイル
+# 将軍・家老・軍師がタスク開始時・完了時に更新せよ
+# ============================================================
+
+last_updated: "2026-02-06T13:52:00"
+
+# ================================================================
+# 将軍（Shogun）の現在状況 - 殿との会話要点記録
+# ================================================================
+shogun:
+  current_conversation:
+    topic: null
+    summary: "殿からの指示待ち"
+    started_at: null
+
+  pending_decisions:
+    # 殿に確認が必要な事項
+    - item: null
+      context: null
+
+  recent_directives:
+    # 殿から受けた最近の指示
+    - directive: "v1.6.0追加改善指示"
+      description: "緊急調査ルール明文化、current_task.yaml将軍項目追加"
+      received_at: "2026-02-06T13:45:00"
+
+# ================================================================
+# 家老（Karo）の現在状況
+# ================================================================
+karo:
+  current_task:
+    task_id: null
+    description: "待機中"
+    started_at: null
+
+  waiting_for:
+    - agent: null
+      reason: null
+
+  next_action: "殿の次の指示待ち"
+
+  recent_completed:
+    - task_id: "v1.6.1-additional"
+      description: "殿の追加改善指示2件完了（F001例外明文化、将軍項目追加）"
+      completed_at: "2026-02-06T13:52:00"
+    - task_id: "v1.6.0-improvement"
+      description: "コンパクション復帰負担軽減策導入（current_task.yaml新設、next_action必須化）"
+      completed_at: "2026-02-06T13:37:00"
+    - task_id: "gap-002-005-006"
+      description: "GAP対応3件を本隊に割り当て、全件完了"
+      completed_at: "2026-02-06T13:31:00"
+
+# ================================================================
+# 軍師（Gunshi）の現在状況
+# ================================================================
+gunshi:
+  current_task:
+    task_id: null
+    description: "待機中"
+    started_at: null
+
+  waiting_for:
+    - agent: null
+      reason: null
+
+  next_action: "殿の次の指示待ち"
+
+  recent_completed:
+    - task_id: "v1.6.0-ack"
+      description: "v1.6.0改善策了解・確認完了"
+      completed_at: "2026-02-06T13:37:00"
+    - task_id: "skill-eval-promotion-tab"
+      description: "promotion-tab-component-generator評価・承認、足軽6に作成指示"
+      completed_at: "2026-02-06T13:32:00"
+
+# ================================================================
+# 更新ルール
+# ================================================================
+# 【タスク開始時】
+#   current_task:
+#     task_id: "task-xxx"
+#     description: "タスクの説明"
+#     started_at: "2026-02-06T13:35:00"
+#
+# 【待機中】
+#   waiting_for:
+#     - agent: "ashigaru3"
+#       reason: "GAP-005後半の完了報告待ち"
+#
+# 【タスク完了時】
+#   current_task を null にリセット
+#   recent_completed に追記
+#   next_action を更新
+# ================================================================

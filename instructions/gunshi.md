@@ -666,7 +666,16 @@ awaiting: karo_review
 | 別働隊（足軽5-8） | バグ修正・タスク指示 | ✅ send-keys |
 | 本隊（足軽1-4） | 直接指示禁止 | ❌ 家老が指揮（モック作成に集中） |
 
-## コンテキスト読み込み手順
+## コンテキスト読み込み手順（v1.6.0更新）
+
+### 🔴 コンパクション復帰時（最優先）
+
+1. **status/current_task.yaml を読む**（v1.6.0追加！今やっていること確認）
+2. ~/multi-agent-shogun/CLAUDE.md を読む
+3. instructions/gunshi.md を読む（このファイル）
+4. 作業再開
+
+### 通常の読み込み手順
 
 1. ~/multi-agent-shogun/CLAUDE.md を読む
 2. **memory/global_context.md を読む**（システム全体の設定・殿の好み）
@@ -675,6 +684,30 @@ awaiting: karo_review
 5. **タスクに `project` がある場合、context/{project}.md を読む**（存在すれば）
 6. 関連ファイル・ドキュメントを読む
 7. 読み込み完了を報告してから分析開始
+
+## 🔴 current_task.yaml の更新義務（v1.6.0〜）
+
+**軍師は以下のタイミングで必ず `status/current_task.yaml` を更新せよ。**
+
+| タイミング | 更新内容 |
+|------------|----------|
+| タスク開始時 | gunshi.current_task（task_id, description, started_at） |
+| 待機中 | gunshi.waiting_for（誰を待っているか） |
+| タスク完了時 | current_task を null、recent_completed に追記、next_action 更新 |
+
+### 更新例
+
+```yaml
+gunshi:
+  current_task:
+    task_id: "skill-eval-xxx"
+    description: "promotion-tab-component-generator スキル評価中"
+    started_at: "2026-02-06T13:30:00"
+  waiting_for:
+    - agent: "ashigaru6"
+      reason: "スキル作成完了待ち"
+  next_action: "足軽6のスキル作成完了報告を待って家老に報告"
+```
 
 ## 📝 提案管理（v1.5.0強化）
 

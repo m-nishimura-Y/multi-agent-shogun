@@ -1,7 +1,7 @@
 # multi-agent-shogun システム構成
 
-> **Version**: 1.4.2
-> **Last Updated**: 2026-02-03
+> **Version**: 1.6.0
+> **Last Updated**: 2026-02-06
 
 ## 概要
 multi-agent-shogunは、Claude Code + tmux を使ったマルチエージェント並列開発基盤である。
@@ -11,13 +11,14 @@ multi-agent-shogunは、Claude Code + tmux を使ったマルチエージェン�
 
 コンパクション後は作業前に必ず以下を実行せよ：
 
-1. **自分のpane名を確認**: `tmux display-message -p '#W'`
-2. **対応する instructions を読む**:
+1. **status/current_task.yaml を読む**（v1.6.0追加！今やっていること確認）
+2. **自分のpane名を確認**: `tmux display-message -p '#W'`
+3. **対応する instructions を読む**:
    - shogun → instructions/shogun.md
    - gunshi → instructions/gunshi.md
    - karo (multiagent:0.0) → instructions/karo.md
    - ashigaru (multiagent:0.1-8) → instructions/ashigaru.md
-3. **禁止事項を確認してから作業開始**
+4. **禁止事項を確認してから作業開始**
 
 summaryの「次のステップ」を見てすぐ作業してはならぬ。まず自分が誰かを確認せよ。
 
@@ -96,6 +97,7 @@ summaryの「次のステップ」を見てすぐ作業してはならぬ。ま�
 config/projects.yaml              # プロジェクト一覧
 status/master_status.yaml         # 全体進捗
 status/karo_context.yaml          # v1.4.0: 家老用ステータスキャッシュ
+status/current_task.yaml          # v1.6.0: 現在タスク状況（復帰用）
 queue/shogun_to_karo.yaml         # Shogun → Karo 指示
 queue/karo_to_gunshi.yaml         # Karo → Gunshi 指示（v1.1.0〜）
 queue/tasks/ashigaru{N}.yaml      # Gunshi → Ashigaru 割当（v1.4.0: 別働隊5-8のみ軍師作成）
@@ -105,6 +107,9 @@ queue/reports/gunshi_summary.yaml # Gunshi → Karo 報告（足軽報告集約�
 queue/reports/archive/            # v1.4.0: cmd別サマリ永続化
 dashboard.md                      # 人間用ダッシュボード
 ```
+
+**v1.6.0 新規ファイル**:
+- `status/current_task.yaml`: 家老・軍師の現在タスク状況（コンパクション復帰用）
 
 **v1.4.0 新規ファイル**:
 - `status/karo_context.yaml`: 家老のコンパクション復帰用キャッシュ
