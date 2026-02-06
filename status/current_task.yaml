@@ -5,16 +5,16 @@
 # 将軍・家老・軍師がタスク開始時・完了時に更新せよ
 # ============================================================
 
-last_updated: "2026-02-06T13:52:00"
+last_updated: "2026-02-06T18:10:00"
 
 # ================================================================
 # 将軍（Shogun）の現在状況 - 殿との会話要点記録
 # ================================================================
 shogun:
   current_conversation:
-    topic: null
-    summary: "殿からの指示待ち"
-    started_at: null
+    topic: "プロジェクト規約・テンプレート整備"
+    summary: "殿の指示により、今後の作り込みで活用できる規約（命名規則、ディレクトリ構成等）を整備中。家老にcmd_028を指示済み。"
+    started_at: "2026-02-06T18:10:00"
 
   pending_decisions:
     # 殿に確認が必要な事項
@@ -23,6 +23,12 @@ shogun:
 
   recent_directives:
     # 殿から受けた最近の指示
+    - directive: "プロジェクト規約・テンプレート整備"
+      description: "命名規則、ディレクトリ構成、共通テンプレート、タスク依存関係ガイドを整備。今後の作り込みに活用。"
+      received_at: "2026-02-06T18:10:00"
+    - directive: "React警告バグ対応"
+      description: "PromotionMasterPage key prop警告、MediaSalesListPage controlled/uncontrolled警告"
+      received_at: "2026-02-06T14:00:00"
     - directive: "v1.6.0追加改善指示"
       description: "緊急調査ルール明文化、current_task.yaml将軍項目追加"
       received_at: "2026-02-06T13:45:00"
@@ -43,6 +49,27 @@ karo:
   next_action: "殿の次の指示待ち"
 
   recent_completed:
+    - task_id: "cmd_028"
+      description: "プロジェクト規約・テンプレート整備完了（4文書1,401行）"
+      completed_at: "2026-02-06T18:42:00"
+    - task_id: "urgent_pagination_fix"
+      description: "pagination自動変換完了（apiClientインターセプター追加、全API自動対応）"
+      completed_at: "2026-02-06T16:06:00"
+    - task_id: "urgent_entity_delete"
+      description: "重複Entityファイル削除完了（user.entity.ts、ビルド成功）"
+      completed_at: "2026-02-06T15:29:00"
+    - task_id: "cmd_027"
+      description: "全画面キャメルケース統一完了（FE17ファイル+設計書70+件、ビルド成功）"
+      completed_at: "2026-02-06T15:12:00"
+    - task_id: "cmd_026"
+      description: "FE-BEフィールド名不一致+画面サイズ統一（足軽2,3並行対応）"
+      completed_at: "2026-02-06T14:42:00"
+    - task_id: "cmd_025"
+      description: "シードデータ投入完了（全8テーブル、FK制約エラー修正含む）"
+      completed_at: "2026-02-06T14:06:00"
+    - task_id: "cmd_024"
+      description: "React警告バグ再発対応完了（BUG-030,031修正）"
+      completed_at: "2026-02-06T14:01:00"
     - task_id: "v1.6.1-additional"
       description: "殿の追加改善指示2件完了（F001例外明文化、将軍項目追加）"
       completed_at: "2026-02-06T13:52:00"
@@ -66,9 +93,21 @@ gunshi:
     - agent: null
       reason: null
 
-  next_action: "殿の次の指示待ち"
+  next_action: "家老からの次の指示待ち"
 
   recent_completed:
+    - task_id: "cmd_028_conventions"
+      description: "プロジェクト規約4文書作成完了（別働隊4名、合計1,401行）"
+      completed_at: "2026-02-06T18:55:00"
+    - task_id: "feedback-collection"
+      description: "別働隊4名（足軽5-8）から現場の声・改善提案を収集し家老に報告完了"
+      completed_at: "2026-02-06T17:45:00"
+    - task_id: "cmd_027_design_docs"
+      description: "設計書キャメルケース統一完了（api_schema.md 50+件、ui_details.md 22件）"
+      completed_at: "2026-02-06T15:20:00"
+    - task_id: "cmd_024_react_warnings"
+      description: "React警告バグ再発対応完了（BUG-030,031修正、足軽5）"
+      completed_at: "2026-02-06T14:00:00"
     - task_id: "v1.6.0-ack"
       description: "v1.6.0改善策了解・確認完了"
       completed_at: "2026-02-06T13:37:00"

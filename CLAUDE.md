@@ -1,6 +1,6 @@
 # multi-agent-shogun システム構成
 
-> **Version**: 1.6.0
+> **Version**: 1.6.1
 > **Last Updated**: 2026-02-06
 
 ## 概要
@@ -195,6 +195,9 @@ MCPツールは遅延ロード方式。使用前に必ず `ToolSearch` で検索
 - **dashboard.md の更新は家老の責任**
 - 将軍は家老に指示を出し、家老が更新する
 - 将軍は dashboard.md を読んで状況を把握する
+- **【v1.6.1追加】タスク完了時は必ず dashboard.md を更新せよ**
+  - current_task.yaml だけ更新して dashboard.md を忘れるな
+  - 殿は dashboard.md を見て状況を把握する（current_task.yaml は見ない）
 
 ### 2. 指揮系統の遵守（v1.4.0更新）
 - 将軍 → 家老 → 軍師/足軽 の順で指示

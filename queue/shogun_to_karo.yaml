@@ -1,1 +1,117 @@
-queue: []
+queue:
+  - id: cmd_028
+    timestamp: "2026-02-06T18:10:00"
+    command: "プロジェクト規約・テンプレート整備"
+    details:
+      description: |
+        殿より指示があった。今回のモック開発で得た教訓を元に、
+        今後の作り込み・新規プロジェクトで活用できる規約・テンプレートを整備せよ。
+
+        【背景】
+        足軽からのフィードバック:
+        - snake_case vs camelCase で17ファイル修正が発生
+        - Entity重複配置でTypeORMエラー
+        - 12画面で個別にContainer設定が必要だった
+        - タスク間の依存関係が見えにくい
+
+        【作成物】
+        docs/conventions/ 配下に以下を作成:
+
+        1. naming-convention.md（命名規則）
+           - API: キャメルケース（確定済み）
+           - DB: スネークケース（PostgreSQL標準）
+           - フロントエンド型: キャメルケース（APIに合わせる）
+           - ファイル名: ケバブケース（React標準）
+           - コンポーネント名: パスカルケース
+           - 変換方針: apiClientで自動変換（実装済み）
+
+        2. directory-structure.md（ディレクトリ構成ルール）
+           - backend/src/auth/entities/ → 認証関連Entity
+           - backend/src/modules/xxx/entities/ → 各モジュールEntity
+           - frontend/src/components/ → 共通コンポーネント
+           - frontend/src/pages/ → ページコンポーネント
+           - 「絶対に置いてはいけない場所」も明記
+
+        3. common-templates.md（共通テンプレート）
+           - ページの基本構造（Container, padding等）
+           - APIサービスの基本構造
+           - 型定義ファイルの基本構造
+
+        4. task-dependency-guide.md（タスク依存関係ガイド）
+           - blockedBy / blocks の使い方
+           - 並行作業時の注意点
+           - 依存グラフの例
+
+        【参照】
+        - 現モックの実装（~/arms-mock/）
+        - 足軽の声（dashboard.md）
+        - apiClient.tsの自動変換実装
+
+        【担当】
+        - 軍師に調査・設計を指示
+        - 本隊または別働隊に文書作成を実施させよ
+        - 現モックから「正しいパターン」を抽出すること
+
+        【注意】
+        - 机上の空論ではなく、実際の実装に基づいた規約とせよ
+        - 新規参画者が読んですぐ理解できる文書にせよ
+    priority: high
+    status: completed
+    completed_at: "2026-02-06T18:42:00"
+    result: "4文書1,401行完成（命名規則230/ディレクトリ272/テンプレート697/依存関係202）"
+
+  - id: cmd_027
+    timestamp: "2026-02-06T14:55:00"
+    command: "【重要】全画面フィールド名キャメルケース統一 + 設計書調査"
+    details:
+      description: |
+        殿より指示。フィールド名不一致が複数画面で発生している。
+        全画面一括でキャメルケースに統一せよ。
+    priority: high
+    status: completed
+    completed_at: "2026-02-06T15:12:00"
+    result: "FE17ファイル+設計書70+件キャメルケース統一、ビルド成功"
+
+  - id: cmd_026
+    timestamp: "2026-02-06T14:40:00"
+    command: "【緊急】FE-BE フィールド名不一致修正 + 画面サイズ統一"
+    details:
+      description: |
+        殿より報告。2件の修正依頼。
+    priority: high
+    status: completed
+    completed_at: "2026-02-06T14:42:00"
+    result: "問題1:足軽2(フィールド名統一)、問題2:足軽3(レイアウト統一7ページ) 両方ビルド成功"
+
+  - id: cmd_025
+    timestamp: "2026-02-06T14:05:00"
+    command: "テストデータ投入状況確認・追加"
+    details:
+      description: |
+        殿より指示があった。画面遷移確認用のテストデータを整備せよ。
+    priority: high
+    status: completed
+    completed_at: "2026-02-06T14:06:00"
+    result: "全8テーブル投入成功。FK制約エラー修正（3ファイル）、Entity重複修正（5ファイル）"
+
+  - id: cmd_024
+    timestamp: "2026-02-06T14:00:00"
+    command: "React警告バグ再発対応"
+    details:
+      description: |
+        殿より報告があった。以下のReact警告が再発している可能性がある。
+    priority: high
+    status: completed
+    completed_at: "2026-02-06T14:01:00"
+    result: "BUG-030,031修正完了。PromotionMasterPage key追加、MediaSalesListPage undefined対策"
+
+  - id: cmd_023
+    timestamp: "2026-02-05T16:50:00"
+    command: "ARMS代替システムモック作成"
+    details:
+      description: |
+        殿より指示があった。環境構築が完了した。モック作成に着手せよ。
+    priority: high
+    status: completed
+    completed_at: "2026-02-05T18:30:00"
+    result: "Phase1完了。30ファイル・スキル5件(1,970行)。Grade A/B。残課題: bcrypt実装(別タスク)"
