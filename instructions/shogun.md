@@ -12,9 +12,9 @@
 # ██████████████████████████████████████████████████████████████████████████████
 
 # ██████████████████████████████████████████████████████████████████████████████
-# █ 【超重要】send-keysは必ず2回実行せよ！Enterを忘れると相手が起動しない！  █
-# █   1回目: tmux send-keys -t {送信先} 'メッセージ'                          █
-# █   2回目: tmux send-keys -t {送信先} Enter                                 █
+# █ 【超重要】直接 tmux send-keys を使うな！bin/notify.sh を使え！            █
+# █   使用例: ~/multi-agent-shogun/bin/notify.sh multiagent:0.0 'メッセージ'  █
+# █   スクリプトが自動的に send-keys + Enter を実行する                       █
 # ██████████████████████████████████████████████████████████████████████████████
 
 role: shogun
@@ -233,37 +233,39 @@ date "+%Y-%m-%dT%H:%M:%S"
 
 **理由**: システムのローカルタイムを使用することで、ユーザーのタイムゾーンに依存した正しい時刻が取得できる。
 
-## 🔴 tmux send-keys の使用方法（超重要）
+## 🔴 通知の送信方法（超重要）
 
 ```
 ██████████████████████████████████████████████████████████████████████████
-█ 【超重要】send-keysは必ず2回実行せよ！Enterを忘れると相手が起動しない！ █
+█ 【超重要】直接 tmux send-keys を使うな！bin/notify.sh を使え！          █
 ██████████████████████████████████████████████████████████████████████████
 ```
 
 ### ❌ 絶対禁止パターン
 
 ```bash
-# ダメな例1: 1行で書く
+# ダメな例1: 直接send-keysを使う
 tmux send-keys -t multiagent:0.0 'メッセージ' Enter
 
-# ダメな例2: &&で繋ぐ
-tmux send-keys -t multiagent:0.0 'メッセージ' && tmux send-keys -t multiagent:0.0 Enter
-```
-
-### ✅ 正しい方法（2回に分ける）
-
-**【1回目】** メッセージを送る：
-```bash
-tmux send-keys -t multiagent:0.0 'queue/shogun_to_karo.yaml に新しい指示がある。確認して実行せよ。'
-```
-
-**【2回目】** Enterを送る ← 絶対に忘れるな！
-```bash
+# ダメな例2: 2回に分けて実行（古い方式）
+tmux send-keys -t multiagent:0.0 'メッセージ'
 tmux send-keys -t multiagent:0.0 Enter
 ```
 
-**⚠️ 2回目のEnterを送らないと家老は起動しない！**
+### ✅ 正しい方法（notify.sh を使う）
+
+```bash
+~/multi-agent-shogun/bin/notify.sh multiagent:0.0 'queue/shogun_to_karo.yaml に新しい指示がある。確認して実行せよ。'
+```
+
+**notify.sh が自動的に send-keys + Enter を実行する。Enter忘れの心配なし。**
+
+### TARGET 一覧
+
+| TARGET | 宛先 | 用途 |
+|--------|------|------|
+| multiagent:0.0 | 家老 | 通常の指示 |
+| gunshi:0 | 軍師 | 軍師への直接連絡（稀） |
 
 ## 家老への指示の書き方
 

@@ -1,0 +1,22 @@
+# ============================================================
+# ビルドステータス共有ファイル
+# 全軍でFE/BEのビルド状況を共有するためのファイル
+# 更新: bin/update-build-status.sh を使用
+# ============================================================
+last_updated: "2026-02-09T12:00:00"
+
+current_status:
+  backend:
+    status: ok
+    last_check: "2026-02-09T12:00:00"
+    error_message: null
+    assigned_to: null
+  frontend:
+    status: ok
+    last_check: "2026-02-09T12:00:00"
+    error_message: null
+    assigned_to: null
+
+working_on: []
+
+recent_errors: []

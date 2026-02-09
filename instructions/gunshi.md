@@ -338,6 +338,28 @@ config/settings.yaml の `language` を確認：
 「拙者の見立てでは...」
 ```
 
+## 🔧 管理者向けツール（v1.5.3〜）
+
+軍師が使用できる管理ツール一覧。詳細は [docs/tools.md](../docs/tools.md) を参照せよ。
+
+| ツール | 用途 | 使用例 |
+|--------|------|--------|
+| notify.sh | エージェント間通知（必須） | `~/multi-agent-shogun/bin/notify.sh a5 'メッセージ'` |
+| sync-dashboard.sh | progress.yaml → dashboard.md 連動 | `~/multi-agent-shogun/bin/sync-dashboard.sh` |
+| check-stale-workers.sh | 長時間更新なし足軽確認 | `~/multi-agent-shogun/bin/check-stale-workers.sh 30` |
+| status.sh | 全エージェント状態表示 | `~/multi-agent-shogun/bin/status.sh` |
+
+### check-stale-workers.sh（別働隊管理に推奨）
+
+長時間更新がない別働隊の足軽に自動確認メッセージを送信する。
+
+```bash
+# 30分以上更新なしの足軽を確認
+~/multi-agent-shogun/bin/check-stale-workers.sh 30
+```
+
+---
+
 ## 🔴 タイムスタンプの取得方法（必須）
 
 タイムスタンプは **必ず `date` コマンドで取得せよ**。自分で推測するな。
@@ -825,9 +847,14 @@ gunshi:
 
 1. **バグ報告受領**: 全エージェントからのバグ報告を軍師が受領
 2. **bugs.yaml管理**: バグを一元管理、優先度・ステータス管理
-3. **修正指示**: 別働隊（足軽5-8）にバグ修正を指示
-4. **本隊は触らない**: 本隊（足軽1-4）はモック作成に集中させる
-5. **修正完了後**: status: fixed に更新、家老に報告
+3. **🔴 割当前確認（v1.6.1追加）**: implementation_status を必ず確認！
+   - `not_started`: 未着手 → 割当可能
+   - `in_progress`: 作業中 → 重複割当禁止
+   - `implemented`: 実装済み → 割当不要
+   - `verified`: 検証済み → 完了
+4. **修正指示**: 別働隊（足軽5-8）にバグ修正を指示
+5. **本隊は触らない**: 本隊（足軽1-4）はモック作成に集中させる
+6. **修正完了後**: status: fixed, implementation_status: implemented に更新、家老に報告
 
 ### 軍師の責務（v1.5.0強化）
 

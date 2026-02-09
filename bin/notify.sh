@@ -67,7 +67,7 @@ TARGET=$(resolve_target "$TARGET_ALIAS")
 
 # send-keys + Enter を実行（2回に分けて確実に送信）
 tmux send-keys -t "$TARGET" "$MESSAGE"
-sleep 0.1  # tmuxが処理する時間を確保
+sleep 0.3  # tmuxが処理する時間を確保（0.1→0.3に増加）
 tmux send-keys -t "$TARGET" Enter
 
 # 成功ログ（デバッグ用、必要に応じてコメントアウト）

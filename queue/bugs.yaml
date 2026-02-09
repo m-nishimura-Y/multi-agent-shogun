@@ -6,25 +6,175 @@
 # 2) 優先度: high / medium / low
 # 3) まとめて対処させる
 # 4) 修正完了したら status: fixed に更新
+# 5) 🔴【v1.6.1追加】割当前に implementation_status を必ず確認せよ！
+#    - not_started: 未着手（割当可能）
+#    - in_progress: 作業中（重複割当禁止）
+#    - implemented: 実装済み（割当不要）
+#    - verified: 検証済み（完了）
 # ============================================================
 
-last_updated: "2026-02-05T18:13:27"
+last_updated: "2026-02-07T16:45:00"
 
 # === 未修正バグ ===
 open_bugs:
-  - id: BUG-001
-    priority: low
-    status: open
-    location: "backend/src/database/seeds/"
-    description: "画像サブ 2件不足"
-    detail: "Phase2レビューで指摘。軽微問題。"
-    reported_at: "2026-02-05T19:00:00"
-    reported_by: ashigaru8
-    assigned_to: null
+  # ----------------------------------------------------------
+  # cmd_032: 販促商品マスタ表示バグ（2026-02-06 20:25）
+  # ----------------------------------------------------------
+  - id: BUG-032
+    priority: high
+    status: fixed
+    implementation_status: implemented
+    location: "backend/src/promotion/promotion.controller.ts"
+    description: "販促商品マスタ - 商品リストの商品名が表示されない"
+    detail: |
+      殿より報告。商品リストで商品名が表示されない問題。
+      原因: バックエンドが"name"を返していたがFEは"productName"を期待。
+      修正: コントローラーのレスポンスをスネークケース(product_name)に変更。
+    reported_at: "2026-02-06T20:25:00"
+    reported_by: tono
+    assigned_to: ashigaru1
+    fixed_at: "2026-02-06T21:01:00"
+    fixed_by: ashigaru1
 
+  - id: BUG-033
+    priority: high
+    status: fixed
+    implementation_status: implemented
+    location: "frontend/src/components/promotion/ImageSettingTab.tsx"
+    description: "販促商品マスタ - 画像設定でローディングが続く"
+    detail: |
+      殿より報告。画像設定のところでくるくる（ローディング）が続く。
+      原因: janCdがfalsyな場合にuseEffectがfetchを実行せず、isLoadingがtrueのまま。
+      修正: janCdがない場合は即座にローディング終了+エラーメッセージ表示。
+    reported_at: "2026-02-06T20:25:00"
+    reported_by: tono
+    assigned_to: ashigaru2
+    fixed_at: "2026-02-06T20:35:00"
+    fixed_by: ashigaru2
+
+  # ----------------------------------------------------------
+  # cmd_024: React警告バグ再発（2026-02-06 14:00）- 修正済み
+  # ----------------------------------------------------------
+  - id: BUG-030
+    priority: high
+    status: fixed
+    implementation_status: implemented  # v1.6.1追加
+    location: "frontend/src/pages/PromotionMasterPage.tsx:466"
+    description: "【再発】React key prop警告（BUG-025の別箇所）"
+    detail: |
+      条件分岐（三項演算子）内のTableRowにkey propがなかった。
+      以前の調査ではmap()内のkey確認のみ行い、静的要素へのkey付与を見落としていた。
+      <TableRow key="loading"> と <TableRow key="empty"> を追加。
+    reported_at: "2026-02-06T13:56:00"
+    reported_by: tono
+    fixed_at: "2026-02-06T13:59:38"
+    fixed_by: ashigaru5
+
+  - id: BUG-031
+    priority: high
+    status: fixed
+    implementation_status: implemented  # v1.6.1追加
+    location: "frontend/src/pages/MediaSalesListPage.tsx:230"
+    description: "【再発】React controlled/uncontrolled警告（BUG-026の別箇所）"
+    detail: |
+      Select要素のvalue属性がundefinedになる可能性があった。
+      selectedWeek ?? '' と selectedCenter ?? '' で明示的にフォールバックを追加。
+    reported_at: "2026-02-06T13:56:00"
+    reported_by: tono
+    fixed_at: "2026-02-06T13:59:38"
+    fixed_by: ashigaru5
+
+  # ----------------------------------------------------------
+  # 殿より緊急報告（2026-02-06 13:24）
+  # ----------------------------------------------------------
+  - id: BUG-029
+    priority: high
+    status: fixed
+    implementation_status: implemented  # v1.6.1追加
+    location: "arms-mock/backend database schema"
+    description: "【緊急】TypeORMエラー: tables can have at most 1600 columns"
+    detail: |
+      原因: DBスキーマに過去のマイグレーション残骸が蓄積している可能性。
+      対応: DBリセットして再作成。殿がDBリセット実行、足軽5が動作確認。
+    reported_at: "2026-02-06T13:24:00"
+    reported_by: tono
+    fixed_at: "2026-02-06T13:30:00"
+    fixed_by: "殿+足軽5"
+
+  # ----------------------------------------------------------
+  # 殿より追加報告（2026-02-06 12:46）
+  # ----------------------------------------------------------
+  - id: BUG-026
+    priority: medium
+    status: fixed
+    implementation_status: implemented  # v1.6.1追加
+    location: "frontend/src/pages/PromotionMasterPage.tsx"
+    description: "【FEバグ】React key prop警告"
+    detail: |
+      調査の結果、全map()呼び出しにkey prop設定済み。警告なし。
+    reported_at: "2026-02-06T12:46:50"
+    reported_by: karo
+    fixed_at: "2026-02-06T12:50:34"
+    fixed_by: ashigaru5
+    note: "既に修正済みだった"
+
+  - id: BUG-027
+    priority: medium
+    status: fixed
+    implementation_status: implemented  # v1.6.1追加
+    location: "frontend/src/pages/PromotionMasterPage.tsx"
+    description: "【FEバグ】controlled/uncontrolled input警告"
+    detail: |
+      TextField 5箇所に || '' を追加。
+    reported_at: "2026-02-06T12:46:50"
+    reported_by: karo
+    fixed_at: "2026-02-06T12:50:38"
+    fixed_by: ashigaru6
+
+  - id: BUG-028
+    priority: medium
+    status: fixed
+    implementation_status: implemented  # v1.6.1追加
+    location: "backend/src/auth/"
+    description: "【BEバグ】/api/v1/auth/logout 404エラー"
+    detail: |
+      ログアウトAPIが未実装または不正。
+      POST /api/v1/auth/logout エンドポイントを追加。
+      トークン無効化処理（または空レスポンス返却）を実装。
+    reported_at: "2026-02-06T12:46:50"
+    reported_by: karo
+    fixed_at: "2026-02-06T12:48:47"
+    fixed_by: ashigaru8
+
+  # ----------------------------------------------------------
+  # 既存バグ
+  # ----------------------------------------------------------
+  - id: BUG-025
+    priority: medium
+    status: fixed
+    implementation_status: implemented  # v1.6.1追加
+    location: "frontend/src/pages/MediaSalesListPage.tsx"
+    description: "【FEバグ】controlled/uncontrolled input エラー"
+    detail: |
+      年度変更時の週選択リセット処理を追加。value ?? '' を追加。
+    reported_at: "2026-02-06T11:58:24"
+    reported_by: karo
+    fixed_at: "2026-02-06T12:50:37"
+    fixed_by: ashigaru7
+
+  # BUG-009,010,011 は fixed_bugs セクションに移動済み
+
+  # ----------------------------------------------------------
+  # 重大（Critical）- FE-BE整合性 [足軽8]
+  # ----------------------------------------------------------
+
+  # ----------------------------------------------------------
+  # 中程度（Medium）
+  # ----------------------------------------------------------
   - id: BUG-002
     priority: medium
     status: open
+    implementation_status: not_started  # v1.6.1追加
     location: "backend/src/auth/auth.service.ts"
     description: "bcrypt未使用（パスワードハードコード）"
     detail: "モック用簡易実装。本番移行前に修正必須。殿裁定: 後回しでOK"
@@ -32,8 +182,354 @@ open_bugs:
     reported_by: ashigaru7
     assigned_to: null
 
+  # ----------------------------------------------------------
+  # 中程度（Medium）- API照合 [足軽7]
+  # ----------------------------------------------------------
+  # BUG-013,014 は fixed_bugs セクションに移動済み（既に実装済みだった）
+
+  # ----------------------------------------------------------
+  # 中程度（Medium）- UI照合 [足軽6]
+  # ----------------------------------------------------------
+  - id: BUG-016
+    priority: medium
+    status: open
+    implementation_status: not_started  # v1.6.1追加
+    location: "frontend/src/components/ProductForm.tsx"
+    description: "【未実装】商品詳細画面: 掲載商品情報セクション未実装"
+    detail: "掲載ブロック、インデックス、カタログ商品名等の項目が欠落"
+    design_ref: "ui_details.md"
+    reported_at: "2026-02-06T01:00:00"
+    reported_by: ashigaru6
+    assigned_to: null
+
+  - id: BUG-017
+    priority: medium
+    status: open
+    implementation_status: not_started  # v1.6.1追加
+    location: "frontend/src/pages/PromotionMasterPage.tsx"
+    description: "【未実装】販促商品マスタ: 9タブ構成が未実装（販促文のみ）"
+    detail: "画像設定/コラム/販促文/販促情報/素材/掲載履歴/マーク/EC詳細/ギフトの9タブ必要"
+    design_ref: "ui_details.md"
+    reported_at: "2026-02-06T01:00:00"
+    reported_by: ashigaru6
+    assigned_to: null
+
+  # ----------------------------------------------------------
+  # 中程度（Medium）- BUG-012派生
+  # ----------------------------------------------------------
+
+  # ----------------------------------------------------------
+  # 軽微（Low）
+  # ----------------------------------------------------------
+  - id: BUG-007
+    priority: low
+    status: open
+    implementation_status: not_started  # v1.6.1追加
+    location: "backend/src/auth/auth.controller.ts"
+    description: "logoutエンドポイント未実装（FEは呼ぶがBEに存在しない）"
+    detail: "FEはtry-catchで無視しているため動作に影響なし"
+    fix_proposal: "BE追加またはFEから削除"
+    reported_at: "2026-02-06T00:40:00"
+    reported_by: ashigaru8
+    assigned_to: null
+
+  - id: BUG-001
+    priority: low
+    status: open
+    implementation_status: not_started  # v1.6.1追加
+    location: "backend/src/database/seeds/"
+    description: "画像サブ 2件不足"
+    detail: "Phase2レビューで指摘。軽微問題。"
+    reported_at: "2026-02-05T19:00:00"
+    reported_by: ashigaru8
+    assigned_to: null
+
 # === 修正済みバグ ===
 fixed_bugs:
+  # ----------------------------------------------------------
+  # 本隊（足軽1）緊急修正分（2026-02-07）- BUG-034〜037
+  # ----------------------------------------------------------
+  - id: BUG-034
+    priority: high
+    status: fixed
+    implementation_status: verified
+    location: "backend/src/product/entities/product.entity.ts（削除）"
+    description: "TypeORMエラー: Entity metadata 'ProductEntity' was not found"
+    detail: |
+      backend/src/product/entities/product.entity.tsとbackend/src/entities/product.entity.ts
+      が重複。DB再作成後の同期エラー。重複ファイルを削除して解決。
+    reported_at: "2026-02-07T14:00:00"
+    reported_by: tono
+    fixed_at: "2026-02-07T14:05:00"
+    fixed_by: ashigaru1
+
+  - id: BUG-035
+    priority: high
+    status: fixed
+    implementation_status: verified
+    location: "backend process（古いプロセス）"
+    description: "商品一覧API 500エラー"
+    detail: |
+      BUG-034修正後、古いBEプロセスが再起動されずに稼働継続。
+      Entity修正がメモリに反映されていなかった。
+      プロセス再起動（kill + npm run start:dev）で解決。
+    reported_at: "2026-02-07T14:30:00"
+    reported_by: tono
+    fixed_at: "2026-02-07T14:35:00"
+    fixed_by: ashigaru1
+
+  - id: BUG-036
+    priority: high
+    status: fixed
+    implementation_status: verified
+    location: "backend/src/composition-export/, manuscript-export/"
+    description: "帳票出力画面ログアウト問題"
+    detail: |
+      帳票系API（composition-export, manuscript-export）に@Public()なし。
+      画面オープン時にsummary APIが発火→401→apiClientがlogout()実行。
+      両Controllerに@Public()デコレーターを追加して解決。
+    reported_at: "2026-02-07T16:00:00"
+    reported_by: tono
+    fixed_at: "2026-02-07T16:10:00"
+    fixed_by: ashigaru1
+
+  - id: BUG-037
+    priority: high
+    status: fixed
+    implementation_status: verified
+    location: "frontend/src/services/apiClient.ts:77"
+    description: "販促校正表ダウンロードでcreateObjectURLエラー"
+    detail: |
+      apiClientのレスポンスインターセプターがBlobをcamelCase変換→Blobが壊れる。
+      convertKeysToCamelCase(Blob)→空オブジェクト{}に変換→createObjectURL({})でエラー。
+      Blob instanceof チェックで変換スキップするよう修正。
+    reported_at: "2026-02-07T16:30:00"
+    reported_by: tono
+    fixed_at: "2026-02-07T16:35:00"
+    fixed_by: ashigaru1
+
+  # ----------------------------------------------------------
+  # 別働隊 修正分（2026-02-06）- BUG-023/024
+  # ----------------------------------------------------------
+  - id: BUG-023
+    priority: high
+    status: fixed
+    location: "backend/src/media/"
+    description: "【未実装】MediaModule未実装"
+    detail: "7エンドポイント実装完了（years, weeks, centers, 一覧, 詳細, export×2）"
+    reported_at: "2026-02-06T03:10:00"
+    fixed_at: "2026-02-06T12:42:30"
+    fixed_by: "別働隊（足軽5-8）"
+
+  - id: BUG-024
+    priority: high
+    status: fixed
+    location: "backend/src/promotion/"
+    description: "【未実装】promotionモジュール未実装"
+    detail: "3エンドポイント実装完了（一覧, 詳細, 更新）+ DTO7種 + サービス4メソッド"
+    reported_at: "2026-02-06T11:58:24"
+    fixed_at: "2026-02-06T12:42:30"
+    fixed_by: "別働隊（足軽5-6-8）"
+
+  # ----------------------------------------------------------
+  # 別働隊 追加修正分（2026-02-06）- BUG-009,010,011,013,014
+  # ----------------------------------------------------------
+  - id: BUG-009
+    priority: high
+    status: fixed
+    location: "backend/src/promotion-text/"
+    description: "【未実装】販促文API未実装"
+    detail: "GET/PUT /products/{jan_cd}/{start_date}/promotions を実装。2エンドポイント+DTO+サービス"
+    design_ref: "api_schema.md Section 2.2"
+    reported_at: "2026-02-06T00:45:00"
+    fixed_at: "2026-02-06T13:08:08"
+    fixed_by: "足軽5"
+
+  - id: BUG-010
+    priority: high
+    status: fixed
+    location: "backend/src/catalog/"
+    description: "【未実装】カタログAPI未実装"
+    detail: "既存実装を改修。パス修正（api/catalogs→catalogs）、Swaggerデコレータ追加、@Public()追加。6EP"
+    design_ref: "api_schema.md Section 2.3, 2.4"
+    reported_at: "2026-02-06T00:45:00"
+    fixed_at: "2026-02-06T13:08:18"
+    fixed_by: "足軽6"
+
+  - id: BUG-011
+    priority: high
+    status: fixed
+    location: "backend/src/job/"
+    description: "【未実装】ジョブAPI未実装"
+    detail: "確認の結果、既に実装済み＆app.module.ts登録済みだった"
+    design_ref: "api_schema.md Section 2.4"
+    reported_at: "2026-02-06T00:45:00"
+    fixed_at: "2026-02-06T13:08:02"
+    fixed_by: "足軽7（確認）"
+    note: "既に実装済みだった"
+
+  - id: BUG-013
+    priority: medium
+    status: fixed
+    location: "backend/src/category/"
+    description: "【未実装】カテゴリAPI未実装"
+    detail: "確認の結果、既に実装済み＆app.module.ts登録済みだった。2EP"
+    design_ref: "api_schema.md Section 4"
+    reported_at: "2026-02-06T00:45:00"
+    fixed_at: "2026-02-06T13:08:02"
+    fixed_by: "足軽7（確認）"
+    note: "既に実装済みだった"
+
+  - id: BUG-014
+    priority: medium
+    status: fixed
+    location: "backend/src/vendor/"
+    description: "【未実装】取引先API未実装"
+    detail: "確認の結果、既に実装済み＆app.module.ts登録済みだった。2EP"
+    design_ref: "api_schema.md Section 4"
+    reported_at: "2026-02-06T00:45:00"
+    fixed_at: "2026-02-06T13:08:02"
+    fixed_by: "足軽7（確認）"
+    note: "既に実装済みだった"
+
+  # ----------------------------------------------------------
+  # 足軽7 修正分（2026-02-06）
+  # ----------------------------------------------------------
+  # ----------------------------------------------------------
+  # 足軽5 修正分（2026-02-06）- FEルーティング
+  # ----------------------------------------------------------
+  - id: BUG-018
+    priority: high
+    status: fixed
+    location: "frontend/src/App.tsx"
+    description: "【ルーティング未設定】商品エントリー画面"
+    detail: "Route追加: /media/:mediaId/blocks/:blockId/entries → ProductEntryPage"
+    reported_at: "2026-02-06T01:20:00"
+    fixed_at: "2026-02-06T02:00:00"
+    fixed_by: ashigaru5
+
+  - id: BUG-019
+    priority: high
+    status: fixed
+    location: "frontend/src/App.tsx"
+    description: "【ルーティング未設定】ブロック管理画面"
+    detail: "Route追加: /media/:mediaId/blocks/:blockId → BlockManagementPage"
+    reported_at: "2026-02-06T01:20:00"
+    fixed_at: "2026-02-06T02:00:00"
+    fixed_by: ashigaru5
+
+  - id: BUG-020
+    priority: medium
+    status: fixed
+    location: "frontend/src/App.tsx, Sidebar.tsx"
+    description: "【ルーティング未設定】マーク管理画面"
+    detail: "Route追加 + Sidebar.tsx disabled解除"
+    reported_at: "2026-02-06T01:20:00"
+    fixed_at: "2026-02-06T02:00:00"
+    fixed_by: ashigaru5
+
+  - id: BUG-021
+    priority: medium
+    status: fixed
+    location: "frontend/src/App.tsx, Sidebar.tsx"
+    description: "【ルーティング未設定】帳票出力画面"
+    detail: "Route追加 + Sidebar.tsx disabled解除"
+    reported_at: "2026-02-06T01:20:00"
+    fixed_at: "2026-02-06T02:00:00"
+    fixed_by: ashigaru5
+
+  # ----------------------------------------------------------
+  # 足軽6 修正分（2026-02-06）- FEサービス
+  # ----------------------------------------------------------
+  - id: BUG-003
+    priority: high
+    status: fixed
+    location: "frontend/src/services/productService.ts, blockService.ts"
+    description: "localStorage key不整合"
+    detail: "localStorage.getItem('auth_token') → useAuthStore.getState().accessToken に変更"
+    reported_at: "2026-02-06T00:40:00"
+    fixed_at: "2026-02-06T01:45:00"
+    fixed_by: ashigaru6
+
+  - id: BUG-005
+    priority: medium
+    status: fixed
+    location: "frontend/src/services/blockService.ts"
+    description: "環境変数名不整合"
+    detail: "VITE_API_BASE_URL → VITE_API_URL に統一"
+    reported_at: "2026-02-06T00:40:00"
+    fixed_at: "2026-02-06T01:45:00"
+    fixed_by: ashigaru6
+
+  - id: BUG-006
+    priority: medium
+    status: fixed
+    location: "frontend/src/types/auth.ts"
+    description: "User.role型不整合"
+    detail: "UserRole型を追加、User.roleの型をstring → UserRoleに変更"
+    reported_at: "2026-02-06T00:40:00"
+    fixed_at: "2026-02-06T01:45:00"
+    fixed_by: ashigaru6
+
+  # ----------------------------------------------------------
+  # 足軽8 修正分（2026-02-06）- FE-BE整合性
+  # ----------------------------------------------------------
+  - id: BUG-004
+    priority: high
+    status: fixed
+    location: "frontend/src/services/blockService.ts, BlockManagementPage.tsx"
+    description: "blockServiceのAPIパスがBEと完全不整合"
+    detail: |
+      全APIパスをBEに合わせて修正。/api/v1/block-entries/* に統一。
+      旧メソッドは@deprecatedで後方互換維持。BE未実装APIはスタブ化。
+    reported_at: "2026-02-06T00:40:00"
+    fixed_at: "2026-02-06T02:30:00"
+    fixed_by: ashigaru8
+
+  - id: BUG-022
+    priority: medium
+    status: fixed
+    location: "frontend/src/services/*.ts"
+    description: "【BUG-012派生】他サービスのAPIパス /api → /api/v1 未対応"
+    detail: "共通apiClientのbaseURLを /api/v1 に変更し一括対応"
+    reported_at: "2026-02-06T02:30:00"
+    fixed_at: "2026-02-06T03:00:00"
+    fixed_by: ashigaru5
+
+  # ----------------------------------------------------------
+  # 足軽7 修正分（2026-02-06）- BE認証・API
+  # ----------------------------------------------------------
+  - id: BUG-008
+    priority: high
+    status: fixed
+    location: "backend/src/product/product.controller.ts"
+    description: "【セキュリティ】商品API認証ガード未適用"
+    detail: "@UseGuards(JwtAuthGuard) をクラスレベルで適用。GET系は@Public()で除外。"
+    reported_at: "2026-02-06T00:45:00"
+    fixed_at: "2026-02-06T02:00:00"
+    fixed_by: ashigaru7
+
+  - id: BUG-012
+    priority: medium
+    status: fixed
+    location: "backend/src/main.ts + 全コントローラー"
+    description: "APIパスにv1バージョニングなし"
+    detail: "app.setGlobalPrefix('api/v1')を追加。全コントローラーからapi/プレフィックス削除。"
+    reported_at: "2026-02-06T00:45:00"
+    fixed_at: "2026-02-06T02:00:00"
+    fixed_by: ashigaru7
+    note: "FE側のAPIパスも /api/v1 に変更が必要"
+
+  - id: BUG-015
+    priority: medium
+    status: fixed
+    location: "backend/src/product/product.controller.ts"
+    description: "レスポンスmetaにrequest_idなし"
+    detail: "uuid パッケージを追加し、全レスポンスのmetaにrequest_idを追加。"
+    reported_at: "2026-02-06T00:45:00"
+    fixed_at: "2026-02-06T02:00:00"
+    fixed_by: ashigaru7
+
   - id: BUG-F013
     priority: high
     status: fixed
@@ -166,9 +662,21 @@ fixed_bugs:
 
 # === 統計 ===
 statistics:
-  total_reported: 15
-  open: 2
-  fixed: 13
+  total_reported: 44
+  open: 4
+  fixed: 40
   high_priority_open: 0
-  medium_priority_open: 1
-  low_priority_open: 1
+  medium_priority_open: 3  # BUG-002,016,017
+  low_priority_open: 2  # BUG-001,007
+  # 2026-02-07 修正分（本隊緊急対応）:
+  # - BUG-034: TypeORM重複Entity - 足軽1
+  # - BUG-035: 古いプロセス500エラー - 足軽1
+  # - BUG-036: 帳票出力ログアウト問題 - 足軽1
+  # - BUG-037: Blob変換createObjectURLエラー - 足軽1
+  # 2026-02-06 修正分（別働隊バグ修正）:
+  # - BUG-023: MediaModule（7EP）- 別働隊全員
+  # - BUG-024: PromotionModule（3EP）- 足軽5,6,8
+  # - 足軽5: 5件修正（BUG-018,019,020,021,022）FEルーティング+APIパス
+  # - 足軽6: 3件修正（BUG-003,005,006）FEサービス
+  # - 足軽7: 3件修正（BUG-008,012,015）BE認証・API
+  # - 足軽8: 1件修正（BUG-004）FE-BE整合性

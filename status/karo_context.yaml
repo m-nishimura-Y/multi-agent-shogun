@@ -4,16 +4,21 @@
 # v1.4.2: スキル候補転送ルール追加
 # 報告フロー: 本隊(1-4)→家老、別働隊(5-8)→軍師
 # スキル候補: 本隊報告で found:true → 軍師に転送評価依頼
+#
+# 【cmd_014是正】進捗共有ルール
+# - 本隊進捗: 家老がkaro_to_gunshi.yamlで軍師に共有
+# - 別働隊進捗: 軍師がgunshi_summary.yamlで家老に共有
 # ================================================================
 
-last_updated: "2026-02-04T16:31:38"
+last_updated: "2026-02-09T12:00:00"
 updated_by: karo
 
 # === 現在のフォーカス ===
 current_focus:
-  cmd: null
-  description: "🏯 全軍休憩中（殿の指示）"
-  started_at: null
+  cmd: cmd_046
+  description: "フィードバック改善提案3件実施"
+  status: "✅完了"
+  note: "3件全完了。generate-report.sh/build_status.yaml+update-build-status.sh/tools.md"
 
 # === 保留中のcmd ===
 pending_cmds: []
@@ -28,6 +33,13 @@ awaiting_lord:
         URL: https://github.com/Yuidea-DxG/mobile-spec-app/issues/1
       added_at: "2026-02-03T18:27:09"
       priority: CRITICAL
+
+# === 殿の裁定履歴 ===
+lord_decisions:
+  - subject: "cmd_020 技術選定"
+    decision: "案A: NestJS + PostgreSQL + Azure"
+    decided_at: "2026-02-05T14:58:00"
+    action: "recommended_stack.md 修正中"
 
 # === 対応完了 ===
 resolved:
@@ -44,23 +56,83 @@ resolved:
 # === 足軽稼働状況 ===
 ashigaru_status:
   honntai:
-    ashigaru1: idle
-    ashigaru2: idle
-    ashigaru3: idle
-    ashigaru4: idle
+    ashigaru1: done  # cmd_046: IMP-H2 報告書テンプレート自動生成 ✅完了
+    ashigaru2: done  # cmd_046: IMP-M2 ビルドステータス共有 ✅完了
+    ashigaru3: done  # cmd_046: IMP-M4 ツール一覧ドキュメント ✅完了
+    ashigaru4: idle      # 待機中
   betsudoutai:
-    ashigaru5: idle  # cmd_039 完了
-    ashigaru6: idle  # cmd_039 完了
-    ashigaru7: idle
-    ashigaru8: idle
+    ashigaru5: idle  # 待機中
+    ashigaru6: idle  # 待機中
+    ashigaru7: idle  # 待機中
+    ashigaru8: idle  # 待機中
 
 # === 軍師状況 ===
 gunshi_status:
-  current_task: null
-  pending_evaluations: []
+  current_task: idle
+  note: "cmd_045別働隊フィードバック集約完了。全8名idle"
+
+# === 運用ルール変更（cmd_006・即時適用）===
+rule_change_cmd006:
+  effective: "2026-02-05T11:17:00"
+  new_rule: "軍師が自動承認したスキルは、殿の追加承認なく自動作成してよい"
+  details:
+    - "14点以上で軍師が自動承認 → そのまま別働隊にスキル作成を指示可"
+    - "殿への上申は事後報告でOK"
+    - "dashboard.md の「生成されたスキル」に完成後追記"
 
 # === 直近の完了cmd ===
 recent_completed:
+  - cmd: cmd_045
+    description: "組織改編後の連携フィードバック収集完了。全8名回答。改善提案13件（高優先3件）。殿の判断待ち"
+    completed_at: "2026-02-09T12:00:00"
+  - cmd: cmd_023
+    description: "ARMS代替システムモックPhase1完了。30ファイル作成・レビュー完了（Grade A/B）。スキル5件作成（1,970行）"
+    completed_at: "2026-02-05T18:30:00"
+  - cmd: cmd_022
+    description: "gap_analysis推奨12件実施完了。8ファイル作成・レビューOK（Grade A）。スキル5件作成"
+    completed_at: "2026-02-05T17:25:00"
+  - cmd: cmd_021
+    description: "モック作成可否調査完了。条件付き可。総動員8名。成果物3件。スキル3件承認"
+    completed_at: "2026-02-05T15:32:00"
+  - cmd: cmd_020
+    description: "技術選定完了。NestJS+PostgreSQL+Azure確定。スキル1件作成（multi-file-consistency-checker 19点）"
+    completed_at: "2026-02-05T15:05:00"
+  - cmd: cmd_018
+    description: "R-System資料の基本設計情報収集完了。6ファイル作成・品質A"
+    completed_at: "2026-02-05T14:30:32"
+  - cmd: cmd_019
+    description: "cmd_018品質確認完了。問題1件修正済み"
+    completed_at: "2026-02-05T14:30:32"
+  - cmd: cmd_016
+    description: "ARMS脱却に向けた制作必須機能の洗い出し完了。必須11項目/代替可能3項目/不要3項目"
+    completed_at: "2026-02-05T14:02:59"
+  - cmd: cmd_012
+    description: "R-systemバイナリ再解析完了。31ファイル解析・8成果物・スキル3件承認"
+    completed_at: "2026-02-05T12:57:00"
+  - cmd: cmd_011
+    description: "AWS Document Loader MCP導入完了。全足軽がExcel/Word/PowerPoint/PDF読込可能"
+    completed_at: "2026-02-05T12:16:00"
+  - cmd: cmd_010
+    description: "AWS Document Loader MCPコスト調査完了。稟議不要・完全無料（Apache 2.0 OSS）"
+    completed_at: "2026-02-05T12:05:00"
+  - cmd: cmd_009
+    description: "バイナリファイル読み込み方式比較調査完了。MCP導入（AWS Document Loader）推奨"
+    completed_at: "2026-02-05T11:56:00"
+  - cmd: cmd_006
+    description: "システム刷新スキルセット4件完成（enterprise-dependency-analyzer, functional-requirements-generator, nfr-template-generator, tech-stack-proposal-generator）"
+    completed_at: "2026-02-05T11:22:00"
+  - cmd: cmd_005
+    description: "スキル作成状況と推奨スタック選定理由の報告"
+    completed_at: "2026-02-05T11:02:00"
+  - cmd: cmd_004
+    description: "ARMS代替システムの技術仕様調査（3成果物）"
+    completed_at: "2026-02-05T10:56:00"
+  - cmd: cmd_002_a5
+    description: "xlsx-analyzerスキル確認（足軽5）- 既存で問題なし"
+    completed_at: "2026-02-05T10:22:47"
+  - cmd: cmd_003_a2
+    description: "ARMS連携仕様整理（足軽2）- 7システム連携文書化"
+    completed_at: "2026-02-05T10:22:16"
   - cmd: cmd_041
     description: "mobile-spec-app ISSUE #1 作成【CRITICAL】Webhook漏洩"
     completed_at: "2026-02-03T18:27:09"
@@ -71,27 +143,43 @@ recent_completed:
     description: "productivity-metrics解析【LOW】模範的TSプロジェクト"
     completed_at: "2026-02-03T18:17:00"
 
+# === 承認済みスキル（作成完了）===
+approved_skills_pending: []  # 全て作成完了
+
 # === スキル総数 ===
-total_skills: 15  # 12 + 3 (gcp-cloudrun-scaffolder, php-laravel-quality-analyzer, laravel-architecture-analyzer)
+total_skills: 34  # 33 + 1 (promotion-tab-component-generator)
 
 # === メモ ===
 notes: |
+  【v1.5.0 組織改編】
+  - 家老: モック作成指示・進捗管理・dashboard更新に集中
+  - 軍師: バグ管理・提案管理・レビュー指揮を担当
+  - 本隊(1-4)からのスキル候補は家老が軍師に転送
+
+  【v1.4.3 足軽7-8レビュー専任（殿の追加指示）】
+  - 足軽7-8はレビュー専任として軍師が指揮
+  - 今後、成果物レビューは足軽7-8に担当させる
+  - 別働隊の役割分担: 5-6=作業、7-8=レビュー
+
+  【v1.4.2 本隊指示ルール（cmd_017是正）】
+  - 本隊（足軽1-4）への指示は家老が直接行う！軍師に丸投げするな！
+  - 別働隊（足軽5-8）への指示は軍師経由
+  - コンパクション後も忘れるな
+
   【v1.4.2 スキル候補転送ルール】
   - 本隊(1-4)報告で skill_candidate.found: true の場合
   - 軍師に転送：「軍師、本隊報告にスキル候補あり。queue/reports/ashigaru{N}_report.yaml を評価せよ。」
   - 軍師が14点以上なら自動承認・作成
 
-  【v1.4.1 報告フロー】
-  - 本隊(1-4): 家老に直接報告
-  - 別働隊(5-8): 軍師経由
+  【Phase2(UI)完了】
+  - 足軽1: サイドバーナビゲーション（305行）
+  - 足軽2: 画像管理画面（350行）スキル候補PROP-009(15点)
+  - 足軽3: マーク管理画面（802行）
+  - 足軽4: 帳票出力画面（950行）
 
-  【CRITICAL: pal-image-mng】
-  - PHP/Laravel/Vue全てEOL（5-6年経過）
-  - SQLi/XSS/コマンドインジェクション検出
-  - 品質評価 D (34%)
-  - 本番運用継続は重大リスク
+  【本日スキル作成完了（3件・2,193行）】
+  - PROP-007: react-file-download ✅完了（753行）
+  - PROP-008: react-tag-management-ui ✅完了（450行）
+  - PROP-009: image-management-page-generator ✅完了（990行）
 
-  【本日の成果】
-  - スキル12件生成（本日新規6件）
-  - リポジトリ解析3件（biblioMkII, inquiry-rag-api, pal-image-mng）
-  - v1.4.0/v1.4.1/v1.4.2 組織改編成功
+  【cmd_023スキル累計: 9件完了・4,543行】

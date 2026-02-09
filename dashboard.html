@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>dashboard</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+</head>
+<body>
+<h1 id="戦況報告">📊 戦況報告</h1>
+<p>最終更新: 2026-02-06 01:20</p>
+<h2 id="要対応---殿のご判断をお待ちしております">🚨 要対応 -
+殿のご判断をお待ちしております</h2>
+<h3 id="設計書照合結果重大問題6件発見">🚨
+設計書照合結果【重大問題6件発見】</h3>
+<p>殿の指示により設計書照合を実施。<strong>重大問題6件</strong>を発見。修正指示をお待ちしております。</p>
+<h4 id="重大即時対応推奨-6件">🔴 重大（即時対応推奨）: 6件</h4>
+<table>
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 23%" />
+<col style="width: 23%" />
+<col style="width: 38%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>ID</th>
+<th>問題</th>
+<th>影響</th>
+<th>修正工数</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>BUG-008</td>
+<td><strong>商品API認証ガード未適用</strong></td>
+<td>認証なしで商品登録・更新・削除が可能</td>
+<td>30分</td>
+</tr>
+<tr class="even">
+<td>BUG-003</td>
+<td>localStorage key不整合</td>
+<td>productService/blockServiceで401エラー</td>
+<td>10分</td>
+</tr>
+<tr class="odd">
+<td>BUG-004</td>
+<td>blockService APIパス不整合</td>
+<td>ブロック関連機能が全て404</td>
+<td>1-2時間</td>
+</tr>
+<tr class="even">
+<td>BUG-009</td>
+<td>販促文API未実装</td>
+<td>販促文機能が動作しない</td>
+<td>新規実装</td>
+</tr>
+<tr class="odd">
+<td>BUG-010</td>
+<td>カタログAPI未実装</td>
+<td>カタログ確定/ロック機能なし</td>
+<td>新規実装</td>
+</tr>
+<tr class="even">
+<td>BUG-011</td>
+<td>ジョブAPI未実装</td>
+<td>非同期処理状態確認不可</td>
+<td>新規実装</td>
+</tr>
+</tbody>
+</table>
+<h4 id="中程度-9件">🟡 中程度: 9件</h4>
+<ul>
+<li>BUG-002: bcrypt未使用（パスワードハードコード）</li>
+<li>BUG-005: 環境変数名不整合</li>
+<li>BUG-006: User.role型不整合</li>
+<li>BUG-012: APIパスにv1バージョニングなし</li>
+<li>BUG-013: カテゴリAPI未実装</li>
+<li>BUG-014: 取引先API未実装</li>
+<li>BUG-015: レスポンスにrequest_idなし</li>
+<li>BUG-016: 掲載商品情報セクション未実装</li>
+<li>BUG-017: 販促商品マスタ9タブ構成未実装</li>
+</ul>
+<h4 id="軽微-2件">🟢 軽微: 2件</h4>
+<ul>
+<li>BUG-007: logoutエンドポイント未実装</li>
+<li>BUG-001: 画像サブ2件不足</li>
+</ul>
+<p><strong>殿、修正の優先順位をご指示くださいませ。</strong> - 案A:
+BUG-008（セキュリティ）を最優先で即時修正 - 案B:
+BUG-003,004,008の重大3件を一括修正 - 案C: 全重大6件を順次修正</p>
+<hr />
+<h3 id="組織改編完了v1.5.0">✅ 組織改編完了（v1.5.0）</h3>
+<p>殿の指示に従い、役割分担を変更いたした。</p>
+<table>
+<thead>
+<tr class="header">
+<th>役職</th>
+<th>担当</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>家老</strong></td>
+<td>モック作成指示・進捗管理・dashboard更新</td>
+</tr>
+<tr class="even">
+<td><strong>軍師</strong></td>
+<td>バグ管理・提案管理・レビュー指揮</td>
+</tr>
+<tr class="odd">
+<td><strong>本隊（1-4）</strong></td>
+<td>モック作成に集中</td>
+</tr>
+<tr class="even">
+<td><strong>別働隊（5-8）</strong></td>
+<td>バグ修正・複雑タスク</td>
+</tr>
+</tbody>
+</table>
+<p><strong>今後バグ報告は軍師に送られる。instructions更新完了。</strong></p>
+<hr />
+<h3 id="bug-005-typeormmodule.forroot未設定修正完了">✅ BUG-005:
+TypeOrmModule.forRoot()未設定【修正完了】</h3>
+<p><strong>修正内容</strong>: backend/src/app.module.ts に
+TypeOrmModule.forRootAsync() 追加</p>
+<p><strong>殿、バックエンド再起動後に商品一覧画面をご確認くださいませ</strong></p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ~/arms-mock/backend <span class="kw">&amp;&amp;</span> <span class="ex">npm</span> run start:dev</span></code></pre></div>
+<hr />
+<h3 id="phase2完了サイドメニュー-p2画面全4タスク完了">✅
+Phase2完了（サイドメニュー + P2画面・全4タスク完了）</h3>
+<table>
+<colgroup>
+<col style="width: 30%" />
+<col style="width: 40%" />
+<col style="width: 30%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>足軽</th>
+<th>タスク</th>
+<th>状態</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>サイドバーナビゲーション作成</td>
+<td>✅完了（305行+ビルドエラー5件修正）</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>画像管理画面作成</td>
+<td>✅完了（350行・ビルド成功）</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td>マーク管理画面作成</td>
+<td>✅完了（3ファイル・802行）</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td>帳票出力画面作成</td>
+<td>✅完了（3ファイル・950行）</td>
+</tr>
+</tbody>
+</table>
+<p><strong>足軽1成果物</strong>: Sidebar.tsx + Layout.tsx +
+App.tsx修正（メニュー7項目、ログアウト実装）
+<strong>足軽2成果物</strong>:
+ImageManagementPage.tsx（商品検索、カタログ用/EC用/アップロードタブ、ImageSelector/ImageGallery連携）
+<strong>足軽3成果物</strong>:
+MarkManagementPage.tsx（2カラム、カテゴリフィルタ、割当ダイアログ）
+<strong>足軽4成果物</strong>:
+ReportExportPage.tsx（タブ切替・プレビュー・ダウンロード機能）</p>
+<p><strong>スキル作成完了（本日・2,193行）</strong>: -
+react-file-download（16点・753行）→ ✅足軽5完了 -
+react-tag-management-ui（14点・450行）→ ✅足軽6完了 -
+image-management-page-generator（15点・990行）→ ✅足軽7完了</p>
+<hr />
+<h3 id="モックログイン情報cmd_023">🔑 モックログイン情報（cmd_023）</h3>
+<table>
+<thead>
+<tr class="header">
+<th>ユーザーID</th>
+<th>パスワード</th>
+<th>ロール</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>admin</td>
+<td>password</td>
+<td>管理者</td>
+</tr>
+</tbody>
+</table>
+<p>※他のユーザーは実際のコードを要確認</p>
+<p><strong>アクセス</strong>: http://192.168.3.44:5173</p>
+<hr />
+<h2 id="進行中---只今戦闘中でござる">🔄 進行中 -
+只今、戦闘中でござる</h2>
+<h3 id="cmd_023-arms代替システムモック作成phase3完了">cmd_023:
+ARMS代替システムモック作成【Phase3完了】</h3>
+<pre><code>████████████████████████████████████████████████████████████████
+█  🎉 Phase3完了！P1最優先4件 作成完了（Grade A/A）         █
+████████████████████████████████████████████████████████████████</code></pre>
+<p><strong>Phase3 タスク（P1最優先4件）</strong>: | 担当 | 足軽 | タスク
+| 状態 | |——|——|——–|——| | FE | 1 | 媒体作成−販売一覧画面（4ファイル） |
+✅完了 | | FE | 2 | ブロック管理画面（3ファイル） | ✅完了 | | FE+BE | 3
+| 商品エントリー画面（6ファイル・8API） | ✅完了 | | BE | 4 |
+販促構成表出力機能（6ファイル） | ✅完了 | | DB | 5-6 |
+Entity/Seed追加（3ファイル・35件） | ✅完了 | | Review | 7-8 |
+レビュー（A/A） | ✅完了 |</p>
+<p><strong>依存関係</strong>: 媒体管理 → ブロック管理 → 商品エントリー →
+販促構成表出力</p>
+<p><strong>Phase1 残課題（別タスク）</strong>: - auth.service.ts:
+bcrypt実装 - 軽微指摘4件</p>
+<p><strong>Phase1-2完了（8名・30ファイル）</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th>担当</th>
+<th>足軽</th>
+<th>タスク</th>
+<th>ファイル数</th>
+<th>状態</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>FE</td>
+<td>1</td>
+<td>ログイン画面</td>
+<td>7</td>
+<td>✅完了</td>
+</tr>
+<tr class="even">
+<td>FE</td>
+<td>2</td>
+<td>商品マスタ画面</td>
+<td>6</td>
+<td>✅完了</td>
+</tr>
+<tr class="odd">
+<td>BE</td>
+<td>3</td>
+<td>認証API (JWT)</td>
+<td>10</td>
+<td>✅完了</td>
+</tr>
+<tr class="even">
+<td>BE</td>
+<td>4</td>
+<td>商品API (CRUD)</td>
+<td>7</td>
+<td>✅完了</td>
+</tr>
+<tr class="odd">
+<td>DB</td>
+<td>5</td>
+<td>DBスキーマ</td>
+<td>–</td>
+<td>✅完了</td>
+</tr>
+<tr class="even">
+<td>DB</td>
+<td>6</td>
+<td>初期データ</td>
+<td>–</td>
+<td>✅完了</td>
+</tr>
+<tr class="odd">
+<td>Review</td>
+<td>7</td>
+<td>FE+認証BE</td>
+<td>–</td>
+<td>✅完了(B)</td>
+</tr>
+<tr class="even">
+<td>Review</td>
+<td>8</td>
+<td>商品BE+DB</td>
+<td>–</td>
+<td>✅完了(A)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>スキル作成完了（9件・4,543行）</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th>スキル名</th>
+<th>点数</th>
+<th>状態</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>entity-generator-from-spec</td>
+<td>17</td>
+<td>✅完了(340行)</td>
+</tr>
+<tr class="even">
+<td>typeorm-seeder-generator</td>
+<td>15</td>
+<td>✅完了(350行)</td>
+</tr>
+<tr class="odd">
+<td>react-mui-crud-scaffold</td>
+<td>18</td>
+<td>✅完了(480行)</td>
+</tr>
+<tr class="even">
+<td>fe-be-consistency-checker</td>
+<td>17</td>
+<td>✅完了(400行)</td>
+</tr>
+<tr class="odd">
+<td>nestjs-code-reviewer</td>
+<td>16</td>
+<td>✅完了(400行)</td>
+</tr>
+<tr class="even">
+<td>nestjs-file-export</td>
+<td>15</td>
+<td>✅完了(380行)</td>
+</tr>
+<tr class="odd">
+<td>react-file-download</td>
+<td>16</td>
+<td>✅完了(753行)</td>
+</tr>
+<tr class="even">
+<td>react-tag-management-ui</td>
+<td>14</td>
+<td>✅完了(450行)</td>
+</tr>
+<tr class="odd">
+<td>image-management-page-generator</td>
+<td>15</td>
+<td>✅完了(990行)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>別働隊ステータス</strong>: 全員待機中（足軽5-8 idle）</p>
+<p><strong>環境</strong>: ~/arms-mock/ | FE:5173 / BE:3000 / DB:5432</p>
+<hr />
+<h2 id="直近の完了">✅ 直近の完了</h2>
+<h3 id="cmd_022-gap_analysis推奨12件の全件実施grade-a">cmd_022:
+gap_analysis推奨12件の全件実施【Grade A】</h3>
+<p><strong>成果物</strong>: output/detailed_design/
+8ファイル（3,229行）</p>
+<table>
+<thead>
+<tr class="header">
+<th>ファイル</th>
+<th>項目</th>
+<th>行数</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>ui_details.md</td>
+<td>S1,S2,S6</td>
+<td>511</td>
+</tr>
+<tr class="even">
+<td>db_constraints.md</td>
+<td>D1,D2</td>
+<td>250</td>
+</tr>
+<tr class="odd">
+<td>api_schema.md</td>
+<td>A3,A4</td>
+<td>868</td>
+</tr>
+<tr class="even">
+<td>screen_flow_details.md</td>
+<td>F1,F2</td>
+<td>365</td>
+</tr>
+<tr class="odd">
+<td>error_templates.md</td>
+<td>S3,F4</td>
+<td>240</td>
+</tr>
+<tr class="even">
+<td>role_permissions.md</td>
+<td>S4</td>
+<td>219</td>
+</tr>
+<tr class="odd">
+<td>data_volume_estimate.md</td>
+<td>D4</td>
+<td>226</td>
+</tr>
+<tr class="even">
+<td>master_data_samples.md</td>
+<td>D6</td>
+<td>550</td>
+</tr>
+</tbody>
+</table>
+<h3 id="cmd_021-モック作成可否調査条件付き可">cmd_021:
+モック作成可否調査【条件付き可】</h3>
+<ul>
+<li>output/mock_feasibility/ 3ファイル</li>
+<li>output/basic_design/table_structure.md（316行）</li>
+</ul>
+<h3 id="cmd_020-技術選定確定">cmd_020: 技術選定【確定】</h3>
+<pre><code>確定スタック: React + NestJS + PostgreSQL + Azure</code></pre>
+<hr />
+<h2 id="生成されたスキル計33件">🛠️ 生成されたスキル（計33件）</h2>
+<h3 id="最新cmd_022">最新（cmd_022）</h3>
+<table>
+<thead>
+<tr class="header">
+<th>スキル名</th>
+<th>点数</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>api-schema-generator</td>
+<td>16</td>
+</tr>
+<tr class="even">
+<td>data-volume-estimator</td>
+<td>16</td>
+</tr>
+<tr class="odd">
+<td>pptx-ui-extractor</td>
+<td>14</td>
+</tr>
+<tr class="even">
+<td>rbac-design-generator</td>
+<td>16</td>
+</tr>
+<tr class="odd">
+<td>design-doc-quality-reviewer</td>
+<td>15</td>
+</tr>
+</tbody>
+</table>
+<h3 id="システム刷新セットcmd_006">システム刷新セット（cmd_006）</h3>
+<table>
+<thead>
+<tr class="header">
+<th>スキル名</th>
+<th>点数</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>enterprise-dependency-analyzer</td>
+<td>17</td>
+</tr>
+<tr class="even">
+<td>functional-requirements-generator</td>
+<td>17</td>
+</tr>
+<tr class="odd">
+<td>nfr-template-generator</td>
+<td>17</td>
+</tr>
+<tr class="even">
+<td>tech-stack-proposal-generator</td>
+<td>18</td>
+</tr>
+</tbody>
+</table>
+<h3 id="品質保証cmd_020">品質保証（cmd_020）</h3>
+<table>
+<thead>
+<tr class="header">
+<th>スキル名</th>
+<th>点数</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>multi-file-consistency-checker</td>
+<td>19</td>
+</tr>
+</tbody>
+</table>
+<h3 id="その他">その他</h3>
+<table>
+<thead>
+<tr class="header">
+<th>スキル名</th>
+<th>点数</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>xlsx-analyzer</td>
+<td>17</td>
+</tr>
+<tr class="even">
+<td>document-structure-analyzer</td>
+<td>16</td>
+</tr>
+<tr class="odd">
+<td>system-architecture-analyzer</td>
+<td>15</td>
+</tr>
+<tr class="even">
+<td>mcp-server-installer</td>
+<td>15</td>
+</tr>
+<tr class="odd">
+<td>api-design-readiness-checker</td>
+<td>17</td>
+</tr>
+<tr class="even">
+<td>gap-analysis-integrator</td>
+<td>15</td>
+</tr>
+<tr class="odd">
+<td>feasibility-assessment-aggregator</td>
+<td>17</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="本日の戦果">✅ 本日の戦果</h2>
+<table>
+<colgroup>
+<col style="width: 35%" />
+<col style="width: 29%" />
+<col style="width: 35%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>時刻</th>
+<th>cmd</th>
+<th>結果</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>00:20</td>
+<td>cmd_023</td>
+<td>🎉スキル3件完了（本日合計2,193行・累計9件4,543行）</td>
+</tr>
+<tr class="even">
+<td>19:30</td>
+<td>cmd_023</td>
+<td>🎉Phase3完了（P1最優先4件・Grade A/A・Entity8件完成）</td>
+</tr>
+<tr class="odd">
+<td>19:00</td>
+<td>cmd_023</td>
+<td>🎉Phase2完了（Entity3件・Seed40件・スキル1件追加）</td>
+</tr>
+<tr class="even">
+<td>18:30</td>
+<td>cmd_023</td>
+<td>🎉Phase1完了（30ファイル・スキル5件・1,970行）</td>
+</tr>
+<tr class="odd">
+<td>17:25</td>
+<td>cmd_022</td>
+<td>🎉推奨12件全件実施完了（8ファイル・スキル5件）</td>
+</tr>
+<tr class="even">
+<td>16:10</td>
+<td>cmd_021</td>
+<td>🎉テーブル構造資料作成（316行）</td>
+</tr>
+<tr class="odd">
+<td>15:30</td>
+<td>cmd_021</td>
+<td>🎉モック作成可否調査完了（スキル3件）</td>
+</tr>
+<tr class="even">
+<td>15:05</td>
+<td>cmd_020</td>
+<td>🎉技術選定完了（スキル1件）</td>
+</tr>
+<tr class="odd">
+<td>14:30</td>
+<td>cmd_019</td>
+<td>🎉品質確認完了</td>
+</tr>
+<tr class="even">
+<td>14:16</td>
+<td>cmd_018</td>
+<td>🎉基本設計情報収集完了（6ファイル）</td>
+</tr>
+<tr class="odd">
+<td>14:02</td>
+<td>cmd_016</td>
+<td>🎉必須機能洗い出し完了</td>
+</tr>
+<tr class="even">
+<td>12:57</td>
+<td>cmd_012</td>
+<td>🎉R-systemバイナリ再解析完了（8成果物）</td>
+</tr>
+<tr class="odd">
+<td>12:16</td>
+<td>cmd_011</td>
+<td>🎉AWS Document Loader MCP導入完了</td>
+</tr>
+<tr class="even">
+<td>11:22</td>
+<td>cmd_006</td>
+<td>🎉システム刷新スキルセット完成（4件）</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="参考資料">📖 参考資料</h2>
+<h3 id="環境構築手順書cmd_023用">環境構築手順書（cmd_023用）</h3>
+<details>
+<summary>
+クリックで展開
+</summary>
+<h4 id="前提条件">前提条件</h4>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">node</span> <span class="at">-v</span>    <span class="co"># v20.x.x</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="ex">npm</span> <span class="at">-v</span>     <span class="co"># v10.x.x</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> <span class="at">--version</span></span></code></pre></div>
+<h4 id="一括構築スクリプト">一括構築スクリプト</h4>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ディレクトリ作成</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> arms-mock <span class="kw">&amp;&amp;</span> <span class="bu">cd</span> arms-mock</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co"># docker-compose.yml</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> <span class="op">&lt;&lt; &#39;EOF&#39;</span> <span class="op">&gt;</span> docker-compose.yml</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="st">version: &#39;3.8&#39;</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="st">services:</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="st">  postgres:</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="st">    image: postgres:16</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="st">    container_name: arms-postgres</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="st">    environment:</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="st">      POSTGRES_USER: dev</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="st">      POSTGRES_PASSWORD: dev</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="st">      POSTGRES_DB: arms_mock</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="st">    ports:</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="st">      - &quot;5432:5432&quot;</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="st">    volumes:</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="st">      - postgres_data:/var/lib/postgresql/data</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a><span class="st">volumes:</span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="st">  postgres_data:</span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a><span class="op">EOF</span></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a><span class="co"># PostgreSQL起動</span></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose up <span class="at">-d</span></span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a><span class="co"># Backend</span></span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a><span class="ex">npm</span> install <span class="at">-g</span> @nestjs/cli</span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> backend <span class="kw">&amp;&amp;</span> <span class="bu">cd</span> backend</span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a><span class="ex">nest</span> new . <span class="at">--package-manager</span> npm <span class="at">--skip-git</span></span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a><span class="ex">npm</span> install @nestjs/config @nestjs/typeorm typeorm pg class-validator class-transformer @nestjs/passport passport passport-jwt @nestjs/swagger swagger-ui-express bcrypt</span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a><span class="ex">npm</span> install <span class="at">-D</span> @types/passport-jwt @types/bcrypt</span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> <span class="op">&lt;&lt; &#39;EOF&#39;</span> <span class="op">&gt;</span> .env</span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a><span class="st">DATABASE_HOST=localhost</span></span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a><span class="st">DATABASE_PORT=5432</span></span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a><span class="st">DATABASE_USER=dev</span></span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a><span class="st">DATABASE_PASSWORD=dev</span></span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a><span class="st">DATABASE_NAME=arms_mock</span></span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a><span class="st">JWT_SECRET=arms-mock-secret-key-2026</span></span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a><span class="op">EOF</span></span>
+<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ..</span>
+<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a><span class="co"># Frontend</span></span>
+<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a><span class="ex">npm</span> create vite@latest frontend <span class="at">--</span> <span class="at">--template</span> react-ts</span>
+<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> frontend <span class="kw">&amp;&amp;</span> <span class="ex">npm</span> install</span>
+<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a><span class="ex">npm</span> install react-router-dom @tanstack/react-query zustand axios @mui/material @mui/icons-material @emotion/react @emotion/styled @mui/x-date-pickers dayjs</span>
+<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ..</span>
+<span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-48"><a href="#cb5-48" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&quot;✅ 環境構築完了！&quot;</span></span></code></pre></div>
+<h4 id="動作確認">動作確認</h4>
+<table>
+<thead>
+<tr class="header">
+<th>項目</th>
+<th>コマンド</th>
+<th>期待結果</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>DB</td>
+<td><code>docker ps</code></td>
+<td>arms-postgres Running</td>
+</tr>
+<tr class="even">
+<td>BE</td>
+<td><code>cd backend &amp;&amp; npm run start:dev</code></td>
+<td>localhost:3000</td>
+</tr>
+<tr class="odd">
+<td>FE</td>
+<td><code>cd frontend &amp;&amp; npm run dev</code></td>
+<td>localhost:5173</td>
+</tr>
+</tbody>
+</table>
+</details>
+<hr />
+<h2 id="運用ルール">📜 運用ルール</h2>
+<ul>
+<li><strong>スキル自動承認</strong>:
+14点以上で軍師が自動承認→作成可</li>
+<li><strong>MCP導入済</strong>: Excel/Word/PowerPoint/PDF読込可能</li>
+<li><strong>技術スタック確定</strong>: React + NestJS + PostgreSQL +
+Azure</li>
+<li><strong>バグ管理</strong>: queue/bugs.yaml
+で一覧管理（都度報告不要）</li>
+</ul>
+<h2 id="バグ状況queuebugs.yaml">🐛 バグ状況（queue/bugs.yaml）</h2>
+<table>
+<thead>
+<tr class="header">
+<th>状態</th>
+<th>件数</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>未修正（high）</td>
+<td>0</td>
+</tr>
+<tr class="even">
+<td>未修正（medium）</td>
+<td>1（bcrypt未使用）</td>
+</tr>
+<tr class="odd">
+<td>未修正（low）</td>
+<td>1（画像sub不足）</td>
+</tr>
+<tr class="even">
+<td>修正済</td>
+<td>13</td>
+</tr>
+</tbody>
+</table>
+<h2 id="提案一覧queueproposals.yaml">📝
+提案一覧（queue/proposals.yaml）</h2>
+<table>
+<colgroup>
+<col style="width: 13%" />
+<col style="width: 26%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>ID</th>
+<th>提案者</th>
+<th>種別</th>
+<th>名称</th>
+<th>状態</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>PROP-001</td>
+<td>足軽2</td>
+<td>スキル</td>
+<td>react-mui-crud-scaffold</td>
+<td>✅完了(480行)</td>
+</tr>
+<tr class="even">
+<td>PROP-002</td>
+<td>足軽5</td>
+<td>スキル</td>
+<td>entity-generator-from-spec</td>
+<td>✅完了(340行)</td>
+</tr>
+<tr class="odd">
+<td>PROP-003</td>
+<td>足軽6</td>
+<td>スキル</td>
+<td>typeorm-seeder-generator</td>
+<td>✅完了(350行)</td>
+</tr>
+<tr class="even">
+<td>PROP-004</td>
+<td>足軽7</td>
+<td>スキル</td>
+<td>fe-be-consistency-checker</td>
+<td>✅完了(400行)</td>
+</tr>
+<tr class="odd">
+<td>PROP-005</td>
+<td>足軽7</td>
+<td>スキル</td>
+<td>nestjs-code-reviewer</td>
+<td>✅完了(400行)</td>
+</tr>
+<tr class="even">
+<td>PROP-006</td>
+<td>足軽4</td>
+<td>スキル</td>
+<td>nestjs-file-export</td>
+<td>✅完了(380行)</td>
+</tr>
+<tr class="odd">
+<td>PROP-007</td>
+<td>足軽4</td>
+<td>スキル</td>
+<td>react-file-download</td>
+<td>✅完了(753行)</td>
+</tr>
+<tr class="even">
+<td>PROP-008</td>
+<td>足軽3</td>
+<td>スキル</td>
+<td>react-tag-management-ui</td>
+<td>✅完了(450行)</td>
+</tr>
+<tr class="odd">
+<td>PROP-009</td>
+<td>足軽2</td>
+<td>スキル</td>
+<td>image-management-page-generator</td>
+<td>✅完了(990行)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>統計</strong>: 完了9件 / 作成中0件 / 却下0件</p>
+</body>
+</html>

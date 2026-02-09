@@ -8,7 +8,7 @@
 # 4) 承認後は status: approved に更新
 # ============================================================
 
-last_updated: "2026-02-05T19:45:00"
+last_updated: "2026-02-06T00:20:00"
 
 # === 未処理の提案 ===
 pending_proposals:
@@ -70,20 +70,62 @@ pending_proposals:
   - id: PROP-006
     from: ashigaru4
     type: skill_candidate
-    name: "manuscript-export-generator"
-    description: "原稿データ出力機能の雛形生成（Excel/CSV/Tab）"
-    score: null
-    status: pending
-    reviewed_by: null
-    reviewed_at: null
-    note: "Phase2で報告あり、評価待ち"
+    name: "nestjs-file-export"
+    description: "NestJSでのファイルエクスポート機能（Excel/CSV/Tab）"
+    score: 15
+    status: approved
+    reviewed_by: gunshi
+    reviewed_at: "2026-02-05T18:35:00"
+    assigned_to: ashigaru7
+    note: "作成完了（380行）"
+
+  - id: PROP-007
+    from: ashigaru4
+    type: skill_candidate
+    name: "react-file-download"
+    description: "Reactでのファイルダウンロード機能実装パターン（Axios+Blob+createObjectURL）"
+    score: 16
+    status: completed
+    reviewed_by: gunshi
+    reviewed_at: "2026-02-05T20:00:00"
+    assigned_to: ashigaru5
+    completed_at: "2026-02-05T23:35:00"
+    note: "作成完了（753行）"
+
+  - id: PROP-008
+    from: ashigaru3
+    type: skill_candidate
+    name: "react-tag-management-ui"
+    original_name: "create-mark-management-ui"
+    description: "タグ/ラベル/マーク管理UIパターン（カテゴリフィルタ、複数選択ダイアログ、期間設定）"
+    score: 14
+    status: completed
+    reviewed_by: gunshi
+    reviewed_at: "2026-02-05T20:10:00"
+    assigned_to: ashigaru6
+    completed_at: "2026-02-05T23:35:00"
+    note: "作成完了（450行）"
+
+  - id: PROP-009
+    from: ashigaru2
+    type: skill_candidate
+    name: "image-management-page-generator"
+    description: "商品に紐づく複数画像スロット管理画面を生成（スロット定義、APIエンドポイント → 型定義、サービス、セレクター、管理ページ）"
+    score: 15
+    status: completed
+    reviewed_by: gunshi
+    reviewed_at: "2026-02-05T23:40:00"
+    assigned_to: ashigaru7
+    completed_at: "2026-02-06T00:15:00"
+    note: "作成完了（990行）"
 
 # === 統計 ===
 statistics:
-  total: 6
-  pending: 1
-  approved: 5
+  total: 9
+  pending: 0
+  approved: 0
+  completed: 9
   rejected: 0
-  skill_candidates: 6
+  skill_candidates: 9
   improvements: 0
   other: 0

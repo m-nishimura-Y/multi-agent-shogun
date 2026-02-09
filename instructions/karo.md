@@ -454,10 +454,7 @@ task:
 **2. 軍師を起こす（2回に分ける）**
 
 ```bash
-# 【1回目】
-tmux send-keys -t gunshi:0 'instructions/gunshi.md を読んでから queue/karo_to_gunshi.yaml の任務を実行せよ。'
-# 【2回目】
-tmux send-keys -t gunshi:0 Enter
+~/multi-agent-shogun/bin/notify.sh gunshi:0 'instructions/gunshi.md を読んでから queue/karo_to_gunshi.yaml の任務を実行せよ。'
 ```
 
 **3. 軍師が足軽タスクファイルを作成・配布（v1.3.0〜）**
@@ -540,8 +537,7 @@ report:
 
 軍師に転送せよ:
 ```bash
-tmux send-keys -t gunshi:0 '軍師、本隊報告にスキル候補あり。queue/reports/ashigaru{N}_report.yaml を評価せよ。'
-tmux send-keys -t gunshi:0 Enter
+~/multi-agent-shogun/bin/notify.sh gunshi:0 '軍師、本隊報告にスキル候補あり。queue/reports/ashigaru{N}_report.yaml を評価せよ。'
 ```
 
 ---
@@ -565,8 +561,7 @@ tmux send-keys -t gunshi:0 Enter
 
 軍師に転送せよ:
 ```bash
-tmux send-keys -t gunshi:0 '軍師、バグ報告あり。{バグ内容}。bugs.yamlに追記し対処せよ。'
-tmux send-keys -t gunshi:0 Enter
+~/multi-agent-shogun/bin/notify.sh gunshi:0 '軍師、バグ報告あり。{バグ内容}。bugs.yamlに追記し対処せよ。'
 ```
 
 ---
@@ -621,8 +616,7 @@ tmux send-keys -t gunshi:0 Enter
 ### 軍師への指示方法
 
 ```bash
-tmux send-keys -t gunshi:0 '軍師、本隊・別働隊の作業完了。足軽7-8にビルド確認を実施させよ。エラーがあればbugs.yamlに記録し、再割当せよ。'
-tmux send-keys -t gunshi:0 Enter
+~/multi-agent-shogun/bin/notify.sh gunshi:0 '軍師、本隊・別働隊の作業完了。足軽7-8にビルド確認を実施させよ。エラーがあればbugs.yamlに記録し、再割当せよ。'
 ```
 
 ---
@@ -704,6 +698,38 @@ karo:
 
 **殿は dashboard.md を見て状況を把握する。current_task.yaml は見ない。**
 **dashboard.md が更新されていないと、殿には伝わらない。**
+
+---
+
+## 🔧 管理者向けツール（v1.5.3〜）
+
+家老が使用できる管理ツール一覧。詳細は [docs/tools.md](../docs/tools.md) を参照せよ。
+
+| ツール | 用途 | 使用例 |
+|--------|------|--------|
+| notify.sh | エージェント間通知（必須） | `~/multi-agent-shogun/bin/notify.sh gunshi:0 'メッセージ'` |
+| sync-dashboard.sh | progress.yaml → dashboard.md 連動 | `~/multi-agent-shogun/bin/sync-dashboard.sh` |
+| check-stale-workers.sh | 長時間更新なし足軽確認 | `~/multi-agent-shogun/bin/check-stale-workers.sh 30` |
+| status.sh | 全エージェント状態表示 | `~/multi-agent-shogun/bin/status.sh` |
+
+### sync-dashboard.sh
+
+progress.yaml の内容を dashboard.md の「全軍ステータス」に反映する。
+
+```bash
+~/multi-agent-shogun/bin/sync-dashboard.sh
+```
+
+### check-stale-workers.sh
+
+長時間更新がない足軽に自動確認メッセージを送信する。
+
+```bash
+# 30分以上更新なしの足軽を確認
+~/multi-agent-shogun/bin/check-stale-workers.sh 30
+```
+
+---
 
 ### なぜ家老だけが更新するのか
 

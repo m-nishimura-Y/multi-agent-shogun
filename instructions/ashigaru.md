@@ -269,6 +269,83 @@ tmux send-keys -t multiagent:0.0 'メッセージ'        # ダメ（Enter忘れ
 
 **notify.sh を使えばEnter忘れは発生しない！**
 
+## 🔧 利用可能ツール（v1.5.3〜）
+
+```
+██████████████████████████████████████████████████████████████████████████
+█ 【重要】以下のツールを活用して効率的に作業せよ                          █
+██████████████████████████████████████████████████████████████████████████
+```
+
+### 足軽向けツール
+
+| ツール | 場所 | 用途 | 使用例 |
+|--------|------|------|--------|
+| notify.sh | multi-agent-shogun/bin/ | エージェント間通知 | `~/multi-agent-shogun/bin/notify.sh multiagent:0.0 'メッセージ'` |
+| update-progress.sh | multi-agent-shogun/bin/ | 進捗更新 | `~/multi-agent-shogun/bin/update-progress.sh 2 50 'タスク名'` |
+| generate-report.sh | multi-agent-shogun/bin/ | 報告書テンプレート生成 | `~/multi-agent-shogun/bin/generate-report.sh 1 --type implementation` |
+| update-build-status.sh | multi-agent-shogun/bin/ | ビルドステータス共有 | `~/multi-agent-shogun/bin/update-build-status.sh frontend ok` |
+
+### generate-report.sh 詳細（cmd_046追加）
+
+報告書作成の手間を削減するテンプレート自動生成ツール。
+
+```bash
+# 基本使用法
+~/multi-agent-shogun/bin/generate-report.sh <足軽番号> [OPTIONS]
+
+# オプション
+--task-id ID          タスクID（例: cmd_046_impl）
+--parent-cmd CMD      親コマンド（例: cmd_046）
+--type TYPE           テンプレート種別
+                      implementation - 実装タスク用（デフォルト）
+                      research       - 調査・分析用
+                      feedback       - フィードバック用
+--output FILE         出力ファイル（省略時は標準出力）
+```
+
+**使用例:**
+```bash
+# 標準出力にテンプレート表示
+~/multi-agent-shogun/bin/generate-report.sh 1
+
+# ファイルに直接出力
+~/multi-agent-shogun/bin/generate-report.sh 5 --task-id cmd_046_impl --parent-cmd cmd_046 \
+  --output queue/reports/ashigaru5_report.yaml
+
+# 調査タスク用テンプレート
+~/multi-agent-shogun/bin/generate-report.sh 3 --type research
+```
+
+**ワークフロー:**
+1. `generate-report.sh` でテンプレート生成
+2. 実際の内容を記入
+3. `notify.sh` で報告先に通知
+
+### 開発支援ツール
+
+| ツール | 場所 | 用途 | 使用例 |
+|--------|------|------|--------|
+| detect-snake-case.sh | arms-mock/bin/ | スネークケース変数検出 | `./bin/detect-snake-case.sh ./src` |
+| search-skills.sh | multi-agent-shogun/bin/ | スキル検索 | `~/multi-agent-shogun/bin/search-skills.sh react` |
+
+### 管理者向けツール（参考）
+
+以下は軍師・家老が使用するツール。足軽は通常使用しないが、存在を把握しておくこと。
+
+| ツール | 場所 | 用途 |
+|--------|------|------|
+| sync-dashboard.sh | multi-agent-shogun/bin/ | progress.yaml→dashboard.md連動 |
+| check-stale-workers.sh | multi-agent-shogun/bin/ | 長時間更新なし足軽確認 |
+
+### ツール使用のベストプラクティス
+
+1. **報告前**: `update-progress.sh` で進捗100%に更新
+2. **報告時**: `notify.sh` で報告先に通知
+3. **開発時**: 必要に応じて `search-skills.sh` でスキル検索
+
+**詳細は [docs/tools.md](../docs/tools.md) を参照せよ。**
+
 ## 報告の書き方（v1.6.0更新）
 
 ```yaml
@@ -549,3 +626,95 @@ skill_candidate:
 ```
 
 **注意**: proposals.yaml への直接書き込みは禁止。報告書経由で軍師に伝達せよ。
+
+## 📊 進捗共有ファイル運用ルール（v1.5.2〜）
+
+```
+██████████████████████████████████████████████████████████████████████████
+█ 【重要】進捗共有ファイル queue/progress.yaml を更新せよ                █
+██████████████████████████████████████████████████████████████████████████
+```
+
+### 目的
+
+- 足軽間の作業状況を可視化
+- 待機時間の見積もりを容易にする
+- ブロック状況の早期発見
+
+### 更新タイミング
+
+| タイミング | 更新内容 |
+|------------|----------|
+| **タスク開始時** | `current_task`, `task_id`, `progress: 0`, `updated_at` |
+| **進捗発生時** | `progress`, `updated_at`, `note`（必要に応じて） |
+| **タスク完了時** | `current_task: null`, `task_id: null`, `progress: 0` |
+| **ブロック発生時** | `blocked_by` にブロック内容を記載 |
+
+### 更新例
+
+```yaml
+# タスク開始時
+- id: 8
+  name: ashigaru8
+  current_task: "BUG-028修正"
+  task_id: bug028_logout_api
+  progress: 0
+  updated_at: "2026-02-06T12:00:00"
+  blocked_by: null
+  note: null
+
+# 進捗発生時（50%完了）
+- id: 8
+  name: ashigaru8
+  current_task: "BUG-028修正"
+  task_id: bug028_logout_api
+  progress: 50
+  updated_at: "2026-02-06T12:30:00"
+  blocked_by: null
+  note: "コード実装完了、ビルド確認中"
+
+# タスク完了時
+- id: 8
+  name: ashigaru8
+  current_task: null
+  task_id: null
+  progress: 0
+  updated_at: "2026-02-06T13:00:00"
+  blocked_by: null
+  note: null
+```
+
+### 注意事項
+
+- **last_updated** も更新すること（ファイル先頭）
+- 他の足軽のエントリは編集しないこと
+- ブロック解消時は `blocked_by: null` に戻すこと
+
+### 🔧 自動更新スクリプト（cmd_034対応）
+
+**手動編集の代わりに `bin/update-progress.sh` を使え！**
+
+```bash
+# 使用方法
+~/multi-agent-shogun/bin/update-progress.sh <足軽番号> <進捗率> [タスク概要]
+
+# 例1: タスク開始（50%進捗）
+~/multi-agent-shogun/bin/update-progress.sh 1 50 "cmd_034実装中"
+
+# 例2: タスク完了（自動リセット）
+~/multi-agent-shogun/bin/update-progress.sh 1 100 "cmd_034完了"
+
+# 例3: 待機中にリセット
+~/multi-agent-shogun/bin/update-progress.sh 1 0
+```
+
+| 引数 | 説明 |
+|------|------|
+| 足軽番号 | 1-8 |
+| 進捗率 | 0-100（100で完了、自動リセット） |
+| タスク概要 | 任意。current_taskに設定される |
+
+**メリット**:
+- `last_updated` も自動更新
+- 100%完了時は自動でリセット（current_task=null, progress=0）
+- タイムスタンプ自動設定

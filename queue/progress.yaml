@@ -1,0 +1,67 @@
+last_updated: '2026-02-09T11:42:30'
+honntai:
+- id: 1
+  name: ashigaru1
+  current_task: null
+  task_id: null
+  progress: 0
+  updated_at: '2026-02-07T13:24:20'
+  blocked_by: null
+  note: 'completed: cmd_034完了'
+- id: 2
+  name: ashigaru2
+  current_task: null
+  task_id: null
+  progress: 0
+  updated_at: '2026-02-06T19:56:07'
+  blocked_by: null
+  note: null
+- id: 3
+  name: ashigaru3
+  current_task: null
+  task_id: null
+  progress: 0
+  updated_at: '2026-02-06T19:56:07'
+  blocked_by: null
+  note: null
+- id: 4
+  name: ashigaru4
+  current_task: null
+  task_id: null
+  progress: 0
+  updated_at: '2026-02-09T11:10:00'
+  blocked_by: null
+  note: 'completed: cmd_045_feedback_4完了'
+betsudoutai:
+- id: 5
+  name: ashigaru5
+  current_task: null
+  task_id: null
+  progress: 0
+  updated_at: '2026-02-06T19:56:07'
+  blocked_by: null
+  note: null
+- id: 6
+  name: ashigaru6
+  current_task: null
+  task_id: null
+  progress: 0
+  updated_at: '2026-02-06T19:56:07'
+  blocked_by: null
+  note: null
+- id: 7
+  name: ashigaru7
+  current_task: null
+  task_id: null
+  progress: 0
+  updated_at: '2026-02-06T19:56:07'
+  blocked_by: null
+  note: null
+- id: 8
+  name: ashigaru8
+  current_task: null
+  task_id: null
+  progress: 0
+  updated_at: '2026-02-09T11:42:30'
+  blocked_by: null
+  note: 'completed: cmd_045 フィードバック完了'

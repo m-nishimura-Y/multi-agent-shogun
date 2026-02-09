@@ -1,4 +1,292 @@
 queue:
+  - id: cmd_046
+    timestamp: "2026-02-09T11:15:00"
+    command: "フィードバック改善提案3件実施"
+    details:
+      description: |
+        殿より承認。cmd_045で収集した改善提案のうち、
+        軍師・家老推奨の3件を実施せよ。
+
+        【実施対象】
+
+        ■ IMP-H2: 報告書テンプレート自動生成（3名希望・中難易度）
+        - bin/generate-report.sh を作成
+        - 足軽番号を引数に、報告書テンプレートを自動生成
+        - 必須フィールド（task_id, status, output, skill_candidate等）を含む
+        - 使用例: ./bin/generate-report.sh 5
+
+        ■ IMP-M2: ビルドエラー担当者明確化/共有（3名希望・低難易度）
+        - status/build_status.yaml を新設
+        - ビルドエラー発生時に担当者・状況を記録
+        - 他の足軽が確認可能に
+
+        ■ IMP-M4: ツール一覧ドキュメント（1名希望・低難易度）
+        - docs/tools.md を作成
+        - bin/ 配下の全ツールを一覧化
+        - 用途・使用例・対象ユーザーを記載
+
+        【担当割り当て】
+        - 本隊3名で並行対応可能
+        - 足軽1: IMP-H2（報告書テンプレート）
+        - 足軽2: IMP-M2（ビルドステータス）
+        - 足軽3: IMP-M4（ツール一覧）
+
+        【完了条件】
+        - 各成果物が作成され、動作確認済み
+        - instructions/ashigaru.md に新ツールの記載追加
+
+    priority: medium
+    status: completed
+    assigned_at: "2026-02-09T12:10:00"
+    assigned_to: "ashigaru 1-3"
+    completed_at: "2026-02-09T12:15:00"
+    result: "3件全完了。generate-report.sh(289行)/build_status.yaml+update-build-status.sh/tools.md(317行)"
+
+  - id: cmd_045
+    timestamp: "2026-02-09T11:00:00"
+    command: "組織改編後の連携フィードバック収集"
+    details:
+      description: |
+        殿より指示。組織改編（v1.4.0〜v1.5.0）後の連携について
+        足軽全員（本隊1-4、別働隊5-8）からフィードバックを収集せよ。
+
+        【収集項目】
+
+        ■ 指揮系統について
+        1. 本隊（1-4）: 家老からの直接指示は明確か？
+        2. 別働隊（5-8）: 軍師からの指示は明確か？
+        3. 緊急時の連絡フローは機能しているか？
+
+        ■ 通信・ツールについて
+        1. notify.sh は確実に使えているか？問題はないか？
+        2. タスクYAML（queue/tasks/ashigaru{N}.yaml）の指示内容は十分か？
+        3. 報告書（queue/reports/）の書き方で困っていることはあるか？
+
+        ■ チーム間連携について
+        1. 本隊と別働隊の役割分担は明確か？
+        2. 他の足軽との並行作業で困ったことはあるか？
+        3. 情報共有（dashboard.md、progress.yaml等）は十分か？
+
+        ■ 改善提案
+        1. 組織運営で改善してほしい点
+        2. あると便利なツール・仕組み
+        3. その他自由意見
+
+        【収集方法】
+        - 軍師が別働隊（5-8）のフィードバックを収集
+        - 家老が本隊（1-4）のフィードバックを収集
+        - 両者を統合してdashboard.mdに報告
+
+        【成果物】
+        - queue/reports/organization_feedback.yaml（統合レポート）
+        - dashboard.md への要約記載
+
+    priority: medium
+    status: pending
+    assigned_at: null
+    assigned_to: "karo + gunshi"
+
+  - id: cmd_044
+    timestamp: "2026-02-07T17:45:00"
+    command: "非公式DWH乱立問題の解決提案作成"
+    details:
+      description: |
+        殿より重要な調査依頼があった。軍師と別働隊で調査・提案を作成せよ。
+
+        【背景・新情報】
+        - 顧客はBIツールとして「Domo」を導入済み
+        - しかし各部門担当者ごとに見ているところが違う
+        - Domoでデータ統合・可視化はできているが、
+          DWHにありがちな「非公式DWH」が乱立していると仮定
+
+        【調査・提案の観点】
+
+        ■ 現状分析（既存資料ベース）
+        1. 現行システム間のデータフロー確認
+           - MIRROR → ARMS → RING/AS/WMS/DWH の流れ
+           - 各システムからDWHへの連携内容
+        2. データの重複・分散状況の推測
+           - 部門別に独自集計している可能性
+           - Excel等での非公式レポート作成
+
+        ■ 顧客が自覚していない課題（仮説）
+        1. 部門間でのデータ定義の不一致
+           - 同じ「売上」でも集計ロジックが違う
+        2. 非公式DWHの保守コスト
+           - 担当者退職時のブラックボックス化
+        3. データ鮮度のばらつき
+           - 公式DWHは日次更新、非公式は週次など
+        4. セキュリティ・ガバナンス問題
+           - 個人PC上のExcelに顧客データ
+
+        ■ 解決提案の方向性
+        1. データカタログ導入（Single Source of Truth）
+        2. セルフサービスBI強化（Domo活用深化）
+        3. データガバナンス体制構築
+        4. 段階的な非公式DWH統合ロードマップ
+        5. AI活用によるデータ品質監視
+
+        【成果物】
+        - output/data_governance_proposal/ に以下を作成
+          1. current_data_flow_analysis.md（現状分析）
+          2. hidden_issues.md（潜在課題の仮説）
+          3. solution_proposal.md（解決提案）
+          4. integration_roadmap.md（統合ロードマップ）
+
+        【参照資料】
+        - output/current_system_overview.md
+        - output/basic_design/data_structure.md
+        - output/basic_design/interface_spec.md
+        - output/ai_proposal/（AI活用との連携観点）
+
+        【担当】
+        - 軍師に調査・分析を指示
+        - 別働隊を活用してリサーチ・文書作成
+
+        【注意】
+        - 顧客が自覚していない課題を掘り起こすことが重要
+        - 既存のAI活用提案との連携も考慮せよ
+        - ROI観点も含めること
+
+    priority: high
+    status: pending
+    assigned_at: null
+    assigned_to: "gunshi + betsudoutai"
+
+  - id: cmd_043
+    timestamp: "2026-02-07T17:20:00"
+    command: "ESLint未使用変数パターンをガイドラインに追記"
+    details:
+      description: |
+        殿より指示。スキル候補「ESLint未使用変数パターン修正」について、
+        独立スキルではなく docs/conventions/ へのガイドライン追記で対応せよ。
+
+        【追記内容】
+        - Reactコンポーネントで未使用propsを `_props` パターンで処理する方法
+        - 将来拡張性を維持しつつESLint警告を解消するベストプラクティス
+        - 具体例（_productCode, _err 等）
+
+        【対象ファイル】
+        - docs/conventions/naming-convention.md への追記が適切
+
+        【備考】
+        - cmd_042で実施した修正パターンを文書化する形で対応
+        - 軍師評価: 「独立スキルにするほど複雑ではない」
+
+    priority: medium
+    status: pending
+    assigned_at: null
+    assigned_to: null
+
+  - id: cmd_040
+    timestamp: "2026-02-07T16:35:00"
+    command: "ESLint警告解消 + 画像管理画面横幅調整"
+    details:
+      description: |
+        殿より2点の指示があった。
+
+        【タスク1】ESLint警告の解消
+        先ほどのESLintチェックで24件の問題が検出された。
+        今後の効率のため、解消できるものは全て解消せよ。
+
+        検出された問題:
+        - ImageSelector.tsx: setState in effect
+        - ProductEntryPage.tsx: setState in effect
+        - UploadSection.tsx: 未使用変数 'err'
+        - ECDetailTab.tsx: 未使用変数 '_productCode'
+        - GiftTab.tsx: 未使用変数 '_productCode'
+        - MarkTab.tsx: 未使用変数 '_productCode'
+        - PublicationHistoryTab.tsx: 未使用変数 '_productCode'
+        - MediaSalesListPage.tsx: useEffect依存関係不足
+        - blockService.ts: 多数の未使用パラメータ
+
+        【タスク2】画像管理画面の横幅調整
+        殿が画像管理画面を確認したところ、横幅が狭いとのこと。
+        他の画面と同様、ホドホドの広さ（pageType: 'wide' 等）に調整せよ。
+
+    priority: high
+    status: pending
+    assigned_at: null
+    assigned_to: null
+
+  - id: cmd_029
+    timestamp: "2026-02-06T19:15:00"
+    command: "R-system AI活用可能性調査・ROI提案"
+    details:
+      description: |
+        殿より重要な調査依頼があった。顧客はAI導入によるROIを気にしている。
+        業務改善の可能性を調査し、提案をまとめよ。
+
+        【背景・状況】
+        - 顧客はAI導入のROI（投資対効果）を重視
+        - 超概算の話が要求整理段階に進んでしまった（フロント起因）
+        - 顧客の温度感が不明（業務フロー改革OK or 既存骨格維持希望）
+
+        【調査観点】
+
+        ■ 既知のAI活用案（殿より提示）
+        1. 画像分析（商品画像の自動分類、品質チェック等）
+        2. カタログ紙面分析（レイアウト最適化、OCR高度化等）
+        3. 商品分析・予測（需要予測、トレンド分析等）
+
+        ■ 追加で検討すべきAI活用領域
+        - データ入力自動化（OCR + 自然言語処理）
+        - 異常検知（在庫・売上の異常パターン検出）
+        - レコメンデーション（類似商品提案、関連商品紐付け）
+        - 文章生成（販促文の自動生成・校正）
+        - ワークフロー最適化（承認フロー自動化、ボトルネック検出）
+
+        ■ 提案の軸（2パターン検討）
+
+        【パターンA】既存業務フロー骨格維持
+        - 現行フローはそのまま
+        - AIは「既存作業の効率化・精度向上」に特化
+        - 導入リスク低、ROI見積もりしやすい
+
+        【パターンB】業務フロー改革込み
+        - AIを前提とした業務フロー再設計
+        - 人手作業の大幅削減・自動化
+        - 導入リスク高、ROI大きい可能性
+
+        【成果物】
+        1. AI活用領域マトリクス
+           - 領域 × 導入難易度 × 期待効果 × 必要データ
+
+        2. ROI概算シナリオ（3段階）
+           - ミニマム: 既存フロー維持、低リスク施策のみ
+           - ミドル: 一部フロー改善、中リスク施策含む
+           - マキシマム: フロー改革、高リスク高リターン
+
+        3. 顧客温度感確認ポイント
+           - 提案前に確認すべき質問リスト
+           - 温度感に応じた提案の出し分け方針
+
+        4. 参考事例（あれば）
+           - 類似業界のAI導入事例
+           - 期待できる改善率の目安
+
+        【参照資料】
+        - output/basic_design/（現行システム仕様）
+        - output/essential_functions.md（必須機能）
+        - R-System資料（業務フロー理解のため）
+
+        【担当】
+        - 軍師に調査・分析を指示
+        - 別働隊を活用してリサーチ
+        - 結果はdashboard.mdの「🚨 要対応」セクションに記載
+          （殿が顧客と話す際の材料として使うため）
+
+        【注意】
+        - 技術的な実現可能性だけでなく、ROI観点を重視せよ
+        - 顧客の温度感が不明なので、両パターン用意しておくこと
+        - 「これを聞けば温度感がわかる」質問リストも作成せよ
+    priority: high
+    status: completed
+    assigned_at: "2026-02-06T18:57:00"
+    assigned_to: "gunshi + betsudoutai (5-8)"
+    completed_at: "2026-02-06T19:05:00"
+    result: "4文書約1,380行完成（AI活用マトリクス/ROIシナリオ/顧客質問/事例調査）→dashboard.md要対応に記載"
+
   - id: cmd_028
     timestamp: "2026-02-06T18:10:00"
     command: "プロジェクト規約・テンプレート整備"
@@ -6,55 +294,6 @@ queue:
       description: |
         殿より指示があった。今回のモック開発で得た教訓を元に、
         今後の作り込み・新規プロジェクトで活用できる規約・テンプレートを整備せよ。
-
-        【背景】
-        足軽からのフィードバック:
-        - snake_case vs camelCase で17ファイル修正が発生
-        - Entity重複配置でTypeORMエラー
-        - 12画面で個別にContainer設定が必要だった
-        - タスク間の依存関係が見えにくい
-
-        【作成物】
-        docs/conventions/ 配下に以下を作成:
-
-        1. naming-convention.md（命名規則）
-           - API: キャメルケース（確定済み）
-           - DB: スネークケース（PostgreSQL標準）
-           - フロントエンド型: キャメルケース（APIに合わせる）
-           - ファイル名: ケバブケース（React標準）
-           - コンポーネント名: パスカルケース
-           - 変換方針: apiClientで自動変換（実装済み）
-
-        2. directory-structure.md（ディレクトリ構成ルール）
-           - backend/src/auth/entities/ → 認証関連Entity
-           - backend/src/modules/xxx/entities/ → 各モジュールEntity
-           - frontend/src/components/ → 共通コンポーネント
-           - frontend/src/pages/ → ページコンポーネント
-           - 「絶対に置いてはいけない場所」も明記
-
-        3. common-templates.md（共通テンプレート）
-           - ページの基本構造（Container, padding等）
-           - APIサービスの基本構造
-           - 型定義ファイルの基本構造
-
-        4. task-dependency-guide.md（タスク依存関係ガイド）
-           - blockedBy / blocks の使い方
-           - 並行作業時の注意点
-           - 依存グラフの例
-
-        【参照】
-        - 現モックの実装（~/arms-mock/）
-        - 足軽の声（dashboard.md）
-        - apiClient.tsの自動変換実装
-
-        【担当】
-        - 軍師に調査・設計を指示
-        - 本隊または別働隊に文書作成を実施させよ
-        - 現モックから「正しいパターン」を抽出すること
-
-        【注意】
-        - 机上の空論ではなく、実際の実装に基づいた規約とせよ
-        - 新規参画者が読んですぐ理解できる文書にせよ
     priority: high
     status: completed
     completed_at: "2026-02-06T18:42:00"
@@ -93,25 +332,3 @@ queue:
     status: completed
     completed_at: "2026-02-06T14:06:00"
     result: "全8テーブル投入成功。FK制約エラー修正（3ファイル）、Entity重複修正（5ファイル）"
-
-  - id: cmd_024
-    timestamp: "2026-02-06T14:00:00"
-    command: "React警告バグ再発対応"
-    details:
-      description: |
-        殿より報告があった。以下のReact警告が再発している可能性がある。
-    priority: high
-    status: completed
-    completed_at: "2026-02-06T14:01:00"
-    result: "BUG-030,031修正完了。PromotionMasterPage key追加、MediaSalesListPage undefined対策"
-
-  - id: cmd_023
-    timestamp: "2026-02-05T16:50:00"
-    command: "ARMS代替システムモック作成"
-    details:
-      description: |
-        殿より指示があった。環境構築が完了した。モック作成に着手せよ。
-    priority: high
-    status: completed
-    completed_at: "2026-02-05T18:30:00"
-    result: "Phase1完了。30ファイル・スキル5件(1,970行)。Grade A/B。残課題: bcrypt実装(別タスク)"

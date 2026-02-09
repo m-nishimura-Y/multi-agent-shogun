@@ -5,24 +5,27 @@
 # 将軍・家老・軍師がタスク開始時・完了時に更新せよ
 # ============================================================
 
-last_updated: "2026-02-06T18:10:00"
+last_updated: "2026-02-07T16:12:00"
 
 # ================================================================
 # 将軍（Shogun）の現在状況 - 殿との会話要点記録
 # ================================================================
 shogun:
   current_conversation:
-    topic: "プロジェクト規約・テンプレート整備"
-    summary: "殿の指示により、今後の作り込みで活用できる規約（命名規則、ディレクトリ構成等）を整備中。家老にcmd_028を指示済み。"
-    started_at: "2026-02-06T18:10:00"
+    topic: "R-system AI活用可能性調査・ROI提案"
+    summary: "顧客がAI導入ROIを気にしている。業務フロー改革の温度感不明。両パターン（既存維持/改革込み）で提案を準備。家老にcmd_029を指示。"
+    started_at: "2026-02-06T19:15:00"
 
   pending_decisions:
     # 殿に確認が必要な事項
-    - item: null
-      context: null
+    - item: "顧客温度感確認後の提案方針"
+      context: "AI活用範囲（既存フロー維持 or 業務改革込み）の選択"
 
   recent_directives:
     # 殿から受けた最近の指示
+    - directive: "R-system AI活用可能性調査・ROI提案"
+      description: "画像分析、カタログ紙面分析、商品予測等のAI活用領域調査。ROI観点重視。顧客温度感確認ポイントも作成。"
+      received_at: "2026-02-06T19:15:00"
     - directive: "プロジェクト規約・テンプレート整備"
       description: "命名規則、ディレクトリ構成、共通テンプレート、タスク依存関係ガイドを整備。今後の作り込みに活用。"
       received_at: "2026-02-06T18:10:00"
@@ -46,9 +49,55 @@ karo:
     - agent: null
       reason: null
 
-  next_action: "殿の次の指示待ち"
+  next_action: "殿からの次の指示待ち"
 
   recent_completed:
+    - task_id: "bug_036"
+      description: "帳票出力画面ログアウト問題修正（@Public()追加）"
+      completed_at: "2026-02-07T16:12:00"
+    - task_id: "cmd_039"
+      description: "媒体作成−販売一覧シードデータ完了（カタログ36件・ブロック216件）"
+      completed_at: "2026-02-07T15:58:00"
+    - task_id: "cmd_038"
+      description: "モック作成Phase3完了（棚管理・掲載履歴・データIO、全8名完了、重大問題なし）"
+      completed_at: "2026-02-07T15:30:00"
+
+  recent_completed:
+    - task_id: "bug_034_fix"
+      description: "BUG-034修正完了（重複Entity削除、BE正常起動）"
+      completed_at: "2026-02-07T14:05:00"
+    - task_id: "cmd_035"
+      description: "BE/FE起動確認完了（BE:TypeORMエラー1件、FE:起動成功）"
+      completed_at: "2026-02-07T13:46:00"
+
+  recent_completed:
+    - task_id: "cmd_034"
+      description: "自動化ツール4件実装完了（update-progress.sh, sync-dashboard.sh, detect-snake-case.sh, check-stale-workers.sh）"
+      completed_at: "2026-02-07T13:27:00"
+    - task_id: "cmd_033_feedback"
+      description: "足軽提案フィードバック収集完了（6名全員Yes回答、改善案22件）"
+      completed_at: "2026-02-06T21:40:00"
+
+  recent_completed:
+    - task_id: "cmd_032_bugs"
+      description: "販促商品マスタ バグ2件修正完了（BUG-032商品名表示、BUG-033画像設定ローディング）"
+      completed_at: "2026-02-06T21:02:00"
+
+  recent_completed:
+    - task_id: "cmd_031_proposals"
+      description: "足軽提案6件完了（refactor-checklist, layout-template, task-yaml-guidelines, search-skills.sh, bugs.yamlステータス, progress.yaml）"
+      completed_at: "2026-02-06T20:08:00"
+    - task_id: "cmd_030_maxwidth"
+      description: "画面max-width統一完了（Layout.tsx pageType一元管理、12ページ統一、ビルド成功）"
+      completed_at: "2026-02-06T20:00:00"
+
+  recent_completed:
+    - task_id: "cmd_029_running_cost"
+      description: "AIランニングコスト試算完了（月額¥20,550で人件費¥660万削減、dashboard.md追記）"
+      completed_at: "2026-02-06T19:18:00"
+    - task_id: "cmd_029"
+      description: "AI活用提案資料4文書完了（約1,380行、dashboard.md要対応に記載）"
+      completed_at: "2026-02-06T19:05:00"
     - task_id: "cmd_028"
       description: "プロジェクト規約・テンプレート整備完了（4文書1,401行）"
       completed_at: "2026-02-06T18:42:00"
@@ -96,6 +145,21 @@ gunshi:
   next_action: "家老からの次の指示待ち"
 
   recent_completed:
+    - task_id: "cmd_031_proposals"
+      description: "足軽提案の実施完了（別働隊4名：タスクYAMLガイドライン、スキル検索ツール、bugs.yamlステータス拡張、progress.yaml作成）"
+      completed_at: "2026-02-06T20:00:00"
+    - task_id: "cmd_029_pricing_detail"
+      description: "AI料金詳細計算式をdashboard.mdに追記完了（殿ご要望：数式と金額の詳細）"
+      completed_at: "2026-02-06T19:55:00"
+    - task_id: "ai_pricing_research"
+      description: "AI料金最新調査完了（GPT-4o-mini、Claude Sonnet 4.5、AWS Rekognition、Azure Document Intelligence）"
+      completed_at: "2026-02-06T19:45:00"
+    - task_id: "cmd_029_running_cost"
+      description: "AIランニングコスト試算完了（月額¥20,550で人件費¥660万削減、5年累計4億円効果）"
+      completed_at: "2026-02-06T19:35:00"
+    - task_id: "cmd_029_ai_research"
+      description: "R-system AI活用提案資料4文書作成完了（約1,380行、成功事例11件）"
+      completed_at: "2026-02-06T19:25:00"
     - task_id: "cmd_028_conventions"
       description: "プロジェクト規約4文書作成完了（別働隊4名、合計1,401行）"
       completed_at: "2026-02-06T18:55:00"
