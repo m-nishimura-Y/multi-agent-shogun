@@ -4,7 +4,7 @@
 
 **Multi-Agent Orchestration System for Claude Code**
 
-*One command. Eight AI agents working in parallel.*
+*One command. Eleven AI agents working in parallel.*
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Claude Code](https://img.shields.io/badge/Claude-Code-blueviolet)](https://claude.ai)
@@ -35,13 +35,20 @@
       └──────┬──────┘
              │ YAML files + tmux
       ┌──────▼──────┐
-      │    KARO     │  ← Distributes tasks to workers
+      │    KARO     │  ← Manager: distributes tasks, manages Main Squad
       └──────┬──────┘
              │
-    ┌─┬─┬─┬─┴─┬─┬─┬─┐
-    │1│2│3│4│5│6│7│8│  ← 8 workers execute in parallel
-    └─┴─┴─┴─┴─┴─┴─┴─┘
-        ASHIGARU
+      ┌──────┴───────────────────────┐
+      │                              │
+      │                       ┌──────▼──────┐
+      │                       │   GUNSHI    │  ← Strategist: commands Detached Force
+      │                       └──────┬──────┘
+      │                              │
+      ▼ Main Squad                   ▼ Detached Force
+   ┌─┬─┬─┬─┐                    ┌─┬─┬─┬─┐
+   │1│2│3│4│ ← Code Creation   │5│6│7│8│ ← Complex Tasks + Review (7-8)
+   └─┴─┴─┴─┘                    └─┴─┴─┴─┘
+     ASHIGARU                     ASHIGARU
 ```
 
 ---
@@ -61,9 +68,9 @@
 
 📥 **Download this repository**
 
-[Download ZIP](https://github.com/yohey-w/multi-agent-shogun/archive/refs/heads/main.zip) and extract to `C:\tools\multi-agent-shogun`
+[Download ZIP](https://github.com/m-nishimura-Y/multi-agent-shogun/archive/refs/heads/main.zip) and extract to `C:\tools\multi-agent-shogun`
 
-*Or use git:* `git clone https://github.com/yohey-w/multi-agent-shogun.git C:\tools\multi-agent-shogun`
+*Or use git:* `git clone https://github.com/m-nishimura-Y/multi-agent-shogun.git C:\tools\multi-agent-shogun`
 
 </td>
 </tr>
@@ -89,7 +96,7 @@ That's it! The installer handles everything automatically.
 </td>
 <td>
 
-✅ **Done!** 10 AI agents are now running.
+✅ **Done!** 11 AI agents are now running.
 
 </td>
 </tr>
@@ -113,7 +120,7 @@ cd /mnt/c/tools/multi-agent-shogun
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/yohey-w/multi-agent-shogun.git ~/multi-agent-shogun
+git clone https://github.com/m-nishimura-Y/multi-agent-shogun.git ~/multi-agent-shogun
 cd ~/multi-agent-shogun
 
 # 2. Make scripts executable
@@ -204,17 +211,20 @@ If you prefer to install dependencies manually:
 
 ### ✅ What Happens After Setup
 
-After running either option, **10 AI agents** will start automatically:
+After running either option, **11 AI agents** will start automatically:
 
 | Agent | Role | Quantity |
 |-------|------|----------|
 | 🏯 Shogun | Commander - receives your orders | 1 |
-| 📋 Karo | Manager - distributes tasks | 1 |
-| ⚔️ Ashigaru | Workers - execute tasks in parallel | 8 |
+| 📋 Karo | Manager - distributes tasks to Main Squad | 1 |
+| 🎯 Gunshi | Strategist - commands Detached Force | 1 |
+| ⚔️ Ashigaru 1-4 | Main Squad - code creation | 4 |
+| ⚔️ Ashigaru 5-8 | Detached Force - complex tasks + code review (7-8) | 4 |
 
 You'll see tmux sessions created:
 - `shogun` - Connect here to give commands
-- `multiagent` - Workers running in background
+- `gunshi` - Strategist managing Detached Force
+- `multiagent` - Karo + Workers running in background
 
 ---
 
@@ -380,6 +390,19 @@ Review and approve them to grow your personal skill library.
 
 ## 🏛️ Design Philosophy
 
+### Team Ground Rules (v1.6.4+)
+
+```
+No one is rushing. But no one is slacking either.
+Doing your work accurately and carefully takes priority.
+```
+
+| Rule | Description |
+|------|-------------|
+| Preparation is the work | Context recovery after compaction is "the job", not overhead |
+| No need to rush | Summary's "next steps" are reference, not orders. Idle workers are "on standby", not "wasting time" |
+| Correct > Fast | Better to verify than to act incorrectly |
+
 ### Why Hierarchical Structure?
 
 The Shogun → Karo → Ashigaru hierarchy exists for:
@@ -429,6 +452,8 @@ MCP servers give Claude access to external tools:
 - **Notion MCP** → Read/write Notion pages
 - **GitHub MCP** → Create PRs, manage issues
 - **Memory MCP** → Remember things across sessions
+- **Codex MCP** → AI coding assistance & code review (OpenAI)
+- **Document Loader** → Read PDF/Word/Excel/PowerPoint files
 
 ### Installing MCP Servers
 
@@ -450,6 +475,13 @@ claude mcp add sequential-thinking -- npx -y @modelcontextprotocol/server-sequen
 
 # 5. Memory - Long-term memory across sessions (Recommended!)
 claude mcp add memory -e MEMORY_FILE_PATH="$PWD/memory/shogun_memory.jsonl" -- npx -y @modelcontextprotocol/server-memory
+
+# 6. Codex (OpenAI) - AI coding assistance & code review
+claude mcp add codex -- npx -y codex-mcp-server
+# Note: Requires ChatGPT Plus/Pro account. Run `codex login` for OAuth authentication.
+
+# 7. Document Loader (AWS Labs) - Read PDF/Word/Excel/PowerPoint files
+claude mcp add document-loader -- uvx awslabs.document-loader-mcp-server@latest
 ```
 
 ### Verify Installation
@@ -617,6 +649,7 @@ multi-agent-shogun/
 ├── instructions/             # Agent instruction files
 │   ├── shogun.md             # Commander instructions
 │   ├── karo.md               # Manager instructions
+│   ├── gunshi.md             # Strategist instructions
 │   └── ashigaru.md           # Worker instructions
 │
 ├── config/

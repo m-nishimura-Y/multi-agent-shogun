@@ -1,334 +1,214 @@
+# Shogun → Karo 指示キュー
+# Generated: 2026-02-10T13:59:58
+
 queue:
+  - id: cmd_052
+    timestamp: "2026-02-10T13:59:58"
+    command: "README.md 全面改修"
+    details:
+      background: |
+        殿より直接指示。GitHubリポジトリ公開に向けてREADME.mdを最新化せよ。
+
+      updates_required:
+        - item: "GitHubリポジトリURL修正"
+          priority: critical
+          current: "yohey-w/multi-agent-shogun（64-66行目等）"
+          correct: "m-nishimura-Y/multi-agent-shogun"
+          note: "全箇所を置換せよ"
+
+        - item: "組織構造の更新（v1.6.x対応）"
+          priority: high
+          changes:
+            - "軍師（Gunshi）を追加 - 家老の参謀・秘書・別働隊指揮"
+            - "本隊（足軽1-4）と別働隊（足軽5-8）の区分け追加"
+            - "足軽7-8のレビュー担当役割を明記"
+            - "エージェント数を11名に訂正（将軍+軍師+家老+足軽8）"
+          reference: "CLAUDE.md の階層構造図を参照"
+
+        - item: "MCP Setup Guide セクション更新"
+          priority: high
+          add:
+            - name: "Codex MCP（OpenAI）"
+              description: "コーディング支援・コードレビュー"
+              command: "claude mcp add codex -- npx -y codex-mcp-server"
+              note: "ChatGPT Plus/Pro アカウントでOAuth認証"
+            - name: "Document Loader（AWS Labs）"
+              description: "PDF/Word/Excel/PPT読み込み"
+              command: "claude mcp add document-loader -- uvx awslabs.document-loader-mcp-server@latest"
+
+        - item: "チームグランドルール追記（任意）"
+          priority: low
+          note: "v1.6.4のグランドルール概要を Design Philosophy に追記可"
+
+      execution_plan:
+        - step: 1
+          task: "GitHubリポジトリURL全置換"
+          assign: "足軽（単純置換）"
+        - step: 2
+          task: "組織構造図・説明の更新"
+          assign: "軍師または足軽"
+        - step: 3
+          task: "MCP Setup Guide更新"
+          assign: "軍師または足軽"
+        - step: 4
+          task: "全体レビュー・整合性確認"
+          assign: "軍師"
+
+      notes: |
+        - 殿の直接指示。優先度高。
+        - 並列実行可能な作業は分割してよい
+        - README_ja.md も存在する場合は同様に更新せよ
+    priority: high
+    status: completed
+    completed_at: "2026-02-10T13:50:00"
+    result: |
+      README.md/README_ja.md 全面改修完了:
+      - GitHubリポジトリURL: yohey-w → m-nishimura-Y（全箇所）
+      - エージェント数: 8→11体に訂正
+      - 組織構造図: 軍師追加、本隊/別働隊区分け
+      - エージェントテーブル: 役割分担明記
+      - MCP Setup Guide: Codex MCP, Document Loader追加
+      - チームグランドルール追記
+      - ファイル構造: gunshi.md追加
+
+  - id: cmd_051
+    timestamp: "2026-02-10T13:37:14"
+    command: "Codex MCPガイドに殿の運用方針を追記せよ"
+    details:
+      target_file: "docs/tools/codex-mcp-guide.md"
+
+      directive_from_lord: |
+        殿より直接の運用方針指示あり。以下を反映せよ：
+
+        1. Codexはレビューに優れている
+        2. 足軽1-6が書いたコードを足軽7-8がCodexでレビューする
+        3. セルフレビューでも足軽が使用可
+
+      updates_required:
+        - section: "役職別活用シーン > 足軽"
+          current: "一般的なコーディング支援の記載のみ"
+          add: |
+            【足軽1-6】コード作成担当。セルフレビューにCodex使用可
+            【足軽7-8】レビュー担当。足軽1-6のコードをCodexでレビュー
+
+        - section: "新規追加：コードレビュー運用フロー"
+          add: |
+            足軽1-6（作成）→ 足軽7-8（Codexでレビュー）→ 軍師へ報告
+
+        - section: "使用例追加"
+          add: "足軽7-8がレビューする際の mcp__codex__review 具体例"
+
+      notes: |
+        - cmd_050の続きとして軍師に追加指示せよ
+        - 殿の直接指示なので優先度高
+    priority: high
+    status: completed
+    completed_at: "2026-02-10T13:40:00"
+    result: "ガイドv1.1.0更新完了。足軽1-6/7-8役割分担、レビュー運用フロー、レビュー例4件追記"
+
+  - id: cmd_050
+    timestamp: "2026-02-10T13:30:33"
+    command: "Codex MCPの使い方を全エージェントに周知せよ"
+    details:
+      background: |
+        殿がCodex MCPをインストール済み。接続テストも成功した。
+        全エージェントが活用できるよう、使い方を周知せよ。
+
+      available_tools:
+        - tool: "mcp__codex__codex"
+          description: "非対話モードでAIコーディング支援を実行"
+          options:
+            - "prompt: タスク・質問・分析リクエスト"
+            - "model: gpt-5.3-codex（デフォルト）, o3, o4-mini 等"
+            - "fullAuto: サンドボックス自動実行モード"
+            - "sandbox: read-only / workspace-write / danger-full-access"
+        - tool: "mcp__codex__review"
+          description: "コードレビュー実行"
+          options:
+            - "base: ベースブランチ指定"
+            - "commit: 特定コミットのレビュー"
+            - "uncommitted: 未コミット変更のレビュー"
+        - tool: "mcp__codex__ping"
+          description: "接続テスト"
+        - tool: "mcp__codex__listSessions"
+          description: "セッション一覧表示"
+
+      tasks:
+        - task: "使い方ガイド作成"
+          location: "docs/tools/codex-mcp-guide.md"
+          content:
+            - "ツール一覧と用途"
+            - "基本的な使用例"
+            - "注意事項（サンドボックス設定等）"
+        - task: "足軽への周知"
+          method: "ガイド作成後、必要に応じて別働隊に周知"
+
+      notes: |
+        - 軍師に委譲してガイド作成させてよい
+        - 将軍は主に review 機能を使う可能性あり
+        - 足軽は codex でコーディング支援を受けられる
+    priority: medium
+    status: completed
+    assigned_at: "2026-02-10T13:36:00"
+    assigned_to: "gunshi"
+    completed_at: "2026-02-10T13:33:58"
+    result: "docs/tools/codex-mcp-guide.md 作成完了"
+
+  - id: cmd_049
+    timestamp: "2026-02-10T12:53:50"
+    command: "Codex MCP（OpenAI）の調査・導入検討"
+    details:
+      background: |
+        殿より情報提供あり。
+        - CodexのMCPが存在するという噂
+        - 殿はChatGPTの有償プランアカウントを保有
+        - ログイン認証すれば使える可能性あり
+
+      investigation_items:
+        - item: "Codex MCPの存在確認"
+          description: "npmjs、GitHub等でCodex/OpenAI関連のMCPサーバーを検索"
+        - item: "機能・用途の調査"
+          description: "何ができるMCPか（コード生成、補完、解析等）"
+        - item: "認証方式の確認"
+          description: "ChatGPT有償プランで使えるか、APIキー必要か、OAuth認証か"
+        - item: "導入手順の整理"
+          description: "見つかった場合、導入手順をまとめる"
+        - item: "全エージェント共有方法"
+          description: "将軍・家老・軍師・足軽全員が使える設定方法"
+
+      expected_output:
+        - "Codex MCPの有無・概要"
+        - "導入可否の判断"
+        - "導入手順（可能な場合）"
+        - "全エージェント共有のための設定方法"
+
+      notes: |
+        - 軍師に調査を委譲してよい
+        - Web検索を活用せよ
+        - 見つからない場合は「見つからなかった」と報告
+        - 類似のMCP（OpenAI API系）があれば併せて報告
+    priority: medium
+    status: completed
+    assigned_at: "2026-02-10T12:55:00"
+    assigned_to: "gunshi"
+    completed_at: "2026-02-10T12:58:00"
+    result: "導入可能。ChatGPT Plus/ProでOAuth認証可、追加費用なし。詳細はgunshi_report.yaml"
+
+  - id: cmd_048
+    timestamp: "2026-02-10T11:48:33"
+    command: "【重要】ARMS関連の文字列を全て削除・置換せよ"
+    status: completed
+    completed_at: "2026-02-10T11:52:00"
+    result: "全16箇所置換完了。FE/BEビルド成功。Docker再作成必要"
+
+  - id: cmd_047
+    timestamp: "2026-02-09T18:58:46"
+    command: "サイドバーにダッシュボードへの遷移を追加せよ"
+    status: completed
+    result: "ビルド成功"
+
   - id: cmd_046
     timestamp: "2026-02-09T11:15:00"
     command: "フィードバック改善提案3件実施"
-    details:
-      description: |
-        殿より承認。cmd_045で収集した改善提案のうち、
-        軍師・家老推奨の3件を実施せよ。
-
-        【実施対象】
-
-        ■ IMP-H2: 報告書テンプレート自動生成（3名希望・中難易度）
-        - bin/generate-report.sh を作成
-        - 足軽番号を引数に、報告書テンプレートを自動生成
-        - 必須フィールド（task_id, status, output, skill_candidate等）を含む
-        - 使用例: ./bin/generate-report.sh 5
-
-        ■ IMP-M2: ビルドエラー担当者明確化/共有（3名希望・低難易度）
-        - status/build_status.yaml を新設
-        - ビルドエラー発生時に担当者・状況を記録
-        - 他の足軽が確認可能に
-
-        ■ IMP-M4: ツール一覧ドキュメント（1名希望・低難易度）
-        - docs/tools.md を作成
-        - bin/ 配下の全ツールを一覧化
-        - 用途・使用例・対象ユーザーを記載
-
-        【担当割り当て】
-        - 本隊3名で並行対応可能
-        - 足軽1: IMP-H2（報告書テンプレート）
-        - 足軽2: IMP-M2（ビルドステータス）
-        - 足軽3: IMP-M4（ツール一覧）
-
-        【完了条件】
-        - 各成果物が作成され、動作確認済み
-        - instructions/ashigaru.md に新ツールの記載追加
-
-    priority: medium
     status: completed
-    assigned_at: "2026-02-09T12:10:00"
-    assigned_to: "ashigaru 1-3"
-    completed_at: "2026-02-09T12:15:00"
-    result: "3件全完了。generate-report.sh(289行)/build_status.yaml+update-build-status.sh/tools.md(317行)"
-
-  - id: cmd_045
-    timestamp: "2026-02-09T11:00:00"
-    command: "組織改編後の連携フィードバック収集"
-    details:
-      description: |
-        殿より指示。組織改編（v1.4.0〜v1.5.0）後の連携について
-        足軽全員（本隊1-4、別働隊5-8）からフィードバックを収集せよ。
-
-        【収集項目】
-
-        ■ 指揮系統について
-        1. 本隊（1-4）: 家老からの直接指示は明確か？
-        2. 別働隊（5-8）: 軍師からの指示は明確か？
-        3. 緊急時の連絡フローは機能しているか？
-
-        ■ 通信・ツールについて
-        1. notify.sh は確実に使えているか？問題はないか？
-        2. タスクYAML（queue/tasks/ashigaru{N}.yaml）の指示内容は十分か？
-        3. 報告書（queue/reports/）の書き方で困っていることはあるか？
-
-        ■ チーム間連携について
-        1. 本隊と別働隊の役割分担は明確か？
-        2. 他の足軽との並行作業で困ったことはあるか？
-        3. 情報共有（dashboard.md、progress.yaml等）は十分か？
-
-        ■ 改善提案
-        1. 組織運営で改善してほしい点
-        2. あると便利なツール・仕組み
-        3. その他自由意見
-
-        【収集方法】
-        - 軍師が別働隊（5-8）のフィードバックを収集
-        - 家老が本隊（1-4）のフィードバックを収集
-        - 両者を統合してdashboard.mdに報告
-
-        【成果物】
-        - queue/reports/organization_feedback.yaml（統合レポート）
-        - dashboard.md への要約記載
-
-    priority: medium
-    status: pending
-    assigned_at: null
-    assigned_to: "karo + gunshi"
-
-  - id: cmd_044
-    timestamp: "2026-02-07T17:45:00"
-    command: "非公式DWH乱立問題の解決提案作成"
-    details:
-      description: |
-        殿より重要な調査依頼があった。軍師と別働隊で調査・提案を作成せよ。
-
-        【背景・新情報】
-        - 顧客はBIツールとして「Domo」を導入済み
-        - しかし各部門担当者ごとに見ているところが違う
-        - Domoでデータ統合・可視化はできているが、
-          DWHにありがちな「非公式DWH」が乱立していると仮定
-
-        【調査・提案の観点】
-
-        ■ 現状分析（既存資料ベース）
-        1. 現行システム間のデータフロー確認
-           - MIRROR → ARMS → RING/AS/WMS/DWH の流れ
-           - 各システムからDWHへの連携内容
-        2. データの重複・分散状況の推測
-           - 部門別に独自集計している可能性
-           - Excel等での非公式レポート作成
-
-        ■ 顧客が自覚していない課題（仮説）
-        1. 部門間でのデータ定義の不一致
-           - 同じ「売上」でも集計ロジックが違う
-        2. 非公式DWHの保守コスト
-           - 担当者退職時のブラックボックス化
-        3. データ鮮度のばらつき
-           - 公式DWHは日次更新、非公式は週次など
-        4. セキュリティ・ガバナンス問題
-           - 個人PC上のExcelに顧客データ
-
-        ■ 解決提案の方向性
-        1. データカタログ導入（Single Source of Truth）
-        2. セルフサービスBI強化（Domo活用深化）
-        3. データガバナンス体制構築
-        4. 段階的な非公式DWH統合ロードマップ
-        5. AI活用によるデータ品質監視
-
-        【成果物】
-        - output/data_governance_proposal/ に以下を作成
-          1. current_data_flow_analysis.md（現状分析）
-          2. hidden_issues.md（潜在課題の仮説）
-          3. solution_proposal.md（解決提案）
-          4. integration_roadmap.md（統合ロードマップ）
-
-        【参照資料】
-        - output/current_system_overview.md
-        - output/basic_design/data_structure.md
-        - output/basic_design/interface_spec.md
-        - output/ai_proposal/（AI活用との連携観点）
-
-        【担当】
-        - 軍師に調査・分析を指示
-        - 別働隊を活用してリサーチ・文書作成
-
-        【注意】
-        - 顧客が自覚していない課題を掘り起こすことが重要
-        - 既存のAI活用提案との連携も考慮せよ
-        - ROI観点も含めること
-
-    priority: high
-    status: pending
-    assigned_at: null
-    assigned_to: "gunshi + betsudoutai"
-
-  - id: cmd_043
-    timestamp: "2026-02-07T17:20:00"
-    command: "ESLint未使用変数パターンをガイドラインに追記"
-    details:
-      description: |
-        殿より指示。スキル候補「ESLint未使用変数パターン修正」について、
-        独立スキルではなく docs/conventions/ へのガイドライン追記で対応せよ。
-
-        【追記内容】
-        - Reactコンポーネントで未使用propsを `_props` パターンで処理する方法
-        - 将来拡張性を維持しつつESLint警告を解消するベストプラクティス
-        - 具体例（_productCode, _err 等）
-
-        【対象ファイル】
-        - docs/conventions/naming-convention.md への追記が適切
-
-        【備考】
-        - cmd_042で実施した修正パターンを文書化する形で対応
-        - 軍師評価: 「独立スキルにするほど複雑ではない」
-
-    priority: medium
-    status: pending
-    assigned_at: null
-    assigned_to: null
-
-  - id: cmd_040
-    timestamp: "2026-02-07T16:35:00"
-    command: "ESLint警告解消 + 画像管理画面横幅調整"
-    details:
-      description: |
-        殿より2点の指示があった。
-
-        【タスク1】ESLint警告の解消
-        先ほどのESLintチェックで24件の問題が検出された。
-        今後の効率のため、解消できるものは全て解消せよ。
-
-        検出された問題:
-        - ImageSelector.tsx: setState in effect
-        - ProductEntryPage.tsx: setState in effect
-        - UploadSection.tsx: 未使用変数 'err'
-        - ECDetailTab.tsx: 未使用変数 '_productCode'
-        - GiftTab.tsx: 未使用変数 '_productCode'
-        - MarkTab.tsx: 未使用変数 '_productCode'
-        - PublicationHistoryTab.tsx: 未使用変数 '_productCode'
-        - MediaSalesListPage.tsx: useEffect依存関係不足
-        - blockService.ts: 多数の未使用パラメータ
-
-        【タスク2】画像管理画面の横幅調整
-        殿が画像管理画面を確認したところ、横幅が狭いとのこと。
-        他の画面と同様、ホドホドの広さ（pageType: 'wide' 等）に調整せよ。
-
-    priority: high
-    status: pending
-    assigned_at: null
-    assigned_to: null
-
-  - id: cmd_029
-    timestamp: "2026-02-06T19:15:00"
-    command: "R-system AI活用可能性調査・ROI提案"
-    details:
-      description: |
-        殿より重要な調査依頼があった。顧客はAI導入によるROIを気にしている。
-        業務改善の可能性を調査し、提案をまとめよ。
-
-        【背景・状況】
-        - 顧客はAI導入のROI（投資対効果）を重視
-        - 超概算の話が要求整理段階に進んでしまった（フロント起因）
-        - 顧客の温度感が不明（業務フロー改革OK or 既存骨格維持希望）
-
-        【調査観点】
-
-        ■ 既知のAI活用案（殿より提示）
-        1. 画像分析（商品画像の自動分類、品質チェック等）
-        2. カタログ紙面分析（レイアウト最適化、OCR高度化等）
-        3. 商品分析・予測（需要予測、トレンド分析等）
-
-        ■ 追加で検討すべきAI活用領域
-        - データ入力自動化（OCR + 自然言語処理）
-        - 異常検知（在庫・売上の異常パターン検出）
-        - レコメンデーション（類似商品提案、関連商品紐付け）
-        - 文章生成（販促文の自動生成・校正）
-        - ワークフロー最適化（承認フロー自動化、ボトルネック検出）
-
-        ■ 提案の軸（2パターン検討）
-
-        【パターンA】既存業務フロー骨格維持
-        - 現行フローはそのまま
-        - AIは「既存作業の効率化・精度向上」に特化
-        - 導入リスク低、ROI見積もりしやすい
-
-        【パターンB】業務フロー改革込み
-        - AIを前提とした業務フロー再設計
-        - 人手作業の大幅削減・自動化
-        - 導入リスク高、ROI大きい可能性
-
-        【成果物】
-        1. AI活用領域マトリクス
-           - 領域 × 導入難易度 × 期待効果 × 必要データ
-
-        2. ROI概算シナリオ（3段階）
-           - ミニマム: 既存フロー維持、低リスク施策のみ
-           - ミドル: 一部フロー改善、中リスク施策含む
-           - マキシマム: フロー改革、高リスク高リターン
-
-        3. 顧客温度感確認ポイント
-           - 提案前に確認すべき質問リスト
-           - 温度感に応じた提案の出し分け方針
-
-        4. 参考事例（あれば）
-           - 類似業界のAI導入事例
-           - 期待できる改善率の目安
-
-        【参照資料】
-        - output/basic_design/（現行システム仕様）
-        - output/essential_functions.md（必須機能）
-        - R-System資料（業務フロー理解のため）
-
-        【担当】
-        - 軍師に調査・分析を指示
-        - 別働隊を活用してリサーチ
-        - 結果はdashboard.mdの「🚨 要対応」セクションに記載
-          （殿が顧客と話す際の材料として使うため）
-
-        【注意】
-        - 技術的な実現可能性だけでなく、ROI観点を重視せよ
-        - 顧客の温度感が不明なので、両パターン用意しておくこと
-        - 「これを聞けば温度感がわかる」質問リストも作成せよ
-    priority: high
-    status: completed
-    assigned_at: "2026-02-06T18:57:00"
-    assigned_to: "gunshi + betsudoutai (5-8)"
-    completed_at: "2026-02-06T19:05:00"
-    result: "4文書約1,380行完成（AI活用マトリクス/ROIシナリオ/顧客質問/事例調査）→dashboard.md要対応に記載"
-
-  - id: cmd_028
-    timestamp: "2026-02-06T18:10:00"
-    command: "プロジェクト規約・テンプレート整備"
-    details:
-      description: |
-        殿より指示があった。今回のモック開発で得た教訓を元に、
-        今後の作り込み・新規プロジェクトで活用できる規約・テンプレートを整備せよ。
-    priority: high
-    status: completed
-    completed_at: "2026-02-06T18:42:00"
-    result: "4文書1,401行完成（命名規則230/ディレクトリ272/テンプレート697/依存関係202）"
-
-  - id: cmd_027
-    timestamp: "2026-02-06T14:55:00"
-    command: "【重要】全画面フィールド名キャメルケース統一 + 設計書調査"
-    details:
-      description: |
-        殿より指示。フィールド名不一致が複数画面で発生している。
-        全画面一括でキャメルケースに統一せよ。
-    priority: high
-    status: completed
-    completed_at: "2026-02-06T15:12:00"
-    result: "FE17ファイル+設計書70+件キャメルケース統一、ビルド成功"
-
-  - id: cmd_026
-    timestamp: "2026-02-06T14:40:00"
-    command: "【緊急】FE-BE フィールド名不一致修正 + 画面サイズ統一"
-    details:
-      description: |
-        殿より報告。2件の修正依頼。
-    priority: high
-    status: completed
-    completed_at: "2026-02-06T14:42:00"
-    result: "問題1:足軽2(フィールド名統一)、問題2:足軽3(レイアウト統一7ページ) 両方ビルド成功"
-
-  - id: cmd_025
-    timestamp: "2026-02-06T14:05:00"
-    command: "テストデータ投入状況確認・追加"
-    details:
-      description: |
-        殿より指示があった。画面遷移確認用のテストデータを整備せよ。
-    priority: high
-    status: completed
-    completed_at: "2026-02-06T14:06:00"
-    result: "全8テーブル投入成功。FK制約エラー修正（3ファイル）、Entity重複修正（5ファイル）"
+    result: "3件全完了"

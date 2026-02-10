@@ -14,7 +14,7 @@
 # - 大型タスク区切り時
 # ================================================================
 
-last_updated: "2026-02-09T13:00:00"
+last_updated: "2026-02-10T13:33:58"
 updated_by: gunshi
 
 # === 現在のフォーカス ===
@@ -22,7 +22,7 @@ current_focus:
   cmd: null
   description: "待機中"
   status: "idle"
-  note: "cmd_046完了後、次タスク待ち"
+  note: "cmd_050 Codex MCPガイド作成完了、家老報告完了"
 
 # === 別働隊稼働状況 ===
 betsudoutai_status:
@@ -67,6 +67,14 @@ conditional_skills:
 
 # === 直近の完了タスク ===
 recent_completed:
+  - cmd: cmd_050
+    description: "Codex MCP使い方ガイド作成・全エージェント周知"
+    completed_at: "2026-02-10T13:33:58"
+    result: "docs/tools/codex-mcp-guide.md 作成完了（約200行）"
+  - cmd: cmd_049
+    description: "Codex MCP（OpenAI）調査・導入検討"
+    completed_at: "2026-02-10T12:59:05"
+    result: "導入可能、ChatGPT Plus/ProでOAuth認証可、追加費用なし"
   - cmd: cmd_046
     description: "新ツール確認通知（別働隊4名）"
     completed_at: "2026-02-09T12:30:00"

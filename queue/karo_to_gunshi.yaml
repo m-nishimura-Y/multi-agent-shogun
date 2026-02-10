@@ -1,54 +1,88 @@
 # ============================================================
 # 家老 → 軍師 指示書
-# cmd_045: 組織改編後の連携フィードバック収集（別働隊）
+# cmd_050: Codex MCP使い方ガイド作成・全エージェント周知
 # ============================================================
 
 task:
-  task_id: cmd_045_feedback_betsudoutai
-  parent_cmd: cmd_045
-  timestamp: "2026-02-09T11:05:00"
-  type: feedback_collection
-  status: assigned
+  task_id: cmd_050_codex_guide
+  parent_cmd: cmd_050
+  timestamp: "2026-02-10T13:35:00"
+  type: documentation
+  status: pending
   priority: medium
 
+  title: "Codex MCP使い方ガイド作成・全エージェント周知"
+
   description: |
-    殿より指示。組織改編（v1.4.0〜v1.5.0）後の連携について
-    別働隊（足軽5-8）からフィードバックを収集せよ。
+    殿がCodex MCPをインストール済み。接続テストも成功した。
+    全エージェントが活用できるよう、使い方ガイドを作成し周知せよ。
 
   # ================================================================
-  # 収集項目
+  # 利用可能なCodex MCPツール
   # ================================================================
-  feedback_items:
-    command_structure:
-      - "軍師からの指示は明確か？"
-      - "緊急時の連絡フローは機能しているか？"
+  available_tools:
+    - tool: "mcp__codex__codex"
+      description: "非対話モードでAIコーディング支援を実行"
+      options:
+        - "prompt: タスク・質問・分析リクエスト（必須）"
+        - "model: gpt-5.3-codex（デフォルト）, o3, o4-mini 等"
+        - "fullAuto: サンドボックス自動実行モード"
+        - "sandbox: read-only / workspace-write / danger-full-access"
+        - "sessionId: 会話継続用セッションID"
+        - "workingDirectory: 作業ディレクトリ"
 
-    communication_tools:
-      - "notify.sh は確実に使えているか？問題はないか？"
-      - "タスクYAMLの指示内容は十分か？"
-      - "報告書の書き方で困っていることはあるか？"
+    - tool: "mcp__codex__review"
+      description: "コードレビュー実行"
+      options:
+        - "base: ベースブランチ指定"
+        - "commit: 特定コミットのレビュー"
+        - "uncommitted: 未コミット変更のレビュー"
+        - "prompt: カスタムレビュー指示"
 
-    team_collaboration:
-      - "本隊と別働隊の役割分担は明確か？"
-      - "他の足軽との並行作業で困ったことはあるか？"
-      - "情報共有（dashboard.md等）は十分か？"
+    - tool: "mcp__codex__ping"
+      description: "接続テスト"
 
-    improvement_proposals:
-      - "組織運営で改善してほしい点"
-      - "あると便利なツール・仕組み"
-      - "その他自由意見"
+    - tool: "mcp__codex__listSessions"
+      description: "セッション一覧表示"
+
+    - tool: "mcp__codex__help"
+      description: "ヘルプ情報表示"
+
+  # ================================================================
+  # 成果物
+  # ================================================================
+  deliverables:
+    - file: "docs/tools/codex-mcp-guide.md"
+      content:
+        - "概要（Codex MCPとは）"
+        - "ツール一覧と用途"
+        - "基本的な使用例"
+        - "注意事項（サンドボックス設定等）"
+        - "役職別活用シーン"
 
   # ================================================================
   # 軍師への指示
   # ================================================================
   gunshi_instructions: |
-    1. 別働隊4名（足軽5-8）に上記フィードバック項目を配布
-    2. 各足軽から回答を収集
-    3. 回答を集約してgunshi_summary.yamlで家老に報告
-    4. 家老が本隊分と統合して最終レポートを作成
+    【ガイド作成】
+    1. docs/tools/ ディレクトリがなければ作成
+    2. codex-mcp-guide.md を作成
+    3. 全エージェントが理解できる明確な記載
 
-    【報告形式】
-    各項目にYes/No + 簡潔なコメント
+    【役職別活用シーン例】
+    - 将軍: review機能でコードレビュー指示
+    - 家老: 複雑な調査・分析の委譲
+    - 軍師: 調査補助、レビュー実行
+    - 足軽: コーディング支援、コード生成
+
+    【注意事項として記載】
+    - sandboxはデフォルトread-only推奨
+    - fullAutoは慎重に使用
+    - セッション管理（sessionId）の活用
+
+    【報告】
+    - ガイド作成完了後、gunshi_report.yaml に報告
+    - 周知方法は instructions への追記を推奨
 
   report_to: multiagent:0.0
-  next_action: "別働隊4名にフィードバック収集、集約して報告"
+  next_action: "docs/tools/codex-mcp-guide.md 作成、完了後報告"

@@ -5,7 +5,7 @@
 # 将軍・家老・軍師がタスク開始時・完了時に更新せよ
 # ============================================================
 
-last_updated: "2026-02-07T16:12:00"
+last_updated: "2026-02-10T13:50:00"
 
 # ================================================================
 # 将軍（Shogun）の現在状況 - 殿との会話要点記録
@@ -50,6 +50,17 @@ karo:
       reason: null
 
   next_action: "殿からの次の指示待ち"
+
+  recent_completed:
+    - task_id: "cmd_052"
+      description: "README.md/README_ja.md 全面改修（GitHub URL修正、組織構造更新、MCP追加）"
+      completed_at: "2026-02-10T13:50:00"
+    - task_id: "cmd_051"
+      description: "Codex MCPガイドに殿の運用方針追記（v1.1.0）"
+      completed_at: "2026-02-10T13:40:00"
+    - task_id: "cmd_050"
+      description: "Codex MCP使い方ガイド作成・全エージェント周知"
+      completed_at: "2026-02-10T13:33:58"
 
   recent_completed:
     - task_id: "bug_036"
@@ -143,6 +154,14 @@ gunshi:
       reason: null
 
   next_action: "家老からの次の指示待ち"
+
+  recent_completed:
+    - task_id: "cmd_050_codex_guide"
+      description: "Codex MCP使い方ガイド作成完了（docs/tools/codex-mcp-guide.md）"
+      completed_at: "2026-02-10T13:33:58"
+    - task_id: "cmd_049_codex_mcp"
+      description: "Codex MCP調査完了 - 導入可能、ChatGPT Plus/ProでOAuth認証可"
+      completed_at: "2026-02-10T12:59:05"
 
   recent_completed:
     - task_id: "cmd_031_proposals"

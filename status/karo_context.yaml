@@ -15,10 +15,10 @@ updated_by: karo
 
 # === 現在のフォーカス ===
 current_focus:
-  cmd: cmd_046
-  description: "フィードバック改善提案3件実施"
+  cmd: cmd_049
+  description: "Codex MCP（OpenAI）の調査・導入検討"
   status: "✅完了"
-  note: "3件全完了。generate-report.sh/build_status.yaml+update-build-status.sh/tools.md"
+  note: "導入可能。ChatGPT Plus/ProでOAuth認証可。殿の判断待ち"
 
 # === 保留中のcmd ===
 pending_cmds: []
@@ -56,10 +56,10 @@ resolved:
 # === 足軽稼働状況 ===
 ashigaru_status:
   honntai:
-    ashigaru1: done  # cmd_046: IMP-H2 報告書テンプレート自動生成 ✅完了
-    ashigaru2: done  # cmd_046: IMP-M2 ビルドステータス共有 ✅完了
-    ashigaru3: done  # cmd_046: IMP-M4 ツール一覧ドキュメント ✅完了
-    ashigaru4: idle      # 待機中
+    ashigaru1: done  # cmd_048: FE画面系 ✅完了
+    ashigaru2: done  # cmd_048: BE認証系 ✅完了
+    ashigaru3: done  # cmd_048: DB/設定系 ✅完了
+    ashigaru4: done  # cmd_048: ドキュメント系 ✅完了
   betsudoutai:
     ashigaru5: idle  # 待機中
     ashigaru6: idle  # 待機中

@@ -4,7 +4,7 @@
 
 **Claude Code マルチエージェント統率システム**
 
-*コマンド1つで、8体のAIエージェントが並列稼働*
+*コマンド1つで、11体のAIエージェントが並列稼働*
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Claude Code](https://img.shields.io/badge/Claude-Code-blueviolet)](https://claude.ai)
@@ -21,27 +21,37 @@
 **multi-agent-shogun** は、複数の Claude Code インスタンスを同時に実行し、戦国時代の軍制のように統率するシステムです。
 
 **なぜ使うのか？**
-- 1つの命令で、8体のAIワーカーが並列で実行
+- 1つの命令で、11体のAIエージェントが並列で実行
 - 待ち時間なし - タスクがバックグラウンドで実行中も次の命令を出せる
 - AIがセッションを跨いであなたの好みを記憶（Memory MCP）
 - ダッシュボードでリアルタイム進捗確認
 
 ```
-      あなた（上様）
-           │
-           ▼ 命令を出す
-    ┌─────────────┐
-    │   SHOGUN    │  ← 命令を受け取り、即座に委譲
-    └──────┬──────┘
-           │ YAMLファイル + tmux
-    ┌──────▼──────┐
-    │    KARO     │  ← タスクをワーカーに分配
-    └──────┬──────┘
-           │
-  ┌─┬─┬─┬─┴─┬─┬─┬─┐
-  │1│2│3│4│5│6│7│8│  ← 8体のワーカーが並列実行
-  └─┴─┴─┴─┴─┴─┴─┴─┘
-      ASHIGARU
+        あなた（上様）
+             │
+             ▼ 命令を出す
+      ┌─────────────┐
+      │   SHOGUN    │  ← 命令を受け取り、即座に委譲
+      │   (将軍)    │
+      └──────┬──────┘
+             │ YAMLファイル + tmux
+      ┌──────▼──────┐
+      │    KARO     │  ← 管理者: タスク分配、本隊指揮
+      │   (家老)    │
+      └──────┬──────┘
+             │
+      ┌──────┴───────────────────────┐
+      │                              │
+      │                       ┌──────▼──────┐
+      │                       │   GUNSHI    │  ← 参謀: 別働隊指揮
+      │                       │   (軍師)    │
+      │                       └──────┬──────┘
+      │                              │
+      ▼ 本隊                         ▼ 別働隊
+   ┌─┬─┬─┬─┐                    ┌─┬─┬─┬─┐
+   │1│2│3│4│ ← コード作成      │5│6│7│8│ ← 複雑タスク + レビュー(7-8)
+   └─┴─┴─┴─┘                    └─┴─┴─┴─┘
+     ASHIGARU                     ASHIGARU
 ```
 
 ---
@@ -61,9 +71,9 @@
 
 📥 **リポジトリをダウンロード**
 
-[ZIPダウンロード](https://github.com/yohey-w/multi-agent-shogun/archive/refs/heads/main.zip) して `C:\tools\multi-agent-shogun` に展開
+[ZIPダウンロード](https://github.com/m-nishimura-Y/multi-agent-shogun/archive/refs/heads/main.zip) して `C:\tools\multi-agent-shogun` に展開
 
-*または git を使用:* `git clone https://github.com/yohey-w/multi-agent-shogun.git C:\tools\multi-agent-shogun`
+*または git を使用:* `git clone https://github.com/m-nishimura-Y/multi-agent-shogun.git C:\tools\multi-agent-shogun`
 
 </td>
 </tr>
@@ -89,7 +99,7 @@
 </td>
 <td>
 
-✅ **完了！** 10体のAIエージェントが起動しました。
+✅ **完了！** 11体のAIエージェントが起動しました。
 
 </td>
 </tr>
@@ -113,7 +123,7 @@ cd /mnt/c/tools/multi-agent-shogun
 
 ```bash
 # 1. リポジトリをクローン
-git clone https://github.com/yohey-w/multi-agent-shogun.git ~/multi-agent-shogun
+git clone https://github.com/m-nishimura-Y/multi-agent-shogun.git ~/multi-agent-shogun
 cd ~/multi-agent-shogun
 
 # 2. スクリプトに実行権限を付与
@@ -204,17 +214,20 @@ wsl --install
 
 ### ✅ セットアップ後の状態
 
-どちらのオプションでも、**10体のAIエージェント**が自動起動します：
+どちらのオプションでも、**11体のAIエージェント**が自動起動します：
 
 | エージェント | 役割 | 数 |
 |-------------|------|-----|
 | 🏯 将軍（Shogun） | 総大将 - あなたの命令を受ける | 1 |
-| 📋 家老（Karo） | 管理者 - タスクを分配 | 1 |
-| ⚔️ 足軽（Ashigaru） | ワーカー - 並列でタスク実行 | 8 |
+| 📋 家老（Karo） | 管理者 - 本隊にタスクを分配 | 1 |
+| 🎯 軍師（Gunshi） | 参謀 - 別働隊を指揮 | 1 |
+| ⚔️ 足軽1-4（本隊） | コード作成担当 | 4 |
+| ⚔️ 足軽5-8（別働隊） | 複雑タスク + コードレビュー(7-8) | 4 |
 
 tmuxセッションが作成されます：
 - `shogun` - ここに接続してコマンドを出す
-- `multiagent` - ワーカーがバックグラウンドで稼働
+- `gunshi` - 軍師が別働隊を指揮
+- `multiagent` - 家老+ワーカーがバックグラウンドで稼働
 
 ---
 
@@ -372,7 +385,20 @@ screenshot:
 
 ## 🎯 設計思想
 
-### なぜ階層構造（将軍→家老→足軽）なのか
+### チームグランドルール（v1.6.4〜）
+
+```
+誰も急かしていない。しかし遊んでもいない。
+正確に、丁寧に、自分の仕事をすることが最優先される。
+```
+
+| ルール | 内容 |
+|--------|------|
+| 確認・準備は本来の仕事 | コンパクション復帰時の確認は「準備」ではなく「仕事」 |
+| 焦る必要はない | summaryの「次のステップ」は参考情報。足軽idleも「遊ばせている」わけではない |
+| 正しく > 早く | 誤った行動より、正しい確認 |
+
+### なぜ階層構造（将軍→家老→軍師→足軽）なのか
 
 1. **単一責任**: 各役割が明確に分離され、混乱しない
 2. **スケーラビリティ**: 足軽を増やしても構造が崩れない
@@ -435,6 +461,8 @@ MCPサーバはClaudeに外部ツールへのアクセスを提供します：
 - **Notion MCP** → Notionページの読み書き
 - **GitHub MCP** → PR作成、Issue管理
 - **Memory MCP** → セッション間で記憶を保持
+- **Codex MCP** → AIコーディング支援・コードレビュー（OpenAI）
+- **Document Loader** → PDF/Word/Excel/PowerPointファイル読み込み
 
 ### MCPサーバのインストール
 
@@ -456,6 +484,13 @@ claude mcp add sequential-thinking -- npx -y @modelcontextprotocol/server-sequen
 
 # 5. Memory - セッション間の長期記憶（推奨！）
 claude mcp add memory -e MEMORY_FILE_PATH="$PWD/memory/shogun_memory.jsonl" -- npx -y @modelcontextprotocol/server-memory
+
+# 6. Codex (OpenAI) - AIコーディング支援・コードレビュー
+claude mcp add codex -- npx -y codex-mcp-server
+# 注意: ChatGPT Plus/Proアカウントが必要。`codex login` でOAuth認証
+
+# 7. Document Loader (AWS Labs) - PDF/Word/Excel/PowerPoint読み込み
+claude mcp add document-loader -- uvx awslabs.document-loader-mcp-server@latest
 ```
 
 ### インストール確認
@@ -636,6 +671,7 @@ multi-agent-shogun/
 ├── instructions/             # エージェント指示書
 │   ├── shogun.md             # 将軍の指示書
 │   ├── karo.md               # 家老の指示書
+│   ├── gunshi.md             # 軍師の指示書
 │   └── ashigaru.md           # 足軽の指示書
 │
 ├── config/
