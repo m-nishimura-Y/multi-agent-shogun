@@ -1,214 +1,135 @@
-# Shogun → Karo 指示キュー
-# Generated: 2026-02-10T13:59:58
-
 queue:
-  - id: cmd_052
-    timestamp: "2026-02-10T13:59:58"
-    command: "README.md 全面改修"
-    details:
-      background: |
-        殿より直接指示。GitHubリポジトリ公開に向けてREADME.mdを最新化せよ。
-
-      updates_required:
-        - item: "GitHubリポジトリURL修正"
-          priority: critical
-          current: "yohey-w/multi-agent-shogun（64-66行目等）"
-          correct: "m-nishimura-Y/multi-agent-shogun"
-          note: "全箇所を置換せよ"
-
-        - item: "組織構造の更新（v1.6.x対応）"
-          priority: high
-          changes:
-            - "軍師（Gunshi）を追加 - 家老の参謀・秘書・別働隊指揮"
-            - "本隊（足軽1-4）と別働隊（足軽5-8）の区分け追加"
-            - "足軽7-8のレビュー担当役割を明記"
-            - "エージェント数を11名に訂正（将軍+軍師+家老+足軽8）"
-          reference: "CLAUDE.md の階層構造図を参照"
-
-        - item: "MCP Setup Guide セクション更新"
-          priority: high
-          add:
-            - name: "Codex MCP（OpenAI）"
-              description: "コーディング支援・コードレビュー"
-              command: "claude mcp add codex -- npx -y codex-mcp-server"
-              note: "ChatGPT Plus/Pro アカウントでOAuth認証"
-            - name: "Document Loader（AWS Labs）"
-              description: "PDF/Word/Excel/PPT読み込み"
-              command: "claude mcp add document-loader -- uvx awslabs.document-loader-mcp-server@latest"
-
-        - item: "チームグランドルール追記（任意）"
-          priority: low
-          note: "v1.6.4のグランドルール概要を Design Philosophy に追記可"
-
-      execution_plan:
-        - step: 1
-          task: "GitHubリポジトリURL全置換"
-          assign: "足軽（単純置換）"
-        - step: 2
-          task: "組織構造図・説明の更新"
-          assign: "軍師または足軽"
-        - step: 3
-          task: "MCP Setup Guide更新"
-          assign: "軍師または足軽"
-        - step: 4
-          task: "全体レビュー・整合性確認"
-          assign: "軍師"
-
-      notes: |
-        - 殿の直接指示。優先度高。
-        - 並列実行可能な作業は分割してよい
-        - README_ja.md も存在する場合は同様に更新せよ
+  - id: cmd_034
+    timestamp: "2026-02-13T17:38:55"
+    command: "【通達】全軍役割ファイル責任フォーカス化リストラクチャ完了"
+    project: multi-agent-shogun
     priority: high
-    status: completed
-    completed_at: "2026-02-10T13:50:00"
-    result: |
-      README.md/README_ja.md 全面改修完了:
-      - GitHubリポジトリURL: yohey-w → m-nishimura-Y（全箇所）
-      - エージェント数: 8→11体に訂正
-      - 組織構造図: 軍師追加、本隊/別働隊区分け
-      - エージェントテーブル: 役割分担明記
-      - MCP Setup Guide: Codex MCP, Document Loader追加
-      - チームグランドルール追記
-      - ファイル構造: gunshi.md追加
-
-  - id: cmd_051
-    timestamp: "2026-02-10T13:37:14"
-    command: "Codex MCPガイドに殿の運用方針を追記せよ"
+    status: assigned
     details:
-      target_file: "docs/tools/codex-mcp-guide.md"
+      summary: |
+        殿のご指導のもと、全役割ファイルを「責任フォーカス」形式に再編成した。
+        全軍にこの変更を通達し、新しいファイル構成を周知せよ。
 
-      directive_from_lord: |
-        殿より直接の運用方針指示あり。以下を反映せよ：
+      changes:
+        - description: "役割ファイルを責任（フォーカス）中心に再構成"
+          before: "手順・ルール・詳細が混在（700-1000行）"
+          after: "責任を明確化（130-170行）+ マニュアル分離"
 
-        1. Codexはレビューに優れている
-        2. 足軽1-6が書いたコードを足軽7-8がCodexでレビューする
-        3. セルフレビューでも足軽が使用可
+        - description: "詳細手順をマニュアルディレクトリに分離"
+          structure: |
+            instructions/
+            ├── shogun.md (責任フォーカス) + shogun/（3マニュアル）
+            ├── gunshi.md (責任フォーカス) + gunshi/（7マニュアル）
+            ├── karo.md (責任フォーカス) + karo/（5マニュアル）
+            └── ashigaru.md (責任フォーカス) + ashigaru/（8マニュアル）
 
-      updates_required:
-        - section: "役職別活用シーン > 足軽"
-          current: "一般的なコーディング支援の記載のみ"
-          add: |
-            【足軽1-6】コード作成担当。セルフレビューにCodex使用可
-            【足軽7-8】レビュー担当。足軽1-6のコードをCodexでレビュー
+        - description: "戦国風口調を維持"
+          note: "「〜せよ」「〜するな」「〜じゃ」等のペルソナ維持"
 
-        - section: "新規追加：コードレビュー運用フロー"
-          add: |
-            足軽1-6（作成）→ 足軽7-8（Codexでレビュー）→ 軍師へ報告
+        - description: "20%ルール（コンパクション自己管理）を全ファイルに追加"
+          rule: "コンテキスト残量20%以下でキリの良いところで /compact 実行"
 
-        - section: "使用例追加"
-          add: "足軽7-8がレビューする際の mcp__codex__review 具体例"
+      key_points:
+        - "責任とは「作業すること」ではない。フォーカスである"
+        - "マニュアルを読むことが目的ではない。責任を果たすことが目的じゃ"
+        - "旧ファイルは *_old.md としてバックアップ済み"
 
-      notes: |
-        - cmd_050の続きとして軍師に追加指示せよ
-        - 殿の直接指示なので優先度高
-    priority: high
-    status: completed
-    completed_at: "2026-02-10T13:40:00"
-    result: "ガイドv1.1.0更新完了。足軽1-6/7-8役割分担、レビュー運用フロー、レビュー例4件追記"
+      action_required:
+        - "軍師に通達せよ"
+        - "本隊・別働隊に周知せよ"
+        - "dashboard.md を更新せよ"
 
-  - id: cmd_050
-    timestamp: "2026-02-10T13:30:33"
-    command: "Codex MCPの使い方を全エージェントに周知せよ"
+  - id: cmd_033
+    timestamp: "2026-02-13T17:00:54"
+    command: "【緊急】軍師の永続化アーカイブ忘れ問題 - 役割ファイル見直し・再発防止策を講じよ"
+    project: multi-agent-shogun
+    priority: critical
+    status: done
+    completed_at: "2026-02-13T17:04:00"
     details:
-      background: |
-        殿がCodex MCPをインストール済み。接続テストも成功した。
-        全エージェントが活用できるよう、使い方を周知せよ。
+      problem:
+        description: |
+          軍師が cmd_*_summary.yaml の永続化を忘れており、
+          過去のタスク記録のほとんどが復旧困難になった。
 
-      available_tools:
-        - tool: "mcp__codex__codex"
-          description: "非対話モードでAIコーディング支援を実行"
-          options:
-            - "prompt: タスク・質問・分析リクエスト"
-            - "model: gpt-5.3-codex（デフォルト）, o3, o4-mini 等"
-            - "fullAuto: サンドボックス自動実行モード"
-            - "sandbox: read-only / workspace-write / danger-full-access"
-        - tool: "mcp__codex__review"
-          description: "コードレビュー実行"
-          options:
-            - "base: ベースブランチ指定"
-            - "commit: 特定コミットのレビュー"
-            - "uncommitted: 未コミット変更のレビュー"
-        - tool: "mcp__codex__ping"
-          description: "接続テスト"
-        - tool: "mcp__codex__listSessions"
-          description: "セッション一覧表示"
+          【現状】
+          - archive に存在: cmd_001, 002, 012, 013, 022, 023, 031 の7件のみ
+          - 欠落: cmd_003〜011, 014〜021, 024〜030 など多数
+
+          【原因分析】
+          - gunshi.md にはルールが書いてあるが、コンパクション復帰時に見落とされやすい
+          - 家老報告「前」に永続化すべきだが、タイミングが曖昧
+          - チェックリストとしてより強調する必要がある
 
       tasks:
-        - task: "使い方ガイド作成"
-          location: "docs/tools/codex-mcp-guide.md"
-          content:
-            - "ツール一覧と用途"
-            - "基本的な使用例"
-            - "注意事項（サンドボックス設定等）"
-        - task: "足軽への周知"
-          method: "ガイド作成後、必要に応じて別働隊に周知"
+        - task: "gunshi.md の永続化ルール強化"
+          changes:
+            - "コンパクション復帰セクションに永続化確認を追加"
+            - "家老報告フローに「永続化チェック」ステップを必須化"
+            - "より目立つ警告ボックスを追加"
+            - "チェックリスト形式で確認項目を明記"
 
-      notes: |
-        - 軍師に委譲してガイド作成させてよい
-        - 将軍は主に review 機能を使う可能性あり
-        - 足軽は codex でコーディング支援を受けられる
-    priority: medium
-    status: completed
-    assigned_at: "2026-02-10T13:36:00"
-    assigned_to: "gunshi"
-    completed_at: "2026-02-10T13:33:58"
-    result: "docs/tools/codex-mcp-guide.md 作成完了"
+        - task: "karo.md にも軍師の永続化確認を追加"
+          reason: "家老が報告を受ける際に、永続化されたか確認するチェックポイント"
 
-  - id: cmd_049
-    timestamp: "2026-02-10T12:53:50"
-    command: "Codex MCP（OpenAI）の調査・導入検討"
-    details:
-      background: |
-        殿より情報提供あり。
-        - CodexのMCPが存在するという噂
-        - 殿はChatGPTの有償プランアカウントを保有
-        - ログイン認証すれば使える可能性あり
+        - task: "CLAUDE.md のグランドルールに追記"
+          reason: "全エージェント共通の重要ルールとして周知"
 
-      investigation_items:
-        - item: "Codex MCPの存在確認"
-          description: "npmjs、GitHub等でCodex/OpenAI関連のMCPサーバーを検索"
-        - item: "機能・用途の調査"
-          description: "何ができるMCPか（コード生成、補完、解析等）"
-        - item: "認証方式の確認"
-          description: "ChatGPT有償プランで使えるか、APIキー必要か、OAuth認証か"
-        - item: "導入手順の整理"
-          description: "見つかった場合、導入手順をまとめる"
-        - item: "全エージェント共有方法"
-          description: "将軍・家老・軍師・足軽全員が使える設定方法"
+        - task: "Obsidian知見ノートに失敗事例として記録"
+          target: "知見/失敗と学び/永続化アーカイブ忘れ.md"
+          content: |
+            - 何が起きたか
+            - なぜ起きたか
+            - どう防ぐか
+            - 学んだこと
 
-      expected_output:
-        - "Codex MCPの有無・概要"
-        - "導入可否の判断"
-        - "導入手順（可能な場合）"
-        - "全エージェント共有のための設定方法"
+      proposed_changes:
+        gunshi_md:
+          - location: "コンパクション復帰セクション（最上部）"
+            add: |
+              # ██████████████████████████████████████████████████████████████████████████████
+              # █ 【最重要】家老に報告する前に、必ず永続化を確認せよ！                      █
+              # █ cp queue/reports/gunshi_summary.yaml queue/reports/archive/cmd_XXX_summary.yaml █
+              # █ これを忘れると記録が消える！過去に多数のcmdが消失した！                  █
+              # ██████████████████████████████████████████████████████████████████████████████
 
-      notes: |
-        - 軍師に調査を委譲してよい
-        - Web検索を活用せよ
-        - 見つからない場合は「見つからなかった」と報告
-        - 類似のMCP（OpenAI API系）があれば併せて報告
-    priority: medium
-    status: completed
-    assigned_at: "2026-02-10T12:55:00"
-    assigned_to: "gunshi"
-    completed_at: "2026-02-10T12:58:00"
-    result: "導入可能。ChatGPT Plus/ProでOAuth認証可、追加費用なし。詳細はgunshi_report.yaml"
+          - location: "workflowセクション"
+            modify: |
+              step A5.5（新規追加）:
+                action: archive_summary
+                target: queue/reports/archive/cmd_{XXX}_summary.yaml
+                command: "cp queue/reports/gunshi_summary.yaml queue/reports/archive/cmd_XXX_summary.yaml"
+                note: "これを忘れるな！家老報告の「前」に必ず実行！"
+                mandatory: true
 
-  - id: cmd_048
-    timestamp: "2026-02-10T11:48:33"
-    command: "【重要】ARMS関連の文字列を全て削除・置換せよ"
-    status: completed
-    completed_at: "2026-02-10T11:52:00"
-    result: "全16箇所置換完了。FE/BEビルド成功。Docker再作成必要"
+        karo_md:
+          - location: "軍師報告受領時"
+            add: |
+              【軍師報告受領時チェック】
+              軍師からサマリ報告を受けた際、以下を確認せよ：
+              □ queue/reports/archive/cmd_XXX_summary.yaml は存在するか？
+              存在しない場合は軍師に永続化を指示せよ。
 
-  - id: cmd_047
-    timestamp: "2026-02-09T18:58:46"
-    command: "サイドバーにダッシュボードへの遷移を追加せよ"
-    status: completed
-    result: "ビルド成功"
+      note: |
+        殿のご指摘：「役割ファイルとかも見直してくれる？」
+        → gunshi.md, karo.md, CLAUDE.md の関連セクションを全て見直し、
+        再発防止策を講じること。
 
-  - id: cmd_046
-    timestamp: "2026-02-09T11:15:00"
-    command: "フィードバック改善提案3件実施"
-    status: completed
-    result: "3件全完了"
+  - id: cmd_032
+    timestamp: "2026-02-13T16:57:26"
+    command: "Obsidian vault「gunryaku-roku」のディレクトリ構造を整備せよ"
+    status: done
+    completed_at: "2026-02-13T17:06:00"
+    note: "cmd_033と並行して進めてよい"
+
+  - id: cmd_031
+    timestamp: "2026-02-13T16:42:30"
+    command: "cmd_*_summary.yaml をObsidianに取り込み、記録を可視化せよ"
+    status: done
+    completed_at: "2026-02-13T16:56:00"
+
+  - id: cmd_030
+    timestamp: "2026-02-13T14:14:15"
+    command: "Draw.io MCP 運用ルール整備"
+    status: done
+    completed_at: "2026-02-13T14:49:32"
