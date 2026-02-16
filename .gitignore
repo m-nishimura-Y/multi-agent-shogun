@@ -1,8 +1,8 @@
 # Order file (internal use only)
 claude-shogun-orders.md
 
-# Claude Code settings
-.claude/
+# Claude Code settings (個人設定のみ除外、チーム設定は共有)
+.claude/settings.local.json
 
 # Test outputs (generated during testing)
 test_output/
