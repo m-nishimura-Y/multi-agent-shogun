@@ -151,6 +151,10 @@ total_skills: 34  # 33 + 1 (promotion-tab-component-generator)
 
 # === メモ ===
 notes: |
+  【要確認】drawio MCP 再起動後に動作確認せよ（パッケージ修正済み: @drawio/mcp）
+  - ツール: open_drawio_mermaid, open_drawio_csv, open_drawio_xml
+  - Mermaid記法が最も使いやすい（LLMに最適）
+
   【v1.5.0 組織改編】
   - 家老: モック作成指示・進捗管理・dashboard更新に集中
   - 軍師: バグ管理・提案管理・レビュー指揮を担当

@@ -70,7 +70,7 @@ if [ -n "$SELF_TARGET" ]; then
         # コンパクション処理が完全に完了し、Claudeが入力待ちになるまで待つ
         sleep 8
         echo "[$(date)] Sending notification to $SELF_TARGET" >> "$LOG_FILE"
-        "$PROJECT_DIR/bin/notify.sh" "$SELF_TARGET" "【コンパクション復帰】殿に報告せよ。"
+        "$PROJECT_DIR/bin/notify.sh" "$SELF_TARGET" "/recovery"
         echo "[$(date)] notify.sh exit code: $?" >> "$LOG_FILE"
     ) &
     echo "[$(date)] Background process started" >> "$LOG_FILE"

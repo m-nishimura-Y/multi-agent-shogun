@@ -14,52 +14,141 @@
 # - 大型タスク区切り時
 # ================================================================
 
-last_updated: "2026-02-10T13:33:58"
+last_updated: "2026-02-16T19:00:00"
 updated_by: gunshi
 
 # === 現在のフォーカス ===
 current_focus:
-  cmd: null
-  description: "待機中"
-  status: "idle"
-  note: "cmd_050 Codex MCPガイド作成完了、家老報告完了"
+  cmd: cmd_057
+  description: "document-ai 全軍総合診断（スキル実地テスト）"
+  status: "done"
+  note: "全4名完了、家老への報告待ち"
+
+# === ブロッカー ===
+blocker:
+  type: null
+  detail: null
+  impact: null
+  reported_to: null
+  awaiting: null
 
 # === 別働隊稼働状況 ===
 betsudoutai_status:
-  ashigaru5: idle  # 待機中
-  ashigaru6: idle  # 待機中
-  ashigaru7: idle  # 待機中（レビュー専任）
-  ashigaru8: idle  # 待機中（レビュー専任）
+  ashigaru5: idle
+  ashigaru6: idle
+  ashigaru7: idle
+  ashigaru8: idle
 
 # === 別働隊役割分担 ===
 betsudoutai_roles:
-  作業担当: [ashigaru5, ashigaru6]
-  レビュー専任: [ashigaru7, ashigaru8]
-  note: "v1.4.3より足軽7-8はレビュー専任"
+  ashigaru5: null
+  ashigaru6: null
+  ashigaru7: null
+  ashigaru8: null
+  note: "cmd_057完了、全員待機中"
 
 # === 進行中タスク ===
-in_progress_tasks: []
+in_progress_tasks:
+  - cmd: cmd_057
+    tasks:
+      - task_id: cmd057_skill_test_cloudrun
+        assignee: ashigaru5
+        description: "gcp-cloudrun-analyzer スキル実地テスト"
+        status: done
+        result: "総合D(10/40)、HIGH 3件(非root,ハードコード,secret混入)、スキル動作OK"
+      - task_id: cmd057_skill_test_gcpconfig
+        assignee: ashigaru6
+        description: "gcp-config-analyzer スキル実地テスト"
+        status: done
+        result: "MEDIUM 1件(PROJECT_IDハードコード)、スキル動作OK"
+      - task_id: cmd057_skill_test_codequality
+        assignee: ashigaru7
+        description: "code-quality-analyzer スキル実地テスト"
+        status: done
+        result: "総合B(62%)、テストA+、LinterC。スキル候補: python-code-quality-analyzer"
+      - task_id: cmd057_skill_test_docquality
+        assignee: ashigaru8
+        description: "design-doc-quality-reviewer スキル実地テスト"
+        status: done
+        result: "Grade A-、軽微指摘2件、スキル動作OK"
 
 # === スキル評価履歴（直近） ===
 skill_evaluations:
+  # cmd_050, cmd_051で作成完了
+  - name: "windows-credential-audit"
+    score: 16
+    result: "作成完了"
+    evaluated_at: "2026-02-16"
+    note: "380行・7カテゴリ・26項目・PowerShell/Bash自動化スクリプト付き"
+
+  - name: "dotnet-process-injection-audit"
+    score: 17
+    result: "作成完了"
+    evaluated_at: "2026-02-16"
+    note: "350行・4フェーズ診断・CWEマッピング・危険パターン検出"
+
+  - name: "powershell-security-checker"
+    score: 13
+    result: "条件付き承認（統合推奨）"
+    evaluated_at: "2026-02-16"
+    note: "足軽8提案。他スキルのサブスキルとして統合推奨。"
+
+  # cmd_046で作成完了
+  - name: "express-security-audit"
+    score: 17
+    result: "作成完了"
+    evaluated_at: "2026-02-16"
+    note: "Express.jsセキュリティ監査。420行・7カテゴリ・35項目・自動化スクリプト付き。"
+
+  # cmd_037で提案された1件
+  - name: "gcp-iap-auth-audit"
+    score: 15
+    result: "作成完了"
+    evaluated_at: "2026-02-13"
+    note: "GCP IAP認証監査スキル。足軽5,6提案を統合。"
+
+  # cmd_035で提案された4件（全て作成完了）
+  - name: "aspnet-auth-audit"
+    score: 19
+    result: "作成完了"
+    evaluated_at: "2026-02-13"
+    note: "ASP.NET Core認証認可設定の自動監査"
+
+  - name: "dotnet-secrets-scanner"
+    score: 18
+    result: "作成完了"
+    evaluated_at: "2026-02-13"
+    note: "appsettings.jsonから機密情報の平文コミット検出"
+
+  - name: "dotnet-security-audit"
+    score: 19
+    result: "作成完了"
+    evaluated_at: "2026-02-13"
+    note: "ASP.NET Coreセキュリティ監査チェックリスト（親スキル）"
+
+  - name: "blazor-security-checker"
+    score: 17
+    result: "作成完了"
+    evaluated_at: "2026-02-13"
+    note: "Blazor Server特化セキュリティ診断"
+
+  # 過去の履歴
   - name: "dependency-analyzer"
     score: 16
     result: "承認・作成完了"
     evaluated_at: "2026-02-05"
+
   - name: "typeorm-entity-checker"
     score: 15
     result: "承認・作成完了"
     evaluated_at: "2026-02-05"
-  - name: "ESLint未使用変数パターン"
-    score: 10
-    result: "却下（ガイドライン追記で対応）"
-    evaluated_at: "2026-02-07"
-    note: "独立スキルにするほど複雑ではない"
 
 # === 条件付き承認スキル（12-13点） ===
-# v1.6.3: 軍師裁量で条件クリア判断可（殿承認済み）
 conditional_skills:
-  items: []
+  items:
+    - name: "powershell-security-checker"
+      score: 13
+      condition: "windows-credential-auditまたはdotnet-process-injection-auditのサブスキルとして統合"
   rule: |
     12-13点のスキルは条件付き承認。
     条件を満たせば軍師の裁量で作成指示可。
@@ -67,26 +156,63 @@ conditional_skills:
 
 # === 直近の完了タスク ===
 recent_completed:
+  - cmd: cmd_051
+    description: "dotnet-process-injection-audit スキル作成"
+    completed_at: "2026-02-16T15:55:00"
+    result: |
+      350行・4フェーズ診断・CWEマッピング・危険パターン検出。
+      cmd_049で発見したProcess.Start脆弱性を体系化。
+
   - cmd: cmd_050
-    description: "Codex MCP使い方ガイド作成・全エージェント周知"
-    completed_at: "2026-02-10T13:33:58"
-    result: "docs/tools/codex-mcp-guide.md 作成完了（約200行）"
+    description: "windows-credential-audit スキル作成"
+    completed_at: "2026-02-16T15:55:00"
+    result: |
+      380行・7カテゴリ・26項目・PowerShell/Bash自動化スクリプト付き。
+      cmd_049で発見した認証情報管理問題を体系化。
+
   - cmd: cmd_049
-    description: "Codex MCP（OpenAI）調査・導入検討"
-    completed_at: "2026-02-10T12:59:05"
-    result: "導入可能、ChatGPT Plus/ProでOAuth認証可、追加費用なし"
+    description: "ZeroTouchKitter 脆弱性診断【緊急】"
+    completed_at: "2026-02-16T15:25:00"
+    result: |
+      【緊急】Critical 4件、High 3件、Medium 3件。
+      config.jsonに平文PW（Gitコミット済み）、コマンドインジェクション3件。
+      即時パスワード変更必要。
+
   - cmd: cmd_046
-    description: "新ツール確認通知（別働隊4名）"
-    completed_at: "2026-02-09T12:30:00"
-    result: "3/4名確認完了（足軽7待ち）"
+    description: "express-security-audit スキル作成"
+    completed_at: "2026-02-16T14:00:00"
+    result: |
+      420行・7カテゴリ・35チェック項目。
+      自動化シェルスクリプト付き。
+      cmd_045の診断結果を元に作成。
+
   - cmd: cmd_045
-    description: "組織改編フィードバック収集（別働隊分）"
-    completed_at: "2026-02-09T12:00:00"
-    result: "別働隊4名からフィードバック収集完了"
-  - cmd: cmd_044
-    description: "非公式DWH乱立問題の解決提案作成"
-    completed_at: "2026-02-07T18:00:00"
-    result: "4文書1,520行完成（別働隊4名並行作成）"
+    description: "ipadress-manager 脆弱性診断"
+    completed_at: "2026-02-16T13:35:00"
+    result: |
+      既存Issue 3件確認（#52対応済み、#53未対応、#54追加発見）。
+      npm audit: Critical 2, High 9, Moderate 7, Low 1。
+      コード/設定: High 2, Medium 6, Low 5。
+      スキル候補: express-security-audit (17点) 自動承認。
+
+  - cmd: cmd_037
+    description: "billing-mng-gcp セキュリティ診断"
+    completed_at: "2026-02-13T19:50:00"
+    result: |
+      Critical 2件、High 1件、Medium 5件、Low 4件検出。
+      Issue #34 部分対応済み。スキル候補1件提案（gcp-iap-auth-audit 15点）。
+
+  - cmd: cmd_036
+    description: "セキュリティスキル4件作成"
+    completed_at: "2026-02-13T18:25:00"
+    result: "4スキル合計1,614行作成完了"
+
+  - cmd: cmd_035
+    description: "AssetsManageSystem セキュリティ診断"
+    completed_at: "2026-02-13T17:58:00"
+    result: |
+      Critical 10件、High 7件、Medium 5件、Low 2件検出。
+      スキル候補4件提案（全て自動承認対象）。
 
 # === 家老への報告待ち ===
 pending_to_karo: []
@@ -111,15 +237,11 @@ skill_criteria_summary: |
 
 # === メモ ===
 notes: |
-  【v1.6.3 条件付きスキル裁量委任】
-  - 12-13点スキルの条件クリア判断は軍師裁量でOK（殿承認済み）
-  - 事後報告で可
+  【cmd_040 スキル作成】
+  - skill-evaluate: 評価→作成依頼を自動化（仕組みで解決）
+  - gcp-iap-auth-audit: cmd_037で評価済み、作成漏れ対応
 
-  【別働隊指揮のポイント】
-  - 4名並行時はタスク依存関係に注意
-  - 大型タスク後はコンパクションに備えてこのファイルを更新
-  - 報告集約時は gunshi_summary.yaml に記載
-
-  【足軽間直接連携について】
-  - 原則は軍師経由
-  - レビュー依頼等、効率的な場合は直接連携も検討可（要ルール整備）
+  【skill-evaluate の重要性】
+  殿の方針「チェックリストではなく仕組みで解決」
+  - 軍師がスキル評価後、作成指示を出し忘れる問題を根本解決
+  - 14点以上なら自動でタスク生成+通知まで実行

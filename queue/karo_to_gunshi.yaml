@@ -1,88 +1,85 @@
 # ============================================================
 # 家老 → 軍師 指示書
-# cmd_050: Codex MCP使い方ガイド作成・全エージェント周知
+# cmd_057: document-ai 全軍総合診断（スキル実地テスト）
 # ============================================================
 
 task:
-  task_id: cmd_050_codex_guide
-  parent_cmd: cmd_050
-  timestamp: "2026-02-10T13:35:00"
-  type: documentation
+  task_id: gunshi_cmd057_betsudoutai
+  parent_cmd: cmd_057
+  timestamp: "2026-02-16T18:50:00"
+  type: parallel_diagnosis
   status: pending
-  priority: medium
+  priority: high
 
-  title: "Codex MCP使い方ガイド作成・全エージェント周知"
+  title: "【別働隊指揮】document-ai スキル実地テスト"
 
   description: |
-    殿がCodex MCPをインストール済み。接続テストも成功した。
-    全エージェントが活用できるよう、使い方ガイドを作成し周知せよ。
+    殿の指示により、document-ai を全軍で総合診断する。
+    目的は2つ：
+    1. プロジェクトの品質・セキュリティ診断
+    2. 既存スキルの実地テスト（使用率0%問題の解消）
 
-  # ================================================================
-  # 利用可能なCodex MCPツール
-  # ================================================================
-  available_tools:
-    - tool: "mcp__codex__codex"
-      description: "非対話モードでAIコーディング支援を実行"
-      options:
-        - "prompt: タスク・質問・分析リクエスト（必須）"
-        - "model: gpt-5.3-codex（デフォルト）, o3, o4-mini 等"
-        - "fullAuto: サンドボックス自動実行モード"
-        - "sandbox: read-only / workspace-write / danger-full-access"
-        - "sessionId: 会話継続用セッションID"
-        - "workingDirectory: 作業ディレクトリ"
+    別働隊4名（足軽5-8）にスキルを割り当て、並列で診断を実行せよ。
 
-    - tool: "mcp__codex__review"
-      description: "コードレビュー実行"
-      options:
-        - "base: ベースブランチ指定"
-        - "commit: 特定コミットのレビュー"
-        - "uncommitted: 未コミット変更のレビュー"
-        - "prompt: カスタムレビュー指示"
+  target:
+    repository: "https://github.com/Yuidea-DxG/document-ai.git"
+    local_path: "/home/nishimura/document-ai"
+    tech_stack:
+      - "Python 3.x"
+      - "Streamlit (Web UI)"
+      - "FastAPI (API)"
+      - "Google Cloud Document AI"
+      - "GCP Cloud Run"
+      - "pytest"
 
-    - tool: "mcp__codex__ping"
-      description: "接続テスト"
+  existing_issues:
+    - id: 5
+      title: "エラーハンドリング強化とログ出力の充実"
+    - id: 7
+      title: "統合テストの追加とテストカバレッジ向上"
+    - id: 9
+      title: "軽微な改善まとめ（print削除・定数化・整理）"
 
-    - tool: "mcp__codex__listSessions"
-      description: "セッション一覧表示"
+  task_assignment:
+    ashigaru5:
+      skill: "gcp-cloudrun-analyzer"
+      target: "Cloud Run構成診断"
+      focus: "Dockerfile, cloudbuild*.yaml, deploy.sh"
 
-    - tool: "mcp__codex__help"
-      description: "ヘルプ情報表示"
+    ashigaru6:
+      skill: "gcp-config-analyzer"
+      target: "GCP設定全般診断"
+      focus: ".env.example, api/, GCP関連設定"
 
-  # ================================================================
-  # 成果物
-  # ================================================================
-  deliverables:
-    - file: "docs/tools/codex-mcp-guide.md"
-      content:
-        - "概要（Codex MCPとは）"
-        - "ツール一覧と用途"
-        - "基本的な使用例"
-        - "注意事項（サンドボックス設定等）"
-        - "役職別活用シーン"
+    ashigaru7:
+      skill: "code-quality-analyzer"
+      target: "コード品質評価（Python適用）"
+      focus: "app.py, api/, 全体構造"
 
-  # ================================================================
-  # 軍師への指示
-  # ================================================================
-  gunshi_instructions: |
-    【ガイド作成】
-    1. docs/tools/ ディレクトリがなければ作成
-    2. codex-mcp-guide.md を作成
-    3. 全エージェントが理解できる明確な記載
+    ashigaru8:
+      skill: "design-doc-quality-reviewer"
+      target: "ドキュメント品質評価"
+      focus: "docs/*.md, README.md"
 
-    【役職別活用シーン例】
-    - 将軍: review機能でコードレビュー指示
-    - 家老: 複雑な調査・分析の委譲
-    - 軍師: 調査補助、レビュー実行
-    - 足軽: コーディング支援、コード生成
+  report_format: |
+    各足軽は以下の形式で報告せよ：
+    1. 使用したスキル名
+    2. スキルの動作確認結果（正常/問題あり）
+    3. 診断結果サマリ
+    4. 発見した問題（severity付き）
+    5. 改善提案
+    6. スキルへのフィードバック（使いにくい点、改善案）
 
-    【注意事項として記載】
-    - sandboxはデフォルトread-only推奨
-    - fullAutoは慎重に使用
-    - セッション管理（sessionId）の活用
+  action_required:
+    - "足軽5-8のタスクファイルを作成せよ"
+    - "全4名に通知して並列で診断を開始せよ"
+    - "結果を集約して家老に報告せよ"
+    - "既存Issue（#5, #7, #9）との関連を確認せよ"
 
-    【報告】
-    - ガイド作成完了後、gunshi_report.yaml に報告
-    - 周知方法は instructions への追記を推奨
+  success_criteria:
+    - "4つのスキル（gcp-cloudrun-analyzer, gcp-config-analyzer, code-quality-analyzer, design-doc-quality-reviewer）が実際に使用される"
+    - "各スキルの動作確認が完了する"
+    - "document-aiの品質状況が可視化される"
+    - "スキルへのフィードバックが収集される"
 
   report_to: multiagent:0.0
-  next_action: "docs/tools/codex-mcp-guide.md 作成、完了後報告"

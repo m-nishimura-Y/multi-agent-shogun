@@ -1,4 +1,4 @@
-last_updated: '2026-02-09T11:42:30'
+last_updated: '2026-02-16T15:07:37'
 honntai:
 - id: 1
   name: ashigaru1
@@ -13,17 +13,17 @@ honntai:
   current_task: null
   task_id: null
   progress: 0
-  updated_at: '2026-02-06T19:56:07'
+  updated_at: '2026-02-13T19:14:36'
   blocked_by: null
-  note: null
+  note: 'completed: cmd_041カタログ完了'
 - id: 3
   name: ashigaru3
   current_task: null
   task_id: null
   progress: 0
-  updated_at: '2026-02-06T19:56:07'
+  updated_at: '2026-02-16T15:07:37'
   blocked_by: null
-  note: null
+  note: 'completed: cmd_054 self-compactテスト完了'
 - id: 4
   name: ashigaru4
   current_task: null
@@ -43,25 +43,25 @@ betsudoutai:
   note: null
 - id: 6
   name: ashigaru6
-  current_task: null
+  current_task: cmd_041 obsidian-note-creator スキル作成中
   task_id: null
-  progress: 0
-  updated_at: '2026-02-06T19:56:07'
+  progress: 10
+  updated_at: '2026-02-13T19:14:12'
   blocked_by: null
-  note: null
+  note: 'completed: cmd_037 セキュリティ診断完了'
 - id: 7
   name: ashigaru7
-  current_task: null
+  current_task: cmd_040 gcp-iap-auth-audit スキル作成
   task_id: null
-  progress: 0
-  updated_at: '2026-02-06T19:56:07'
+  progress: 60
+  updated_at: '2026-02-13T19:10:54'
   blocked_by: null
-  note: null
+  note: 'completed: cmd_037 billing-mng-gcp セキュリティ診断完了'
 - id: 8
   name: ashigaru8
-  current_task: null
+  current_task: cmd049_race_powershell - PowerShell実行確認中
   task_id: null
-  progress: 0
-  updated_at: '2026-02-09T11:42:30'
+  progress: 30
+  updated_at: '2026-02-16T14:15:12'
   blocked_by: null
-  note: 'completed: cmd_045 フィードバック完了'
+  note: 'completed: cmd045_crypto_logging完了'

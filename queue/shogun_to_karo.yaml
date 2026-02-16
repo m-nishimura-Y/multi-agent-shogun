@@ -1,4 +1,152 @@
 queue:
+  - id: cmd_057
+    timestamp: "2026-02-16T18:44:02"
+    command: "【全軍総合診断】document-ai スキル実地テスト"
+    project: document-ai
+    priority: high
+    status: pending
+    details:
+      summary: |
+        殿の指示により、document-ai リポジトリを全軍で総合診断せよ。
+        目的は2つ：
+        1. プロジェクトの品質・セキュリティ診断
+        2. 既存スキルの実地テスト（使用率0%問題の解消）
+
+      target:
+        repository: "https://github.com/Yuidea-DxG/document-ai.git"
+        local_path: "/home/nishimura/document-ai"
+        tech_stack:
+          - "Python 3.x"
+          - "Streamlit (Web UI)"
+          - "FastAPI (API)"
+          - "Google Cloud Document AI"
+          - "GCP Cloud Run"
+          - "pytest"
+        scale:
+          python_files: 48
+          docs: "多数（docs/配下）"
+          tests: "test_*.py 多数"
+
+      existing_issues:
+        - id: 5
+          title: "エラーハンドリング強化とログ出力の充実"
+        - id: 7
+          title: "統合テストの追加とテストカバレッジ向上"
+        - id: 9
+          title: "軽微な改善まとめ（print削除・定数化・整理）"
+
+      task_assignment:
+        hontai:
+          ashigaru1:
+            skill: "python-patterns"
+            target: "Pythonコードパターン確認"
+            focus: "app.py, api/, app_utils/"
+          ashigaru2:
+            skill: "security-audit-checker-v2"
+            target: "セキュリティ全般診断"
+            focus: "認証、入力検証、GCP認証情報"
+          ashigaru3:
+            skill: "repo-test-status-checker"
+            target: "テスト整備状況確認"
+            focus: "tests/, test_*.py, pytest.ini"
+          ashigaru4:
+            skill: "cicd-health-checker"
+            target: "CI/CD設定診断"
+            focus: "cloudbuild.yaml, .github/, Dockerfile"
+
+        betsudoutai:
+          ashigaru5:
+            skill: "gcp-cloudrun-analyzer"
+            target: "Cloud Run構成診断"
+            focus: "Dockerfile, cloudbuild*.yaml, deploy.sh"
+          ashigaru6:
+            skill: "gcp-config-analyzer"
+            target: "GCP設定全般診断"
+            focus: ".env.example, api/, GCP関連設定"
+          ashigaru7:
+            skill: "code-quality-analyzer"
+            target: "コード品質評価（Python適用）"
+            focus: "app.py, api/, 全体構造"
+          ashigaru8:
+            skill: "design-doc-quality-reviewer"
+            target: "ドキュメント品質評価"
+            focus: "docs/*.md, README.md"
+
+      report_format: |
+        各足軽は以下の形式で報告せよ：
+        1. 使用したスキル名
+        2. スキルの動作確認結果（正常/問題あり）
+        3. 診断結果サマリ
+        4. 発見した問題（severity付き）
+        5. 改善提案
+        6. スキルへのフィードバック（使いにくい点、改善案）
+
+      action_required:
+        - "本隊4名に担当スキルを割り当てよ"
+        - "軍師経由で別働隊4名に担当スキルを割り当てよ"
+        - "全8名並列で診断を実行せよ"
+        - "結果を集約し、dashboard.mdに報告せよ"
+        - "既存Issue（#5, #7, #9）との関連を確認せよ"
+        - "新規発見はGitHub Issue化の判断を仰げ"
+
+      success_criteria:
+        - "8つのスキルが実際に使用される"
+        - "各スキルの動作確認が完了する"
+        - "document-aiの品質状況が可視化される"
+        - "スキルへのフィードバックが収集される"
+
+  - id: cmd_056
+    timestamp: "2026-02-16T18:00:54"
+    command: "【周知】/recovery スキル v1.1.0 全軍展開"
+    project: multi-agent-shogun
+    priority: high
+    status: pending
+    details:
+      summary: |
+        殿と将軍でテスト完了。/recovery スキル v1.1.0 を全軍に展開せよ。
+
+      background: |
+        【問題】
+        - コンパクション復帰時、役割ファイルの冒頭80行しか読んでいなかった
+        - 詳細マニュアルは全く読んでいなかった
+        - 結果として禁止事項や手順を見落とすリスクがあった
+
+        【改善内容（v1.1.0）】
+        - Step 3: 役割ファイル「冒頭80行」→「全文」に変更
+        - Step 3.5 追加: 詳細マニュアルも全て読む
+        - コンテキスト消費は最大5%程度（許容範囲）
+
+      changes:
+        step_3: |
+          変更前: Read ツールで冒頭80行を読め
+          変更後: Read ツールで全文を読め。禁止事項・心得・手順を確認せよ。
+
+        step_3_5: |
+          【新規追加】詳細マニュアルを全て読む
+
+          | 役割 | 読むべきマニュアル |
+          |------|---------------------|
+          | 将軍 | instructions/shogun/*.md（通知、指示書、memory） |
+          | 家老 | instructions/karo/*.md（dashboard、タスク割当、ビルド確認、軍師連携、通知） |
+          | 軍師 | instructions/gunshi/*.md（スキル評価、バグ管理、ビルド確認、永続化、通知、提案管理、報告書） |
+          | 足軽 | instructions/ashigaru/*.md（スキル候補、ツール、バグ報告、ビルド確認、ペルソナ、進捗共有、通知、報告書） |
+
+          Glob で一覧取得 → Read で全ファイル読み込み。読み飛ばし厳禁。
+
+      verified:
+        agent: "shogun (claude pane)"
+        result: "成功"
+        confirmed_files:
+          - "instructions/shogun.md（全189行確認）"
+          - "instructions/shogun/通知.md（63行）"
+          - "instructions/shogun/指示書.md（94行）"
+          - "instructions/shogun/memory.md（78行）"
+
+      action_required:
+        - "軍師、本隊、別働隊に周知せよ"
+        - "dashboard.md に新機能を記載せよ"
+        - "次回コンパクション時に各自動作確認するよう伝えよ"
+
   - id: cmd_055
     timestamp: "2026-02-16T17:00:00"
     command: "【周知】コンパクション復帰自動通知機能の全軍展開"
