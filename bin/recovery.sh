@@ -9,13 +9,40 @@
 # プロジェクトルート
 PROJECT_DIR="${CLAUDE_PROJECT_DIR:-$HOME/multi-agent-shogun}"
 
-# pane名から役割を判定
-PANE_NAME=$(tmux display-message -p '#W' 2>/dev/null || echo "unknown")
+# セッション名から役割を判定（window名は「claude」になることがあるため使わない）
+SESSION_NAME=$(tmux display-message -p '#S' 2>/dev/null || echo "unknown")
+PANE_INDEX=$(tmux display-message -p '#{pane_index}' 2>/dev/null || echo "0")
+
+# 役割を判定
+case "$SESSION_NAME" in
+    shogun)
+        ROLE="将軍"
+        INSTRUCTION_FILE="shogun.md"
+        ;;
+    gunshi)
+        ROLE="軍師"
+        INSTRUCTION_FILE="gunshi.md"
+        ;;
+    multiagent)
+        if [ "$PANE_INDEX" = "0" ]; then
+            ROLE="家老"
+            INSTRUCTION_FILE="karo.md"
+        else
+            ROLE="足軽$PANE_INDEX"
+            INSTRUCTION_FILE="ashigaru.md"
+        fi
+        ;;
+    *)
+        ROLE="不明（$SESSION_NAME）"
+        INSTRUCTION_FILE="ashigaru.md"
+        ;;
+esac
 
 echo ""
 echo "════════════════════════════════════════════════════════════════"
 echo "  コンパクション復帰でござる"
-echo "  役割: $PANE_NAME"
+echo "  セッション: $SESSION_NAME / pane: $PANE_INDEX"
+echo "  役割: $ROLE"
 echo "════════════════════════════════════════════════════════════════"
 echo ""
 
@@ -36,22 +63,7 @@ echo ""
 
 # 役割に応じた指示書の冒頭を表示（禁止事項まで）
 echo "【汝の役割と禁止事項】"
-case "$PANE_NAME" in
-    shogun*)
-        head -80 "$PROJECT_DIR/instructions/shogun.md" 2>/dev/null
-        ;;
-    gunshi*)
-        head -80 "$PROJECT_DIR/instructions/gunshi.md" 2>/dev/null
-        ;;
-    karo*|multiagent*)
-        # karo は multiagent:0.0 の可能性もある
-        head -80 "$PROJECT_DIR/instructions/karo.md" 2>/dev/null
-        ;;
-    *)
-        # 足軽（ashigaru）またはその他
-        head -80 "$PROJECT_DIR/instructions/ashigaru.md" 2>/dev/null
-        ;;
-esac
+head -80 "$PROJECT_DIR/instructions/$INSTRUCTION_FILE" 2>/dev/null
 
 echo ""
 echo "════════════════════════════════════════════════════════════════"
