@@ -8,7 +8,8 @@ claude-shogun-orders.md
 test_output/
 
 # Generated skills (local development)
-skills/
+# Claude Code requires .claude/skills/skill-name/SKILL.md format
+.claude/skills/
 
 # Temporary files
 *.tmp
