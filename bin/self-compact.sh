@@ -15,5 +15,7 @@ fi
 
 echo "Compacting context for pane $MY_PANE ..."
 
-# /compact を自分に送る
-tmux send-keys -t "$MY_PANE" '/compact' Enter
+# /compact を自分に送る（notify.shと同じ形式: メッセージ→待機→Enter）
+tmux send-keys -t "$MY_PANE" '/compact'
+sleep 0.3
+tmux send-keys -t "$MY_PANE" Enter

@@ -5,9 +5,14 @@
 # 用途: tmux send-keys + Enter を確実に実行する
 # 背景: Enter忘れによる通知未達問題を根本解決
 # v1.1: エイリアス対応（shogun, gunshi, karo, ashigaru1-8）
+# v1.2: エラーハンドリング・リトライ機能追加（cmd_062）
 # ============================================================
 
-set -euo pipefail
+set -uo pipefail
+
+# 設定
+MAX_RETRIES=3
+RETRY_INTERVAL=1
 
 # エイリアスをペイン番号に変換
 resolve_target() {
@@ -38,6 +43,34 @@ resolve_target() {
     esac
 }
 
+# リトライ付きsend-keys関数
+send_with_retry() {
+    local target="$1"
+    local message="$2"
+    local attempt=1
+
+    while [ $attempt -le $MAX_RETRIES ]; do
+        # メッセージ送信
+        if tmux send-keys -t "$target" "$message" 2>/dev/null; then
+            sleep 0.3
+            # Enter送信
+            if tmux send-keys -t "$target" Enter 2>/dev/null; then
+                return 0  # 成功
+            fi
+        fi
+
+        # 失敗した場合
+        if [ $attempt -lt $MAX_RETRIES ]; then
+            echo "[notify] Attempt $attempt failed, retrying in ${RETRY_INTERVAL}s..." >&2
+            sleep $RETRY_INTERVAL
+        fi
+        attempt=$((attempt + 1))
+    done
+
+    # 全リトライ失敗
+    return 1
+}
+
 # 引数チェック
 if [ $# -lt 2 ]; then
     echo "Usage: $0 <TARGET> <MESSAGE>"
@@ -65,10 +98,14 @@ MESSAGE="$*"
 # エイリアス解決
 TARGET=$(resolve_target "$TARGET_ALIAS")
 
-# send-keys + Enter を実行（2回に分けて確実に送信）
-tmux send-keys -t "$TARGET" "$MESSAGE"
-sleep 0.3  # tmuxが処理する時間を確保（0.1→0.3に増加）
-tmux send-keys -t "$TARGET" Enter
-
-# 成功ログ（デバッグ用、必要に応じてコメントアウト）
-# echo "[notify] Sent to $TARGET ($TARGET_ALIAS): $MESSAGE"
+# リトライ付きで送信
+if send_with_retry "$TARGET" "$MESSAGE"; then
+    # 成功ログ（デバッグ用、必要に応じてコメントアウト解除）
+    # echo "[notify] Sent to $TARGET ($TARGET_ALIAS): $MESSAGE"
+    exit 0
+else
+    echo "[notify] ERROR: Failed to send message to $TARGET after $MAX_RETRIES attempts" >&2
+    echo "[notify] Target: $TARGET_ALIAS -> $TARGET" >&2
+    echo "[notify] Message: $MESSAGE" >&2
+    exit 1
+fi
