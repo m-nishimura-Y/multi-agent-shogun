@@ -5,51 +5,163 @@
 # 将軍・家老・軍師がタスク開始時・完了時に更新せよ
 # ============================================================
 
-last_updated: "2026-02-10T13:50:00"
+last_updated: "2026-02-13T20:33:00"
 
 # ================================================================
 # 将軍（Shogun）の現在状況 - 殿との会話要点記録
 # ================================================================
 shogun:
   current_conversation:
-    topic: "R-system AI活用可能性調査・ROI提案"
-    summary: "顧客がAI導入ROIを気にしている。業務フロー改革の温度感不明。両パターン（既存維持/改革込み）で提案を準備。家老にcmd_029を指示。"
-    started_at: "2026-02-06T19:15:00"
+    topic: "MCP設定・drawio問題解決・組織改善"
+    summary: |
+      1. drawio/obsidian MCP のグローバル設定（user scope）に変更
+      2. drawio MCP ツールロード不可問題を殿と調査 → パッケージ名修正で解決
+         - 旧: drawio-mcp-server（間違い）
+         - 新: @drawio/mcp（正解）
+      3. 殿が動作確認済み → 全軍に再起動後確認メモを追加
+      4. スキル自動承認ルールの家老チェックポイント追加（karo.md）
+      5. bloglist-app Critical 4件クローズ（デモ前提のため対応不要）
+    started_at: "2026-02-13T10:20:00"
 
-  pending_decisions:
-    # 殿に確認が必要な事項
-    - item: "顧客温度感確認後の提案方針"
-      context: "AI活用範囲（既存フロー維持 or 業務改革込み）の選択"
+  # ★★★ 次の将軍への引き継ぎ事項 ★★★
+  handover_notes:
+    mcp_status:
+      drawio:
+        status: "✅ 解決済み・動作確認済み"
+        package: "@drawio/mcp"
+        tools: "open_drawio_mermaid, open_drawio_csv, open_drawio_xml"
+        action: "再起動後に上記ツールが使えるか確認せよ"
+        resolved_at: "2026-02-13T12:34:00"
+      obsidian:
+        status: "✅ 接続済み"
+        api_key: "8c2eb912f000fa40c1dbc5aeadb6eee23e38ea1832a15bca5eb6dc86990006aa"
+        action: "再起動後 claude mcp list で確認せよ"
+
+    pending_items:
+      - item: "drawio MCP 再起動後動作確認"
+        action: "再起動後に open_drawio_mermaid 等のツールが使えるか確認"
+
+  pending_decisions: []  # 全て解決済み
 
   recent_directives:
-    # 殿から受けた最近の指示
-    - directive: "R-system AI活用可能性調査・ROI提案"
-      description: "画像分析、カタログ紙面分析、商品予測等のAI活用領域調査。ROI観点重視。顧客温度感確認ポイントも作成。"
-      received_at: "2026-02-06T19:15:00"
-    - directive: "プロジェクト規約・テンプレート整備"
-      description: "命名規則、ディレクトリ構成、共通テンプレート、タスク依存関係ガイドを整備。今後の作り込みに活用。"
-      received_at: "2026-02-06T18:10:00"
-    - directive: "React警告バグ対応"
-      description: "PromotionMasterPage key prop警告、MediaSalesListPage controlled/uncontrolled警告"
-      received_at: "2026-02-06T14:00:00"
-    - directive: "v1.6.0追加改善指示"
-      description: "緊急調査ルール明文化、current_task.yaml将軍項目追加"
-      received_at: "2026-02-06T13:45:00"
+    - directive: "drawio MCP 問題解決"
+      description: "パッケージ名を @drawio/mcp に修正。殿が動作確認済み。全軍に再起動後確認メモを追加。"
+      received_at: "2026-02-13T12:34:00"
+    - directive: "スキル自動承認ルールの家老チェックポイント追加"
+      description: "軍師がルールを忘れた場合、家老が将軍にエスカレーションする前に確認させる"
+      received_at: "2026-02-13T11:21:00"
+    - directive: "bloglist-app Critical 4件クローズ"
+      description: "殿の判断：デモ前提のため対応不要"
+      received_at: "2026-02-13T11:26:00"
+    - directive: "MCP グローバル設定"
+      description: "drawio/obsidian を user scope に変更。どのディレクトリからでも使用可能に"
+      received_at: "2026-02-13T11:00:00"
 
 # ================================================================
 # 家老（Karo）の現在状況
 # ================================================================
 karo:
   current_task:
-    task_id: null
-    description: "待機中"
-    started_at: null
+    task_id: "cmd_049"
+    description: "ZeroTouchKitter 脆弱性診断（既存Issue 8件、.NET/PowerShell）"
+    started_at: "2026-02-16T14:32:00"
 
   waiting_for:
-    - agent: null
-      reason: null
+    - agent: gunshi
+      reason: "別働隊による並列セキュリティ調査完了待ち"
 
-  next_action: "殿からの次の指示待ち"
+  next_action: "軍師からの診断結果報告を待つ"
+
+  recent_completed:
+    - task_id: "cmd_046"
+      description: "skill-evaluate修正（frontmatter追加、Skillツール互換化）"
+      completed_at: "2026-02-16T13:52:00"
+    - task_id: "cmd_045"
+      description: "ipadress-manager脆弱性診断完了（npm audit C2,H9 + コードH2,M6,L5、スキル候補17点）"
+      completed_at: "2026-02-16T13:35:00"
+    - task_id: "cmd_044"
+      description: "billing-mng-gcp診断結果をdashboardから削除（Issue #34追記済み）"
+      completed_at: "2026-02-13T21:12:00"
+
+  recent_completed:
+    - task_id: "cmd_039"
+      description: "1on1振り返り完了"
+      completed_at: "2026-02-13T20:05:00"
+    - task_id: "cmd_037"
+      description: "billing-mng-gcp セキュリティ診断完了（Critical 2, High 1, Medium 5, Low 4）"
+      completed_at: "2026-02-13T19:50:00"
+    - task_id: "cmd_038"
+      description: "スキル利用アンケート完了（使用率0%、欲しいスキル9件）"
+      completed_at: "2026-02-13T19:22:00"
+
+  recent_completed:
+    - task_id: "cmd_036"
+      description: "セキュリティスキル4件作成完了（dotnet-security-audit親+サブ3件、合計1,614行）"
+      completed_at: "2026-02-13T18:25:00"
+
+  recent_completed:
+    - task_id: "cmd_034"
+      description: "役割ファイル責任フォーカス化リストラクチャ通達完了（全軍周知）"
+      completed_at: "2026-02-13T17:41:00"
+
+  recent_completed:
+    - task_id: "cmd_031"
+      description: "Obsidianタスクサマリ取り込み完了（7ファイル作成: cmd_001-023.md + index.md）"
+      completed_at: "2026-02-13T16:56:00"
+
+  recent_completed:
+    - task_id: "cmd_027"
+      description: "drawio MCP問題解決報告（パッケージ修正: @drawio/mcp、全軍に再起動後確認メモ追加）"
+      completed_at: "2026-02-13T12:35:00"
+    - task_id: "cmd_025"
+      description: "drawio MCPテスト完了（問題解決、Mermaid形式でシーケンス図作成済み）"
+      completed_at: "2026-02-13T12:34:00"
+    - task_id: "cmd_024"
+      description: "bloglist-app Critical 4件クローズ（殿の判断：デモ前提のため対応不要）"
+      completed_at: "2026-02-13T11:27:00"
+    - task_id: "cmd_023"
+      description: "自動承認スキル3件作成完了（express-jwt-auth-scaffold, mermaid-sequence-generator, entity-class-diagram-generator）+ karo.mdルール追加"
+      completed_at: "2026-02-13T11:26:00"
+    - task_id: "cmd_022"
+      description: "新規MCP全軍周知・運用整備完了（CLAUDE.md更新、mcp-usage-guide.md作成、全足軽周知）"
+      completed_at: "2026-02-13T11:12:00"
+    - task_id: "cmd_021"
+      description: "スキル候補2件評価完了（両方15点自動承認: mermaid-sequence-generator, entity-class-diagram-generator）"
+      completed_at: "2026-02-13T10:26:00"
+    - task_id: "cmd_020"
+      description: "全軍コンパクション復帰手順完了（本隊4名+別働隊4名+軍師、スキル候補1件自動承認）"
+      completed_at: "2026-02-12T16:31:00"
+    - task_id: "cmd_064"
+      description: "Obsidian CLI調査完了（MCP推奨: cyanheads/obsidian-mcp-server）"
+      completed_at: "2026-02-12T13:29:00"
+    - task_id: "cmd_063"
+      description: "arms-mock図面作成完了（draw.io MCP接続失敗、代替形式で出力）"
+      completed_at: "2026-02-12T13:27:00"
+
+  recent_completed:
+    - task_id: "cmd_059"
+      description: "bloglist-appバックエンドレビュー完了（Critical:0, High:1, Medium:4, Low:3、総合評価B+、CTOデモ十分品質）"
+      completed_at: "2026-02-10T17:50:00"
+    - task_id: "cmd_058"
+      description: "SPA修正+HTTPS+Dashboard配信完了（vite base設定、自己署名SSL、静的ファイル配信、marked.js Markdownビューア）"
+      completed_at: "2026-02-10T17:15:00"
+    - task_id: "cmd_057"
+      description: "Nginxリバースプロキシ設定完了（arms-mock/bloglist-app両アプリURLパス振り分け）"
+      completed_at: "2026-02-10T17:05:00"
+    - task_id: "cmd_056"
+      description: "CTOデモ用BlogListアプリ開発完了（全8名並列、約20分で完成、FE/BE/DB動作確認OK）"
+      completed_at: "2026-02-10T16:38:00"
+
+  recent_completed:
+    - task_id: "cmd_055"
+      description: "開発力証明用ベンチマーク選定完了（BlogList最推奨）"
+      completed_at: "2026-02-10T15:51:00"
+    - task_id: "cmd_054"
+      description: "公開エンジニア研修プログラム調査完了（10件発見）"
+      completed_at: "2026-02-10T15:22:33"
+    - task_id: "cmd_053"
+      description: "R-systemモックGitHubプッシュ完了（193ファイル、44,606行）"
+      completed_at: "2026-02-10T15:25:00"
 
   recent_completed:
     - task_id: "cmd_052"
@@ -146,22 +258,82 @@ karo:
 gunshi:
   current_task:
     task_id: null
-    description: "待機中"
+    description: null
     started_at: null
 
-  waiting_for:
-    - agent: null
-      reason: null
+  waiting_for: []
 
-  next_action: "家老からの次の指示待ち"
+  next_action: "家老からの次タスク待ち"
 
   recent_completed:
+    - task_id: "cmd_049"
+      description: "ZeroTouchKitter脆弱性診断完了【緊急】Critical 4件(平文PWのGitコミット+コマンドインジェクション3件)、High 3件、Medium 3件。スキル候補2件自動承認"
+      completed_at: "2026-02-16T15:25:00"
+    - task_id: "cmd_046"
+      description: "express-security-audit スキル作成完了（420行・7カテゴリ・35項目）"
+      completed_at: "2026-02-16T14:00:00"
+    - task_id: "cmd_045"
+      description: "ipadress-manager脆弱性診断完了（npm audit 19件+コード問題13件、スキル候補17点）"
+      completed_at: "2026-02-16T13:35:00"
+    - task_id: "cmd_041"
+      description: "obsidian-note-creator(401行) 作成完了"
+      completed_at: "2026-02-13T21:38:00"
+    - task_id: "cmd_040"
+      description: "skill-evaluate(298行) + gcp-iap-auth-audit(464行) 計762行作成完了"
+      completed_at: "2026-02-13T21:00:00"
+
+  recent_completed:
+    - task_id: "cmd_037"
+      description: "billing-mng-gcp セキュリティ診断完了（Critical 2件、スキル候補1件評価）"
+      completed_at: "2026-02-13T19:50:00"
+
+  recent_completed:
+    - task_id: "cmd_035"
+      description: "【緊急】AssetsManageSystemセキュリティ診断完了（Critical 10件、High 7件、Medium 5件、Low 2件検出、スキル候補4件評価済み）"
+      completed_at: "2026-02-13T17:58:00"
+    - task_id: "cmd_032"
+      description: "知見ノート作成完了（9ファイル作成）"
+      completed_at: "2026-02-13T17:05:00"
+    - task_id: "cmd_031"
+      description: "Obsidianタスクサマリ取り込み完了（7ファイル作成）"
+      completed_at: "2026-02-13T16:56:00"
+    - task_id: "cmd_025"
+      description: "arms-mock シーケンス図作成完了（Mermaid形式、認証フロー+原稿エクスポートフロー）"
+      completed_at: "2026-02-13T11:42:00"
+    - task_id: "cmd_023"
+      description: "自動承認済みスキル3件作成完了（express-jwt-auth-scaffold, mermaid-sequence-generator, entity-class-diagram-generator）"
+      completed_at: "2026-02-13T11:25:05"
+    - task_id: "cmd_022"
+      description: "mcp-usage-guide.md新規作成完了（drawio/obsidian MCPの使い方を詳細記載）"
+      completed_at: "2026-02-13T11:10:22"
+    - task_id: "cmd_021"
+      description: "スキル候補2件評価完了（両方15点自動承認: mermaid-sequence-generator, entity-class-diagram-generator）"
+      completed_at: "2026-02-13T10:24:20"
+    - task_id: "cmd_020"
+      description: "全軍コンパクション復帰手順実行完了（別働隊4名報告集約、スキル評価1件）"
+      completed_at: "2026-02-12T16:29:34"
+
+  recent_completed:
+    - task_id: "cmd_065"
+      description: "Obsidian MCP追加完了（殿の対応待ち: プラグイン設定・環境変数設定）"
+      completed_at: "2026-02-12T13:35:00"
+    - task_id: "cmd_064"
+      description: "Obsidian CLI調査完了（MCP推奨: cyanheads/obsidian-mcp-server）"
+      completed_at: "2026-02-12T13:29:00"
+    - task_id: "cmd_061"
+      description: "draw.io MCP調査・再インストール完了（Chrome拡張必要と報告）"
+      completed_at: "2026-02-12T13:18:00"
+
+  recent_completed:
+    - task_id: "cmd_055_benchmark_selection"
+      description: "開発力証明用ベンチマーク5件選定完了（BlogList最推奨、CTOデモシナリオ付き）"
+      completed_at: "2026-02-10T15:45:14"
+    - task_id: "cmd_054_training_research"
+      description: "公開エンジニア研修プログラム調査完了（10件発見、ベンチマーク候補3件推奨）"
+      completed_at: "2026-02-10T15:22:33"
     - task_id: "cmd_050_codex_guide"
       description: "Codex MCP使い方ガイド作成完了（docs/tools/codex-mcp-guide.md）"
       completed_at: "2026-02-10T13:33:58"
-    - task_id: "cmd_049_codex_mcp"
-      description: "Codex MCP調査完了 - 導入可能、ChatGPT Plus/ProでOAuth認証可"
-      completed_at: "2026-02-10T12:59:05"
 
   recent_completed:
     - task_id: "cmd_031_proposals"

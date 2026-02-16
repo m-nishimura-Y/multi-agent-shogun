@@ -55,8 +55,25 @@ esac
 
 echo ""
 echo "════════════════════════════════════════════════════════════════"
-echo "  上記を確認してから作業を再開せよ"
+echo "  【必須アクション】殿にコンパクション復帰を報告せよ！"
+echo "  例: 「コンパクション復帰でござる。現在のタスク: XXX」"
 echo "════════════════════════════════════════════════════════════════"
 echo ""
+
+# 自分自身にメッセージを送信して、Claudeへの入力として認識させる
+# バックグラウンドで実行（hookが同期的に完了しないとClaudeが入力待ちにならないため）
+SELF_TARGET=$(tmux display-message -p '#{session_name}:#{window_index}.#{pane_index}' 2>/dev/null)
+LOG_FILE="/tmp/recovery_debug.log"
+echo "[$(date)] recovery.sh executed, SELF_TARGET=$SELF_TARGET" >> "$LOG_FILE"
+if [ -n "$SELF_TARGET" ]; then
+    (
+        # コンパクション処理が完全に完了し、Claudeが入力待ちになるまで待つ
+        sleep 8
+        echo "[$(date)] Sending notification to $SELF_TARGET" >> "$LOG_FILE"
+        "$PROJECT_DIR/bin/notify.sh" "$SELF_TARGET" "【コンパクション復帰】殿に報告せよ。"
+        echo "[$(date)] notify.sh exit code: $?" >> "$LOG_FILE"
+    ) &
+    echo "[$(date)] Background process started" >> "$LOG_FILE"
+fi
 
 exit 0

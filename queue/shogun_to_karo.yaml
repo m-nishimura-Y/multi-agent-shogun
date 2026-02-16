@@ -1,10 +1,731 @@
 queue:
+  - id: cmd_055
+    timestamp: "2026-02-16T17:00:00"
+    command: "【周知】コンパクション復帰自動通知機能の全軍展開"
+    project: multi-agent-shogun
+    priority: high
+    status: pending
+    details:
+      summary: |
+        殿と将軍で開発・検証した「コンパクション復帰自動通知機能」を全軍に周知せよ。
+        これにより、コンパクション後のエージェントが自動で復帰報告を促される。
+
+      background: |
+        【問題】
+        - コンパクション後、エージェントが復帰報告を忘れることがあった
+        - SessionStart hook の "compact" matcher は stdout を Claude に注入しない（GitHub issue #15174）
+
+        【解決策】
+        - recovery.sh を改良し、自分自身の tmux pane に通知を送る仕組みを実装
+        - 8秒後に「【コンパクション復帰】殿に報告せよ。」というメッセージが届く
+        - エージェントはこのメッセージを受け取り、殿への復帰報告を行う
+
+      technical_details:
+        hook_config: "~/.claude/settings.json に SessionStart hook 設定済み"
+        matcher: "compact"
+        script: "bin/recovery.sh"
+        mechanism: |
+          1. コンパクション完了時に SessionStart hook が発動
+          2. recovery.sh が実行され、pane名と現在タスクを表示
+          3. 8秒後にバックグラウンドプロセスが自分自身に通知を送信
+          4. エージェントが通知を受け取り、復帰報告を行う
+
+      verified:
+        - agent: "shogun"
+          pane: "shogun:0.0"
+          result: "成功"
+          log: "/tmp/recovery_debug.log に記録済み"
+
+      action_required:
+        - "dashboard.md に新機能を記載せよ"
+        - "全エージェント（軍師、本隊、別働隊）に周知せよ"
+        - "次回コンパクション時に各自動作確認するよう伝えよ"
+
+      note: |
+        デバッグログ（/tmp/recovery_debug.log）は当面残す。
+        各ペインで正常動作が確認できたら、将軍に報告せよ。
+
+  - id: cmd_054
+    timestamp: "2026-02-16T16:40:00"
+    command: "【整理】組織改編コミット + Obsidian登録"
+    project: multi-agent-shogun
+    priority: high
+    status: pending
+    details:
+      summary: |
+        殿より指示。本日の組織改編内容をコミットし、Obsidianに登録せよ。
+
+      changes:
+        new_files:
+          - bin/self-compact.sh (15%自己管理コンパクション)
+          - docs/diagrams/ (図表)
+          - docs/guides/ (ガイド類)
+          - docs/tools/mcp-usage-guide.md (MCPガイド)
+
+        modified_files:
+          - 全役割ファイル (15%ルール追加)
+          - dashboard.md (戦果更新)
+          - queue/*.yaml (指示・進捗)
+          - status/*.yaml (コンテキスト)
+
+      commit_message_suggestion: |
+        feat: 組織改編 v1.7.1 - 15%自己管理コンパクション導入
+
+        - bin/self-compact.sh 追加（$TMUX_PANE環境変数使用）
+        - 全役割ファイルに15%ルール追加
+        - スキル使い方ガイド整備
+        - MCPツール運用ガイド追加
+
+      obsidian:
+        worthy: true
+        category: "知見/成功事例"
+        title: "コンパクション自己管理の仕組み化"
+        summary: |
+          問題: 自動compactは95%使用時に発動、作業途中で切れるリスク
+          解決: 15%以下でself-compact.sh実行を手順化
+          ポイント: 注意力ではなく仕組みで担保
+
+      action_required:
+        - "git add で必要なファイルをステージング"
+        - "git commit でコミット"
+        - "Obsidian MCPで知見を登録"
+        - "dashboard.md を更新"
+
+  - id: cmd_053
+    timestamp: "2026-02-16T16:35:00"
+    command: "【修正】ZeroTouchKitter Issue ラベル付け"
+    project: ZeroTouchKitter
+    priority: high
+    status: pending
+    details:
+      summary: |
+        殿より指摘あり。cmd_049で作成したIssue（#7コメント, #21-24）にラベルがない。
+        既存ラベルを確認し、不足していれば作成してからラベルを付けよ。
+
+      target:
+        repository: "https://github.com/Yuidea-DxG/ZeroTouchKitter"
+
+      issues_to_label:
+        - id: 7
+          type: comment
+          severity: CRITICAL×3, HIGH, MEDIUM
+        - id: 21
+          type: new
+          severity: CRITICAL
+        - id: 22
+          type: new
+          severity: HIGH
+        - id: 23
+          type: new
+          severity: HIGH
+        - id: 24
+          type: new
+          severity: MEDIUM
+
+      action_required:
+        - "gh label list で既存ラベルを確認せよ"
+        - "security, critical, high, medium 等のラベルがなければ作成せよ"
+        - "各Issueに深刻度に応じたラベルを付けよ"
+        - "完了後、dashboard.md を更新せよ"
+
+  - id: cmd_050
+    timestamp: "2026-02-16T14:50:00"
+    command: "【検証】self-compact.sh の動作テスト"
+    project: multi-agent-shogun
+    priority: high
+    status: done
+    details:
+      summary: |
+        殿と将軍で議論した結果、コンパクション自己管理の新しい仕組みを検証する。
+
+      background: |
+        【問題の経緯】
+        1. 家老のコンテキストが9%まで減っていたが、自動compactが走らなかった
+        2. 調査の結果、auto-compactは「残り5%（95%使用時）」で発動することが判明
+        3. 「Context left until auto-compact: 9%」は「使用率91%、あと4%で発動」の意味だった
+
+        【殿の懸念】
+        - 作業途中でcompactしたくない
+        - エージェントの注意力に頼りたくない
+        - /compact は足軽・家老が直接実行できない（殿が確認済み）
+
+        【解決案】
+        - bin/self-compact.sh を作成
+        - 各エージェントがタスク完了時に残量15%以下なら自分で実行
+        - 「注意力」ではなく「手順」として自己管理
+
+      test_request: |
+        足軽1名に以下を試させよ：
+        1. ~/multi-agent-shogun/bin/self-compact.sh を実行
+        2. /compact が自分のpaneで実行されるか確認
+        3. 結果を報告
+
+      script_location: "bin/self-compact.sh"
+
+      expected_behavior: |
+        スクリプトが自分のpaneに /compact を送り、コンパクションが実行される
+
+      if_success: |
+        全エージェントの役割ファイルに「タスク完了時、残量15%以下なら bin/self-compact.sh 実行」を追加
+
+      if_failure: |
+        別の方法を検討（cron、殿への報告など）
+
+  - id: cmd_049
+    timestamp: "2026-02-16T14:30:00"
+    command: "【セキュリティ診断】ZeroTouchKitter 脆弱性調査"
+    project: ZeroTouchKitter
+    priority: high
+    status: in_progress
+    started_at: "2026-02-16T14:32:00"
+    details:
+      summary: |
+        殿の指示により、ZeroTouchKitter リポジトリの脆弱性診断を実施せよ。
+        再発見は既存Issueにコメント追記、新規発見は新規Issue登録。
+
+      target:
+        repository: "https://github.com/Yuidea-DxG/ZeroTouchKitter"
+        local_path: "/home/nishimura/ZeroTouchKitter"
+
+      existing_issues:
+        - id: 3
+          title: "コード品質改善と再起動シーケンスの強化"
+        - id: 4
+          title: "エラーハンドリングの改善が必要"
+        - id: 5
+          title: "ログ機能の強化と統一化"
+        - id: 7
+          title: "設定ファイルのバリデーション機能の実装"
+        - id: 10
+          title: "レジストリアクセス時の権限エラーとロールバック機能の欠如"
+        - id: 11
+          title: "ネットワークパスアクセス時の認証エラーと接続障害の処理不足"
+        - id: 12
+          title: "複数プロセスやサービスの並行実行時の競合状態"
+        - id: 13
+          title: "再起動後の状態復元とプラグイン実行継続の信頼性問題"
+
+      requirements:
+        - "What/Why/How形式で報告せよ"
+        - "severity（CRITICAL/HIGH/MEDIUM/LOW）を明記せよ"
+        - "既存Issueに該当する問題はコメント追記"
+        - "新規発見は新規Issue作成"
+        - "診断完了後、dashboard.mdに結果を記載せよ"
+        - "obsidian_worthy判定を忘れるな（cmd_048で導入）"
+
+      action_required:
+        - "軍師に調査を委譲し、別働隊で並列調査せよ"
+        - "調査カテゴリ: 認証認可、入力検証、暗号化、ログ、設定、依存関係"
+        - "PowerShell/Windows特有のセキュリティ問題も確認せよ"
+
+  - id: cmd_048
+    timestamp: "2026-02-16T14:20:00"
+    command: "【機能追加】Obsidian自動登録機能の実装"
+    project: multi-agent-shogun
+    priority: high
+    status: done
+    started_at: "2026-02-16T14:22:00"
+    completed_at: "2026-02-16T14:25:00"
+    details:
+      summary: |
+        殿より指示。cmd完了時にObsidian登録を自動化する仕組みを導入せよ。
+        重要度判定付きで、価値あるものだけ登録する。
+
+      design:
+        trigger: "cmd完了時の報告"
+
+        report_format_addition: |
+          # gunshi_summary.yaml に以下を追加
+          obsidian_worthy: true/false
+          obsidian_category: "知見/失敗と学び" or "知見/成功事例" or "案件/xxx" 等
+          obsidian_title: "ノートのタイトル"
+          obsidian_summary: "ノートの概要（frontmatter用）"
+
+        registration_criteria:
+          should_register:
+            - "失敗と学び（再発防止）"
+            - "成功事例（横展開可能）"
+            - "未来設計・アイデア"
+            - "重要な意思決定の経緯"
+            - "新しいスキル作成"
+          should_not_register:
+            - "単純な整理タスク（dashboard更新など）"
+            - "ルーティン作業"
+            - "既存Issueへのコメント追記のみ"
+
+        workflow: |
+          1. 軍師がcmd完了時に obsidian_worthy を判定
+          2. true の場合、obsidian_category と obsidian_title を設定
+          3. 家老がサマリ受領時、obsidian_worthy: true なら Obsidian MCP で登録
+          4. dashboard.md に「📚 Obsidian登録済み」を付記
+
+      action_required:
+        - "軍師の報告フォーマット（gunshi_summary.yaml テンプレート）を更新"
+        - "家老の受領ワークフロー（karo.md または karo/報告受領.md）を更新"
+        - "軍師・家老に新フローを周知"
+
+  - id: cmd_047
+    timestamp: "2026-02-16T14:05:00"
+    command: "【整理】ipadress-manager診断結果をdashboardから削除"
+    project: multi-agent-shogun
+    priority: low
+    status: done
+    completed_at: "2026-02-16T14:07:00"
+    details:
+      summary: |
+        ipadress-managerセキュリティ診断結果は既存Issueにコメント追記済み。
+        dashboard.mdの要対応セクションから削除せよ。
+
+      action:
+        - "dashboard.mdの「【要確認】ipadress-manager セキュリティ診断結果」セクションを削除"
+        - "クローズ済み事項に「Issue #53, #54 コメント追記済み」と記載"
+
+  - id: cmd_046
+    timestamp: "2026-02-16T13:45:00"
+    command: "【修正】skill-evaluate をSkillツール登録可能な形式に修正"
+    project: multi-agent-shogun
+    priority: high
+    status: done
+    completed_at: "2026-02-16T13:52:00"
+    details:
+      summary: |
+        殿より指摘あり。skill-evaluate.md は手順書（ガイドスキル）として作られており、
+        Claude Code の /skill コマンドとして自動実行できない状態。
+
+      problem: |
+        【現状】
+        - skills/skill-evaluate.md は手順書形式
+        - 軍師が手動でステップを実行する必要あり
+        - 「1コマンドで自動化」という殿の意図と乖離
+
+        【殿の意図】
+        - 軍師が /skill-evaluate を実行
+        - 自動で評価→タスク作成→通知まで完了
+        - 人の注意力ではなく仕組みで担保
+
+      action_required: |
+        軍師と協議し、以下を実施せよ：
+        1. Claude Code の Skill ツールに登録可能な形式を調査
+        2. skill-evaluate.md を修正
+        3. .claude/skills/ への配置が必要か確認
+        4. 動作テストを実施
+
+      note: |
+        これは家老→軍師の直接協議案件。
+        軍師がSkillツールの仕様を理解しているか確認し、
+        必要なら調査から始めよ。
+
+  - id: cmd_045
+    timestamp: "2026-02-13T21:15:00"
+    command: "【セキュリティ診断】ipadress-manager 脆弱性調査"
+    project: ipadress-manager
+    priority: high
+    status: done
+    started_at: "2026-02-13T21:16:00"
+    completed_at: "2026-02-16T13:35:00"
+    details:
+      summary: |
+        殿の指示により、ipadress-manager リポジトリの脆弱性診断を実施せよ。
+        既存Issueがあるため、追加発見があればコメント追記で対応。
+
+      target:
+        repository: "https://github.com/Yuidea-DxG/ipadress-manager.git"
+        local_path: "/home/nishimura/ipadress-manager"
+
+      existing_issues:
+        - id: 52
+          title: ".env file committed to git - credential exposure"
+          severity: Critical
+        - id: 53
+          title: "No authentication or authorization implemented"
+          severity: Critical
+        - id: 54
+          title: "Hardcoded fallback password in db.ts"
+          severity: Medium
+
+      requirements:
+        - "What/Why/How形式で報告せよ"
+        - "severity（CRITICAL/HIGH/MEDIUM/LOW）を明記せよ"
+        - "既存Issue（#52, #53, #54）に該当する問題は新規Issue不要"
+        - "追加発見があれば既存Issueにコメント追記、または新規Issue作成"
+        - "診断完了後、dashboard.mdに結果を記載せよ"
+
+      action_required:
+        - "軍師に調査を委譲し、別働隊で並列調査せよ"
+        - "調査カテゴリ: 認証認可、入力検証、暗号化、ログ、設定、依存関係"
+        - "既存Issueとの重複確認を怠るな"
+
+  - id: cmd_044
+    timestamp: "2026-02-13T21:10:00"
+    command: "【整理】billing-mng-gcp診断結果をdashboardから削除"
+    project: multi-agent-shogun
+    priority: low
+    status: done
+    completed_at: "2026-02-13T21:12:00"
+    details:
+      summary: |
+        billing-mng-gcpセキュリティ診断結果はIssue #34にコメント追記済み。
+        dashboard.mdの要対応セクションから削除せよ。
+
+      action:
+        - "dashboard.mdの「【要確認】billing-mng-gcp セキュリティ診断結果」セクションを削除"
+        - "クローズ済み事項に「Issue #34 コメント追記済み」と記載"
+
+  - id: cmd_043
+    timestamp: "2026-02-13T21:05:00"
+    command: "【整理】AssetsManageSystem診断結果をdashboardから削除"
+    project: multi-agent-shogun
+    priority: low
+    status: done
+    completed_at: "2026-02-13T21:07:00"
+    details:
+      summary: |
+        AssetsManageSystemセキュリティ診断結果は既にGitHub Issue化済み（#323-#327）。
+        dashboard.mdの要対応セクションから削除せよ。
+
+      existing_issues:
+        - "#323: 認証・認可が未実装（CRITICAL）"
+        - "#324: DBパスワードがGit履歴に露出（CRITICAL）"
+        - "#325: センシティブデータがログに出力（CRITICAL）"
+        - "#326: HTTPS未強制（HIGH）"
+        - "#327: エラー詳細が外部に露出（MEDIUM）"
+
+      action:
+        - "dashboard.mdの「【緊急】AssetsManageSystem セキュリティ診断結果」セクションを削除"
+        - "クローズ済み事項に「Issue #323-#327 作成済み」と記載"
+
+  - id: cmd_042
+    timestamp: "2026-02-13T21:00:00"
+    command: "【整理】dashboard.md 伺い事項クリーンアップ"
+    project: multi-agent-shogun
+    priority: low
+    status: done
+    completed_at: "2026-02-13T21:02:00"
+    details:
+      summary: |
+        殿の確認済み事項をdashboard.mdから整理せよ。
+
+      action:
+        remove:
+          - section: "【1on1】cmd_039 将軍と家老の振り返り"
+            reason: "skill-evaluateで根本解決済み、gcp-iap-auth-audit作成済み"
+          - section: "cmd_038 スキル利用アンケート結果"
+            reason: "cmd_041でガイド作成 + obsidian-note-creator作成済み"
+
+        keep:
+          - section: "AssetsManageSystem セキュリティ診断結果"
+            reason: "GitHub Issue作成待ち"
+          - section: "billing-mng-gcp セキュリティ診断結果"
+            reason: "#34更新 or 別Issue の判断待ち"
+
+  - id: cmd_041
+    timestamp: "2026-02-13T20:30:00"
+    command: "【並行作業】スキル周知改善 + obsidian-note-creator 作成"
+    project: multi-agent-shogun
+    priority: high
+    status: done
+    completed_at: "2026-02-13T20:45:00"
+    details:
+      summary: |
+        cmd_038のアンケート結果を受け、殿より並行作業の指示あり。
+        本隊・別働隊の両方を使って進めよ。
+
+      background: |
+        【問題】
+        - スキル使用率0%（46件あるのに誰も使っていない）
+        - 「使い方が分からなかった」という声あり
+        - entity-class-diagram-generator は既に存在するのに要望が出た → 周知不足
+
+        【足軽からの要望】
+        - Obsidian関連: 3名が要望（obsidian-note-creator統合で対応可）
+        - 既存スキルの認知: entity-class-diagram-generator等
+
+      tasks:
+        - task_id: "A"
+          name: "スキル使い方ガイド作成・周知"
+          assign_to: "本隊（足軽1-4）"
+          details: |
+            - skills/ にあるスキルの使い方ガイドを作成
+            - 呼び出し方法（ToolSearch？直接？/skill-name？）を明確に
+            - 全軍に周知
+
+        - task_id: "B"
+          name: "obsidian-note-creator スキル作成"
+          assign_to: "別働隊（足軽5-8）"
+          details: |
+            - frontmatter付きObsidianノート生成
+            - wikilink補完
+            - テンプレート対応
+            - 足軽1,2,3,4からの要望を統合
+
+      action_required:
+        - "本隊にスキル使い方ガイド作成を指示"
+        - "別働隊にobsidian-note-creator作成を指示（軍師経由）"
+        - "cmd_040のskill-evaluateも並行で進行中のため、優先度調整せよ"
+
+  - id: cmd_040
+    timestamp: "2026-02-13T20:20:00"
+    command: "【スキル作成】skill-evaluate 自動評価・依頼スキル"
+    project: multi-agent-shogun
+    priority: high
+    status: done
+    completed_at: "2026-02-13T20:40:00"
+    details:
+      summary: |
+        1on1での議論を受け、殿より根本解決策の指示あり。
+        「チェックリストを増やすのではなく、仕組みで解決する」
+
+      background: |
+        【問題】
+        軍師がスキル評価後、作成指示を出し忘れる問題が繰り返し発生。
+        - cmd_035: セキュリティスキル4件、評価後作成指示なし
+        - cmd_037: gcp-iap-auth-audit (15点)、評価後作成指示なし
+
+        【根本原因】
+        評価→報告→確認→作成指示→作成 とステップが多く、途中で切れる。
+        人の注意力に依存している。
+
+      solution: |
+        【殿の指示】
+        「評価が14点以上なら作成するところを自動化」
+        「軍師が1コマンド実行するだけで全部フローとして動く」
+
+        【設計】
+        /skill-evaluate スキルを作成。軍師がこれを実行すると：
+        1. スキル候補を評価（スコアリング）
+        2. 14点以上なら自動で queue/tasks/ashigaru{N}.yaml に作成タスクを書く
+        3. 該当足軽に notify.sh で通知
+        4. 軍師には「✅ 15点 - 自動承認。足軽Nに作成依頼済み」とメッセージ
+
+        【効果】
+        - 軍師は1コマンドで評価→依頼まで完結
+        - 「報告して終わり」という切れ目がなくなる
+        - 人の注意力ではなく仕組みで担保
+
+      action_required:
+        - "軍師にこの方針を伝えよ"
+        - "別働隊で skill-evaluate スキルを作成せよ"
+        - "作成後、軍師に使い方を周知せよ"
+        - "gcp-iap-auth-audit の作成も併せて実施せよ"
+
+      skill_spec:
+        name: skill-evaluate
+        trigger: "/skill-evaluate"
+        input: "スキル候補情報（名前、説明、提案者）"
+        output: |
+          - 評価結果（スコア、判定）
+          - 14点以上: 自動で作成タスク生成 + 足軽通知
+          - 13点以下: 却下理由を返却
+        files_to_write:
+          - "queue/tasks/ashigaru{N}.yaml（作成タスク）"
+        notify: "bin/notify.sh で該当足軽に通知"
+
+  - id: cmd_039
+    timestamp: "2026-02-13T20:00:00"
+    command: "【1on1】将軍と家老の振り返り"
+    project: multi-agent-shogun
+    priority: high
+    status: done
+    completed_at: "2026-02-13T20:05:00"
+    details:
+      summary: |
+        殿より1on1の実施指示あり。以下の問題について家老の見解を聞きたい。
+
+      agenda:
+        - topic: "軍師のスキル評価後のフォロー漏れ"
+          context: |
+            gcp-iap-auth-audit (15点) が自動承認対象なのに、別働隊に作成指示が出ていない。
+            cmd_035でも同様の問題があった。軍師の役割ファイルに「後始末」を追加したが、また発生している。
+          questions:
+            - "家老として、この問題をどう認識しているか？"
+            - "軍師への指導・監視をどう改善できるか？"
+
+        - topic: "軍師のコンパクション自己管理"
+          context: |
+            軍師のコンテキストが0%で止まっている。
+            20%ルール（自己管理でcompact）が守られていない。
+          questions:
+            - "家老として、軍師の状態を把握していたか？"
+            - "部下のコンパクション状態をどう監視すべきか？"
+
+        - topic: "スキル利用率0%"
+          context: |
+            cmd_038のアンケート結果、スキル利用率が0%だった。
+            「使い方が分からなかった」という声あり。
+          questions:
+            - "スキル周知について、家老としてどう対応すべきか？"
+
+      format: |
+        家老は以下の形式で回答せよ：
+        1. 各トピックについての認識
+        2. 改善案の提案
+        3. 今後のアクション
+
+  - id: cmd_038
+    timestamp: "2026-02-13T19:15:00"
+    command: "【アンケート】スキル利用状況調査"
+    project: multi-agent-shogun
+    priority: medium
+    status: done
+    completed_at: "2026-02-13T19:22:00"
+    details:
+      summary: |
+        殿より「スキルを皆使っているか？」との問いあり。
+        本隊（足軽1-4）にアンケートを実施し、スキル利用状況を調査せよ。
+
+      target:
+        agents: [ashigaru1, ashigaru2, ashigaru3, ashigaru4]
+
+      questions:
+        - "skills/ にあるスキルを使ったことがあるか？（Yes/No）"
+        - "使ったことがあるなら、どのスキルを使ったか？"
+        - "使いやすかったか？問題点はあるか？"
+        - "欲しいスキルはあるか？"
+
+      context:
+        total_skills: 46
+        skill_list: |
+          確認系: confirmation-list, risk-matrix
+          分析系: system-architecture-analyzer, xlsx-analyzer, document-structure-analyzer, dependency-analyzer
+          生成系: nfr-template-generator, functional-requirements-generator, api-schema-generator, entity-generator-from-spec
+          React系: react-mui-crud-scaffold, react-file-download, react-tag-management-ui, react-layout-template-generator
+          NestJS系: nestjs-code-reviewer, nestjs-file-export, typeorm-seeder-generator, typeorm-entity-checker
+          セキュリティ系: dotnet-security-audit, dotnet-secrets-scanner, blazor-security-checker, aspnet-auth-audit
+          その他多数（計46件）
+
+      action_required:
+        - "本隊（足軽1-4）に並列でアンケート実施"
+        - "結果を集約してdashboard.mdに報告せよ"
+
+  - id: cmd_037
+    timestamp: "2026-02-13T19:05:00"
+    command: "【セキュリティ診断】billing-mng-gcp 脆弱性調査"
+    project: billing-mng-gcp
+    priority: high
+    status: done
+    completed_at: "2026-02-13T19:50:00"
+    details:
+      summary: |
+        殿の指示により、billing-mng-gcp リポジトリの脆弱性診断を実施せよ。
+        診断結果はdashboard.mdに報告し、殿の確認後にGitHub Issuesを作成する。
+
+      target:
+        repository: "https://github.com/Yuidea-DxG/billing-mng-gcp"
+        local_path: "/home/nishimura/billing-mng-gcp"
+
+      requirements:
+        - "What/Why/How形式で報告せよ"
+        - "severity（CRITICAL/HIGH/MEDIUM/LOW）を明記せよ"
+        - "既存のIssueを確認し、重複を避けよ"
+        - "診断完了後、dashboard.mdに結果を記載せよ"
+        - "殿の確認後にGitHub Issuesを作成する（先にIssue作成するな）"
+
+      action_required:
+        - "軍師に調査を委譲し、別働隊で並列調査せよ"
+        - "調査カテゴリ: 認証認可、入力検証、暗号化、ログ、設定、依存関係"
+        - "dashboard.mdに結果を記載し、殿の確認を待て"
+
+  - id: cmd_036
+    timestamp: "2026-02-13T18:15:00"
+    command: "【スキル作成】セキュリティ診断スキル4件作成"
+    project: multi-agent-shogun
+    priority: high
+    status: done
+    completed_at: "2026-02-13T18:25:00"
+    details:
+      summary: |
+        cmd_035のセキュリティ診断で自動承認された4件のスキルを作成せよ。
+        親スキル: dotnet-security-audit
+        サブスキル: aspnet-auth-audit, dotnet-secrets-scanner, blazor-security-checker
+
+      skills:
+        - name: dotnet-security-audit
+          score: 19
+          type: parent
+        - name: aspnet-auth-audit
+          score: 19
+          type: sub
+        - name: dotnet-secrets-scanner
+          score: 18
+          type: sub
+        - name: blazor-security-checker
+          score: 17
+          type: sub
+
+      action_required:
+        - "軍師に指示し、別働隊でスキル作成"
+        - "skills/ ディレクトリに4ファイル作成"
+
+  - id: cmd_035
+    timestamp: "2026-02-13T17:47:42"
+    command: "【セキュリティ診断】AssetsManageSystem 脆弱性調査"
+    project: AssetsManageSystem
+    priority: critical
+    status: done
+    completed_at: "2026-02-13T17:58:00"
+    details:
+      summary: |
+        殿の指示により、資産管理システム（Blazor Server/.NET 8）の脆弱性診断を実施する。
+        GWS OAuth認証でログインするシステムである。ハッカー視点で課題・問題を洗い出せ。
+
+      target:
+        repository: "https://github.com/Yuidea-DxG/AssetsManageSystem.git"
+        local_path: "/home/nishimura/AssetsManageSystem"
+        tech_stack:
+          - "ASP.NET Core Blazor Server"
+          - "PostgreSQL"
+          - "Entity Framework Core"
+          - "MudBlazor"
+          - ".NET 8"
+
+      initial_findings:
+        critical:
+          - issue: "パスワード・認証情報がappsettings.jsonに平文でコミット"
+            files:
+              - "appsettings.json - Password=asset-db"
+              - "appsettings.Development.json - Password=asset-db"
+              - "appsettings.Staging.json - Password=cgpress1041"
+            risk: "リポジトリにアクセスできる者全員がDB認証情報を取得可能"
+
+          - issue: "EnableSensitiveDataLogging()が有効"
+            file: "Program.cs:52"
+            risk: "センシティブなデータがログに出力される可能性"
+
+        high:
+          - issue: "AllowedHosts が * に設定"
+            file: "appsettings.json:38"
+            risk: "ホストヘッダーインジェクション攻撃の可能性"
+
+          - issue: "認証・認可の実装確認が必要"
+            note: "Program.csにAuthentication/Authorization設定が見当たらない"
+            risk: "未認証アクセスの可能性"
+
+        to_investigate:
+          - "Controllers（5ファイル）の認可属性確認"
+          - "APIエンドポイントの認証確認"
+          - "CSVインポート機能のインジェクション対策"
+          - "SQLインジェクション対策"
+          - "XSS対策"
+          - "CSRF対策"
+          - "OAuth実装の詳細確認"
+
+      scale:
+        cs_files: 306
+        controllers: 5
+        services: 28
+
+      action_required:
+        - "軍師に調査を委譲し、別働隊で並列調査せよ"
+        - "調査カテゴリ: 認証認可、入力検証、暗号化、ログ、設定"
+        - "発見した脆弱性は severity と remediation を含めて報告せよ"
+
   - id: cmd_034
     timestamp: "2026-02-13T17:38:55"
     command: "【通達】全軍役割ファイル責任フォーカス化リストラクチャ完了"
     project: multi-agent-shogun
     priority: high
-    status: assigned
+    status: done
+    completed_at: "2026-02-13T17:41:00"
     details:
       summary: |
         殿のご指導のもと、全役割ファイルを「責任フォーカス」形式に再編成した。
@@ -38,98 +759,3 @@ queue:
         - "軍師に通達せよ"
         - "本隊・別働隊に周知せよ"
         - "dashboard.md を更新せよ"
-
-  - id: cmd_033
-    timestamp: "2026-02-13T17:00:54"
-    command: "【緊急】軍師の永続化アーカイブ忘れ問題 - 役割ファイル見直し・再発防止策を講じよ"
-    project: multi-agent-shogun
-    priority: critical
-    status: done
-    completed_at: "2026-02-13T17:04:00"
-    details:
-      problem:
-        description: |
-          軍師が cmd_*_summary.yaml の永続化を忘れており、
-          過去のタスク記録のほとんどが復旧困難になった。
-
-          【現状】
-          - archive に存在: cmd_001, 002, 012, 013, 022, 023, 031 の7件のみ
-          - 欠落: cmd_003〜011, 014〜021, 024〜030 など多数
-
-          【原因分析】
-          - gunshi.md にはルールが書いてあるが、コンパクション復帰時に見落とされやすい
-          - 家老報告「前」に永続化すべきだが、タイミングが曖昧
-          - チェックリストとしてより強調する必要がある
-
-      tasks:
-        - task: "gunshi.md の永続化ルール強化"
-          changes:
-            - "コンパクション復帰セクションに永続化確認を追加"
-            - "家老報告フローに「永続化チェック」ステップを必須化"
-            - "より目立つ警告ボックスを追加"
-            - "チェックリスト形式で確認項目を明記"
-
-        - task: "karo.md にも軍師の永続化確認を追加"
-          reason: "家老が報告を受ける際に、永続化されたか確認するチェックポイント"
-
-        - task: "CLAUDE.md のグランドルールに追記"
-          reason: "全エージェント共通の重要ルールとして周知"
-
-        - task: "Obsidian知見ノートに失敗事例として記録"
-          target: "知見/失敗と学び/永続化アーカイブ忘れ.md"
-          content: |
-            - 何が起きたか
-            - なぜ起きたか
-            - どう防ぐか
-            - 学んだこと
-
-      proposed_changes:
-        gunshi_md:
-          - location: "コンパクション復帰セクション（最上部）"
-            add: |
-              # ██████████████████████████████████████████████████████████████████████████████
-              # █ 【最重要】家老に報告する前に、必ず永続化を確認せよ！                      █
-              # █ cp queue/reports/gunshi_summary.yaml queue/reports/archive/cmd_XXX_summary.yaml █
-              # █ これを忘れると記録が消える！過去に多数のcmdが消失した！                  █
-              # ██████████████████████████████████████████████████████████████████████████████
-
-          - location: "workflowセクション"
-            modify: |
-              step A5.5（新規追加）:
-                action: archive_summary
-                target: queue/reports/archive/cmd_{XXX}_summary.yaml
-                command: "cp queue/reports/gunshi_summary.yaml queue/reports/archive/cmd_XXX_summary.yaml"
-                note: "これを忘れるな！家老報告の「前」に必ず実行！"
-                mandatory: true
-
-        karo_md:
-          - location: "軍師報告受領時"
-            add: |
-              【軍師報告受領時チェック】
-              軍師からサマリ報告を受けた際、以下を確認せよ：
-              □ queue/reports/archive/cmd_XXX_summary.yaml は存在するか？
-              存在しない場合は軍師に永続化を指示せよ。
-
-      note: |
-        殿のご指摘：「役割ファイルとかも見直してくれる？」
-        → gunshi.md, karo.md, CLAUDE.md の関連セクションを全て見直し、
-        再発防止策を講じること。
-
-  - id: cmd_032
-    timestamp: "2026-02-13T16:57:26"
-    command: "Obsidian vault「gunryaku-roku」のディレクトリ構造を整備せよ"
-    status: done
-    completed_at: "2026-02-13T17:06:00"
-    note: "cmd_033と並行して進めてよい"
-
-  - id: cmd_031
-    timestamp: "2026-02-13T16:42:30"
-    command: "cmd_*_summary.yaml をObsidianに取り込み、記録を可視化せよ"
-    status: done
-    completed_at: "2026-02-13T16:56:00"
-
-  - id: cmd_030
-    timestamp: "2026-02-13T14:14:15"
-    command: "Draw.io MCP 運用ルール整備"
-    status: done
-    completed_at: "2026-02-13T14:49:32"
