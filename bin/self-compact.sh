@@ -15,7 +15,12 @@ fi
 
 echo "Compacting context for pane $MY_PANE ..."
 
-# /compact を自分に送る（notify.shと同じ形式: メッセージ→待機→Enter）
-tmux send-keys -t "$MY_PANE" '/compact'
-sleep 0.3
-tmux send-keys -t "$MY_PANE" Enter
+# バックグラウンドで /compact を送る（Claude Code が入力待ちになってから送るため遅延実行）
+(
+  sleep 1  # Claude Code が入力待ちになるまで待つ
+  tmux send-keys -t "$MY_PANE" '/compact'
+  sleep 0.3
+  tmux send-keys -t "$MY_PANE" Enter
+) &
+
+echo "Scheduled /compact for pane $MY_PANE (will execute in 1 second)"

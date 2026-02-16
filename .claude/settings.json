@@ -3,6 +3,7 @@
     "SessionStart": [
       {
         "matcher": "compact",
+        "statusMessage": "コンパクション復帰中...",
         "hooks": [
           {
             "type": "command",
