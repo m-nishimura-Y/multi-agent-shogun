@@ -1,0 +1,31 @@
+%%{ init: { "theme": "default" } }%%
+sequenceDiagram
+    autonumber
+    participant C as Client<br>(Frontend)
+    participant AC as AuthController
+    participant AS as AuthService
+    participant JWT as JwtService
+
+    Note over C,JWT: POST /api/auth/login
+
+    C->>+AC: login(LoginDto)
+    Note right of C: { userId, password }
+
+    AC->>+AS: login(loginDto)
+
+    AS->>AS: ユーザー検索<br>(mockUsersから)
+
+    alt ユーザー不在
+        AS-->>AC: UnauthorizedException
+        AC-->>C: 401 Unauthorized
+    else パスワード不一致
+        AS-->>AC: UnauthorizedException
+        AC-->>C: 401 Unauthorized
+    else 認証成功
+        AS->>AS: JwtPayload作成<br>{sub, userId, name, role}
+        AS->>+JWT: sign(payload)
+        JWT-->>-AS: accessToken
+        AS-->>-AC: LoginResponseDto
+        Note left of AS: { access_token, user }
+        AC-->>-C: 200 OK
+    end

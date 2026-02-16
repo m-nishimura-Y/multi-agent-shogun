@@ -1,0 +1,36 @@
+%%{ init: { "theme": "default" } }%%
+sequenceDiagram
+    autonumber
+    participant C as Client<br>(Frontend)
+    participant MEC as ManuscriptExport<br>Controller
+    participant MES as ManuscriptExport<br>Service
+    participant DB as Database<br>(TypeORM)
+
+    Note over C,DB: GET /api/manuscript-export?format=excel
+
+    C->>+MEC: exportManuscript(dto)
+    Note right of C: { catalogId, format }
+
+    MEC->>+MES: export(dto)
+
+    MES->>+DB: カタログ情報取得
+    DB-->>-MES: Catalog
+
+    MES->>+DB: 商品一覧取得<br>(ProductEntry)
+    DB-->>-MES: entries[]
+
+    MES->>MES: データ変換<br>(ManuscriptItem[])
+
+    alt format = EXCEL
+        MES->>MES: Excel生成<br>(xlsx)
+    else format = CSV
+        MES->>MES: CSV生成<br>(Shift-JIS)
+    else format = TAB
+        MES->>MES: タブ区切り生成<br>(Shift-JIS)
+    end
+
+    MES-->>-MEC: { buffer, contentType, extension }
+
+    MEC->>MEC: レスポンスヘッダー設定<br>Content-Disposition
+
+    MEC-->>-C: ファイルダウンロード

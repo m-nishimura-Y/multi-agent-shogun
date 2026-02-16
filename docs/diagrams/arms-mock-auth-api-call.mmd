@@ -1,0 +1,25 @@
+%%{ init: { "theme": "default" } }%%
+sequenceDiagram
+    autonumber
+    participant C as Client<br>(Frontend)
+    participant G as JwtAuthGuard
+    participant JS as JwtStrategy
+    participant Ctrl as Controller<br>(任意のAPI)
+
+    Note over C,Ctrl: GET /api/auth/profile 等
+
+    C->>+G: リクエスト<br>Authorization: Bearer {token}
+
+    G->>+JS: validate(payload)
+
+    JS->>JS: トークン検証<br>(署名・有効期限)
+
+    alt トークン無効
+        JS-->>G: UnauthorizedException
+        G-->>C: 401 Unauthorized
+    else トークン有効
+        JS-->>-G: user情報
+        G->>+Ctrl: リクエスト<br>(req.userに付与)
+        Ctrl-->>-G: レスポンス
+        G-->>-C: 200 OK + data
+    end

@@ -204,6 +204,18 @@ MCPツールは遅延ロード方式。使用前に必ず `ToolSearch` で検索
 
 **導入済みMCP**: Notion, Playwright, GitHub, Sequential Thinking, Memory, Document-Loader, Codex, Draw.io, Obsidian
 
+## スキル活用
+
+skills/ ディレクトリには **70以上のスキル** がある。積極的に活用せよ。
+
+| ドキュメント | 内容 |
+|--------------|------|
+| [スキル使い方ガイド](docs/guides/skill-usage-guide.md) | 呼び出し方法（/コマンド、Skill tool、直接読み） |
+| [スキルカタログ](docs/guides/skill-catalog.md) | カテゴリ別スキル一覧（確認系、分析系、生成系、React系、NestJS系、セキュリティ系） |
+| [スキル使用例集](docs/guides/skill-examples.md) | 具体的な使用シーン（シーケンス図、CRUD画面、セキュリティ診断、Entity整合性確認） |
+
+**スキル検索**: `~/multi-agent-shogun/bin/search-skills.sh キーワード`
+
 ## 将軍の必須行動（コンパクション後も忘れるな！）
 
 以下は**絶対に守るべきルール**である。コンテキストがコンパクションされても必ず実行せよ。

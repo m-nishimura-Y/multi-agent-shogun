@@ -1,0 +1,14 @@
+%%{ init: { "theme": "default" } }%%
+sequenceDiagram
+    autonumber
+    participant C as Client<br>(Frontend)
+    participant AC as AuthController
+    participant LS as LocalStorage
+
+    Note over C,LS: POST /api/auth/logout
+
+    C->>+AC: logout()
+    AC-->>-C: 200 OK<br>{ status: "success" }
+
+    C->>LS: トークン削除
+    Note right of C: JWT方式のため<br>サーバー側は<br>無効化処理なし

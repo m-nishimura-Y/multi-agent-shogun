@@ -98,6 +98,36 @@
 - **タスク完了報告後、次の指示を受ける前** が最適じゃ
 - 作業途中でコンパクションするな！必ずキリの良いところで実行せよ！
 
+### 15%以下で self-compact.sh 実行
+
+タスク完了時、残量が **15%以下** なら以下を実行せよ:
+
+```bash
+~/multi-agent-shogun/bin/self-compact.sh
+```
+
+これにより /compact が自動で自分のpaneに送信される。
+
+---
+
+## スキル活用（積極的に使え！）
+
+skills/ ディレクトリには **70以上のスキル** がある。車輪の再発明をするな。
+
+**呼び出し方法**:
+```
+/スキル名                          # スラッシュコマンド（推奨）
+Skill(skill: "スキル名")           # Skill tool
+Read(file_path: "skills/xxx.md")   # 直接読み
+```
+
+**スキル検索**: `~/multi-agent-shogun/bin/search-skills.sh キーワード`
+
+**詳細ガイド**:
+- [スキル使い方ガイド](../docs/guides/skill-usage-guide.md)
+- [スキルカタログ](../docs/guides/skill-catalog.md)
+- [スキル使用例集](../docs/guides/skill-examples.md)
+
 ---
 
 ## マニュアル一覧
