@@ -1,19 +1,9 @@
 # 📊 戦況報告
-最終更新: 2026-02-16 19:30
+最終更新: 2026-02-17 14:30
 
 ## 🚨 要対応 - 殿のご判断をお待ちしております
 
-### cmd_057 スキル候補 4件（軍師評価待ち）
-| 候補名 | 提案者 | 説明 |
-|--------|--------|------|
-| fastapi-security-audit | 足軽2 | FastAPI+GCP向けセキュリティ監査 |
-| python-web-patterns | 足軽1 | FastAPI/Streamlit実装パターン集 |
-| gcp-cloudbuild-auditor | 足軽4 | Cloud Build設定診断 |
-| python-code-quality-analyzer | 足軽7 | Pythonコード品質評価 |
-
-### スキル整備課題（cmd_057で発覚）
-1. **cicd-health-checker**: カタログに記載あるが実体なし
-2. **CLAUDE.md**: 「skills/」と記載だが実際は「.claude/skills/」
+なし
 
 ## 📢 新機能周知 - /recovery スキル v1.1.0
 
@@ -39,6 +29,15 @@
 ## ✅ 本日の戦果
 | 時刻 | 戦場 | 任務 | 結果 |
 |------|------|------|------|
+| 14:30 | multi-agent-shogun | cmd_066: Skill ツール Unknown skill 対策 | ✅ 完了（頻出13スキルの description 短縮、frontmatter 統一）|
+| 13:25 | multi-agent-shogun | cmd_065: 組織改編フィードバック収集 | ✅ 完了（全8名回答、skill-catalog-generator 546行作成）|
+| 21:05 | multi-agent-shogun | cmd_064: 永続化漏れ12件是正 | ✅ 完了（12件archive作成 + karo.md永続化ルール追加）|
+| 20:55 | multi-agent-shogun | cmd_063: 足軽ワークフロー見直し | ✅ 完了（スキル検索ステップ追加、notify.sh表記更新）|
+| 20:50 | multi-agent-shogun | cmd_062: search-skills.shパス修正 | ✅ 完了（.claude/skills/対応、80スキル検出確認）|
+| 20:45 | multi-agent-shogun | cmd_060: スキル4件評価・作成 | ✅ 完了 📚（4スキル・3,050行）|
+| 20:35 | multi-agent-shogun | cmd_061: スキル整備課題2件対応 | ✅ 完了（パス修正: skills/→.claude/skills/、例修正）|
+| 20:25 | document-ai | cmd_059: GitHub Issue作成 | ✅ 完了（#13,#14,#15新規 + #9コメント追記 + 5ラベル作成）|
+| 19:45 | multi-agent-shogun | cmd_058: archive永続化漏れ是正 | ✅ 完了（cmd_046,050,051,053-057全8件是正）|
 | 19:30 | document-ai | cmd_057: 全軍総合診断+スキル実地テスト | ✅ 完了（C2,H8,M16,L8 / スキル7/8動作）|
 | 18:05 | multi-agent-shogun | cmd_056: /recovery v1.1.0 全軍展開 | ✅ 完了（軍師+本隊4名+別働隊4名に通知）|
 | 17:15 | multi-agent-shogun | cmd_055: 復帰通知機能全軍周知 | ✅ 完了（軍師+本隊4名に通知）|
@@ -88,10 +87,56 @@
 | dotnet-secrets-scanner | cmd_035診断 | 足軽7 | 18/20 | skills/dotnet-secrets-scanner.md |
 | blazor-security-checker | cmd_035診断 | 足軽8 | 17/20 | skills/blazor-security-checker.md |
 | express-jwt-auth-scaffold | 足軽6 | 足軽5 | 16/20 | skills/express-jwt-auth-scaffold.md |
-| mermaid-sequence-generator | 足軽3 | 足軽6 | 15/20 | skills/mermaid-sequence-generator.md |
-| entity-class-diagram-generator | 足軽2 | 足軽7 | 15/20 | skills/entity-class-diagram-generator.md |
+| mermaid-sequence-generator | 足軽3 | 足軽6 | 15/20 | .claude/skills/mermaid-sequence-generator.md |
+| entity-class-diagram-generator | 足軽2 | 足軽7 | 15/20 | .claude/skills/entity-class-diagram-generator.md |
+| python-code-quality-analyzer | 足軽7 | 足軽8 | 18/20 | .claude/skills/python-code-quality-analyzer/ (576行) |
+| fastapi-security-audit | 足軽2 | 足軽5 | 16/20 | .claude/skills/fastapi-security-audit/ (638行) |
+| gcp-cloudbuild-auditor | 足軽4 | 足軽7 | 16/20 | .claude/skills/gcp-cloudbuild-auditor/ (690行) |
+| python-web-patterns | 足軽1 | 足軽6 | 14/20 | .claude/skills/python-web-patterns/ (1,146行) |
+| skill-catalog-generator | 足軽2 | 足軽5 | 17/20 | .claude/skills/skill-catalog-generator/ (546行) |
 
 ## 📋 クローズ済み事項
+
+### cmd_065 組織改編フィードバック【全軍収集完了】
+実施日: 2026-02-17
+
+| 項目 | 本隊(1-4) | 別働隊(5-8) | 合計 |
+|------|-----------|-------------|------|
+| 回答 | 4名 | 4名 | 8名 |
+| /recovery 有用 | 4名 | 2名 | 6名 |
+| notify.sh 正常 | 4名 | 4名 | 8名 |
+
+**最重要課題**: Skill tool でカスタムスキル呼び出し不可（Unknown skill エラー）
+- 報告者: 足軽1,2,3,5,6,8（6名）
+- ワークアラウンド: SKILL.md を Read して手動実行
+- 対応予定: 足軽指示書に「カスタムスキルは手動実行」と明記
+
+**その他の課題**（対応済み含む）:
+- ~~スキルパス混乱~~ → cmd_061 で修正済み
+- ~~cicd-health-checker 不存在~~ → cmd_061 で修正済み
+- スキルカタログと実体の整合性 → skill-catalog-generator で自動化予定
+
+**スキル候補**: skill-catalog-generator（17点・自動承認・足軽5作成中）
+
+詳細: queue/reports/cmd_065_hontai_summary.yaml, queue/reports/gunshi_summary.yaml
+
+---
+
+### document-ai セキュリティ診断【GitHub Issue作成完了】
+殿の指示: cmd_057診断結果をIssue化（2026-02-16）
+
+| Issue | 深刻度 | ラベル | 内容 |
+|-------|--------|--------|------|
+| #13 | HIGH×3 | `security` `high` `infrastructure` | CloudRun/Dockerfileセキュリティ強化 |
+| #14 | MEDIUM | `medium` `infrastructure` | cloudbuild.yaml設定改善 |
+| #15 | MEDIUM | `medium` `enhancement` | Linter/Formatter導入 |
+| #9 | LOW | `low` | 軽微な改善まとめ（コメント追記） |
+
+**作成したラベル**: `security`, `high`, `medium`, `low`, `infrastructure`
+
+詳細: queue/reports/archive/cmd_057_summary.yaml
+
+---
 
 ### ZeroTouchKitter セキュリティ診断【GitHub Issue登録+ラベル付け完了】
 殿の指示: Issue #7 コメント追記 + 新規Issue #21-24 作成 + ラベル付け（2026-02-16）

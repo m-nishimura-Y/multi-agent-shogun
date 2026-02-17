@@ -73,7 +73,7 @@ Skill(skill: "api-schema-generator", args: "path/to/spec.yaml")
 スキルファイルを Read ツールで読み、手順に従って実行する。
 
 ```
-Read(file_path: "/home/nishimura/multi-agent-shogun/skills/confirmation-list.md")
+Read(file_path: "/home/nishimura/multi-agent-shogun/.claude/skills/confirmation-list.md")
 ```
 
 その後、ファイルに記載された「実行手順」に従って作業する。
@@ -84,14 +84,14 @@ Read(file_path: "/home/nishimura/multi-agent-shogun/skills/confirmation-list.md"
 
 ---
 
-## skills/ ディレクトリの構造
+## .claude/skills/ ディレクトリの構造
 
 ```
-skills/
+.claude/skills/
 ├── confirmation-list.md        # 単一ファイル形式
 ├── api-schema-generator.md
 ├── react-mui-crud-scaffold.md
-├── cicd-health-checker/        # ディレクトリ形式
+├── repo-test-status-checker/        # ディレクトリ形式
 │   └── SKILL.md
 ├── code-quality-analyzer/
 │   └── SKILL.md
@@ -102,8 +102,8 @@ skills/
 
 | 形式 | 構造 | 例 |
 |------|------|-----|
-| **単一ファイル** | `skills/スキル名.md` | `confirmation-list.md` |
-| **ディレクトリ** | `skills/スキル名/SKILL.md` | `cicd-health-checker/SKILL.md` |
+| **単一ファイル** | `.claude/skills/スキル名.md` | `confirmation-list.md` |
+| **ディレクトリ** | `.claude/skills/スキル名/SKILL.md` | `repo-test-status-checker/SKILL.md` |
 
 ディレクトリ形式は、追加ファイル（テンプレート等）が必要なスキルに使用される。
 
@@ -138,7 +138,7 @@ description: "スキルの説明"
 ### 方法1: ファイル一覧を見る
 
 ```bash
-ls ~/multi-agent-shogun/skills/
+ls ~/multi-agent-shogun/.claude/skills/
 ```
 
 ### 方法2: スキル検索ツールを使う
@@ -180,7 +180,7 @@ A: `search-skills.sh` でキーワード検索するか、カテゴリ別一覧�
 
 ### Q: スキルが見つからない
 
-A: スキル名が正しいか確認せよ。`ls skills/` で一覧を確認できる。
+A: スキル名が正しいか確認せよ。`ls .claude/skills/` で一覧を確認できる。
 
 ### Q: スキルをカスタマイズしたい
 

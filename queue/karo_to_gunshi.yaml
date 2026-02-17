@@ -1,85 +1,101 @@
 # ============================================================
 # 家老 → 軍師 指示書
-# cmd_057: document-ai 全軍総合診断（スキル実地テスト）
+# cmd_065: 組織改編後の改善点フィードバック収集（別働隊分）
 # ============================================================
 
 task:
-  task_id: gunshi_cmd057_betsudoutai
-  parent_cmd: cmd_057
-  timestamp: "2026-02-16T18:50:00"
-  type: parallel_diagnosis
+  task_id: gunshi_cmd065_feedback
+  parent_cmd: cmd_065
+  timestamp: "2026-02-17T09:30:00"
+  type: feedback_collection
   status: pending
-  priority: high
+  priority: normal
 
-  title: "【別働隊指揮】document-ai スキル実地テスト"
+  title: "【フィードバック収集】別働隊（足軽5-8）から組織改編後の改善点を収集せよ"
 
   description: |
-    殿の指示により、document-ai を全軍で総合診断する。
-    目的は2つ：
-    1. プロジェクトの品質・セキュリティ診断
-    2. 既存スキルの実地テスト（使用率0%問題の解消）
+    将軍より指示。組織改編（v1.6.x〜v1.7.x）後の改善点フィードバックを収集する。
+    本隊（足軽1-4）は家老が直接収集中。
+    別働隊（足軽5-8）の収集は軍師に委譲する。
 
-    別働隊4名（足軽5-8）にスキルを割り当て、並列で診断を実行せよ。
+  questions:
+    - "組織改編（v1.6.x〜v1.7.x）で良くなった点は？"
+    - "まだ困っている点・改善してほしい点は？"
+    - "コンパクション復帰時の /recovery は役立っているか？"
+    - "スキル活用について困っている点は？"
+    - "通知（notify.sh）は正常に動作しているか？"
+    - "その他、提案や要望はあるか？"
 
-  target:
-    repository: "https://github.com/Yuidea-DxG/document-ai.git"
-    local_path: "/home/nishimura/document-ai"
-    tech_stack:
-      - "Python 3.x"
-      - "Streamlit (Web UI)"
-      - "FastAPI (API)"
-      - "Google Cloud Document AI"
-      - "GCP Cloud Run"
-      - "pytest"
-
-  existing_issues:
-    - id: 5
-      title: "エラーハンドリング強化とログ出力の充実"
-    - id: 7
-      title: "統合テストの追加とテストカバレッジ向上"
-    - id: 9
-      title: "軽微な改善まとめ（print削除・定数化・整理）"
-
-  task_assignment:
-    ashigaru5:
-      skill: "gcp-cloudrun-analyzer"
-      target: "Cloud Run構成診断"
-      focus: "Dockerfile, cloudbuild*.yaml, deploy.sh"
-
-    ashigaru6:
-      skill: "gcp-config-analyzer"
-      target: "GCP設定全般診断"
-      focus: ".env.example, api/, GCP関連設定"
-
-    ashigaru7:
-      skill: "code-quality-analyzer"
-      target: "コード品質評価（Python適用）"
-      focus: "app.py, api/, 全体構造"
-
-    ashigaru8:
-      skill: "design-doc-quality-reviewer"
-      target: "ドキュメント品質評価"
-      focus: "docs/*.md, README.md"
-
-  report_format: |
-    各足軽は以下の形式で報告せよ：
-    1. 使用したスキル名
-    2. スキルの動作確認結果（正常/問題あり）
-    3. 診断結果サマリ
-    4. 発見した問題（severity付き）
-    5. 改善提案
-    6. スキルへのフィードバック（使いにくい点、改善案）
+  context: |
+    本日実施した組織改善：
+    - /recovery v1.2.0（セッション名で役割判定）
+    - /skill-evaluate 即時実行トリガー明記
+    - search-skills.sh パス修正（.claude/skills/対応）
+    - 足軽ワークフローにスキル検索追加
+    - 永続化ルール整備
+    - コンパクション自己管理（15%ルール）
 
   action_required:
     - "足軽5-8のタスクファイルを作成せよ"
-    - "全4名に通知して並列で診断を開始せよ"
+    - "各足軽に通知して収集を開始せよ"
     - "結果を集約して家老に報告せよ"
-    - "既存Issue（#5, #7, #9）との関連を確認せよ"
 
-  success_criteria:
-    - "4つのスキル（gcp-cloudrun-analyzer, gcp-config-analyzer, code-quality-analyzer, design-doc-quality-reviewer）が実際に使用される"
-    - "各スキルの動作確認が完了する"
-    - "document-aiの品質状況が可視化される"
-    - "スキルへのフィードバックが収集される"
+  report_format: |
+    ```yaml
+    feedback:
+      positive:
+        - "良くなった点1"
+      issues:
+        - "困っている点1"
+      suggestions:
+        - "提案1"
+      recovery_useful: true/false
+      skill_issues: "スキル関連の困り事"
+      notify_working: true/false
+    ```
 
   report_to: multiagent:0.0
+
+# ============================================================
+# 【追加依頼】スキル候補の評価
+# ============================================================
+skill_evaluation:
+  task_id: gunshi_cmd065_skill_eval
+  parent_cmd: cmd_065
+  timestamp: "2026-02-17T13:05:00"
+  type: skill_evaluation
+  status: pending
+  priority: normal
+
+  title: "【スキル評価】本隊フィードバックで発覚したスキル候補1件"
+
+  candidates:
+    - name: "skill-catalog-generator"
+      proposer: ashigaru2
+      description: |
+        .claude/skills/ ディレクトリを走査し、
+        各スキルの SKILL.md からメタデータを抽出して
+        docs/guides/skill-catalog.md を自動生成するスキル。
+        - カテゴリ自動分類
+        - Skill()対応可否の判定
+        - 最終更新日・作成者情報の抽出
+      reason: |
+        スキル数が80以上に増加し、手動でのカタログ管理が困難。
+        自動生成により常に最新状態を維持できる。
+
+  action_required:
+    - "/skill-evaluate skill-catalog-generator を実行"
+    - "14点以上なら作成指示まで実施"
+    - "評価結果を家老に報告"
+
+# ============================================================
+# 以下は完了済み（参考用）
+# cmd_060: スキル候補4件の評価・作成
+# ============================================================
+
+old_task:
+  task_id: gunshi_cmd060_skill_eval
+  parent_cmd: cmd_060
+  status: completed
+  completed_at: "2026-02-16T19:22:00"
+  result: "スキル4件作成完了（合計3,050行）"

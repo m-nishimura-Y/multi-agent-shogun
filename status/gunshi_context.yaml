@@ -14,15 +14,15 @@
 # - 大型タスク区切り時
 # ================================================================
 
-last_updated: "2026-02-16T19:00:00"
+last_updated: "2026-02-17T13:15:00"
 updated_by: gunshi
 
 # === 現在のフォーカス ===
 current_focus:
-  cmd: cmd_057
-  description: "document-ai 全軍総合診断（スキル実地テスト）"
-  status: "done"
-  note: "全4名完了、家老への報告待ち"
+  cmd: null
+  description: "タスク待機中"
+  status: "idle"
+  note: "cmd_065完了（フィードバック収集+skill-catalog-generator作成）"
 
 # === ブロッカー ===
 blocker:
@@ -41,39 +41,68 @@ betsudoutai_status:
 
 # === 別働隊役割分担 ===
 betsudoutai_roles:
-  ashigaru5: null
-  ashigaru6: null
-  ashigaru7: null
-  ashigaru8: null
-  note: "cmd_057完了、全員待機中"
+  ashigaru5: "fastapi-security-audit スキル作成"
+  ashigaru6: "python-web-patterns スキル作成"
+  ashigaru7: "gcp-cloudbuild-auditor スキル作成"
+  ashigaru8: "python-code-quality-analyzer スキル作成"
+  note: "cmd_060: 4件全て自動承認（14-18点）"
 
 # === 進行中タスク ===
 in_progress_tasks:
-  - cmd: cmd_057
+  - cmd: cmd_060
     tasks:
-      - task_id: cmd057_skill_test_cloudrun
+      - task_id: cmd060_skill_fastapi_security_audit
         assignee: ashigaru5
-        description: "gcp-cloudrun-analyzer スキル実地テスト"
+        description: "fastapi-security-audit スキル作成"
         status: done
-        result: "総合D(10/40)、HIGH 3件(非root,ハードコード,secret混入)、スキル動作OK"
-      - task_id: cmd057_skill_test_gcpconfig
+        score: 16
+        result: "638行・7カテゴリ・35+項目・Bash自動化スクリプト・GCP固有チェック"
+      - task_id: cmd060_skill_python_web_patterns
         assignee: ashigaru6
-        description: "gcp-config-analyzer スキル実地テスト"
+        description: "python-web-patterns スキル作成"
         status: done
-        result: "MEDIUM 1件(PROJECT_IDハードコード)、スキル動作OK"
-      - task_id: cmd057_skill_test_codequality
+        score: 14
+        result: "3ファイル計1,146行（FastAPI 8セクション、Streamlit 9セクション）"
+      - task_id: cmd060_skill_gcp_cloudbuild_auditor
         assignee: ashigaru7
-        description: "code-quality-analyzer スキル実地テスト"
+        description: "gcp-cloudbuild-auditor スキル作成"
         status: done
-        result: "総合B(62%)、テストA+、LinterC。スキル候補: python-code-quality-analyzer"
-      - task_id: cmd057_skill_test_docquality
+        score: 16
+        result: "690行・8カテゴリ・セキュリティ/最適化/ベストプラクティス"
+      - task_id: cmd060_skill_python_code_quality_analyzer
         assignee: ashigaru8
-        description: "design-doc-quality-reviewer スキル実地テスト"
+        description: "python-code-quality-analyzer スキル作成"
         status: done
-        result: "Grade A-、軽微指摘2件、スキル動作OK"
+        score: 18
+        result: "576行・5観点評価・code-quality-analyzer（TS版）完全移植"
 
 # === スキル評価履歴（直近） ===
 skill_evaluations:
+  # cmd_060で評価・作成指示
+  - name: "python-code-quality-analyzer"
+    score: 18
+    result: "自動承認・作成指示済み"
+    evaluated_at: "2026-02-16"
+    note: "code-quality-analyzerのPython版。最高点。"
+
+  - name: "fastapi-security-audit"
+    score: 16
+    result: "自動承認・作成指示済み"
+    evaluated_at: "2026-02-16"
+    note: "FastAPI向けセキュリティ監査。express-security-auditの姉妹スキル。"
+
+  - name: "gcp-cloudbuild-auditor"
+    score: 16
+    result: "自動承認・作成指示済み"
+    evaluated_at: "2026-02-16"
+    note: "Cloud Build設定診断。GCPスキル群の補完。"
+
+  - name: "python-web-patterns"
+    score: 14
+    result: "自動承認・作成指示済み"
+    evaluated_at: "2026-02-16"
+    note: "FastAPI/Streamlitパターン集。python-patternsと補完関係。"
+
   # cmd_050, cmd_051で作成完了
   - name: "windows-credential-audit"
     score: 16

@@ -113,13 +113,13 @@
 
 ## スキル活用（積極的に使え！）
 
-skills/ ディレクトリには **70以上のスキル** がある。車輪の再発明をするな。
+.claude/skills/ ディレクトリには **80以上のスキル** がある。車輪の再発明をするな。
 
 **呼び出し方法**:
 ```
-/スキル名                          # スラッシュコマンド（推奨）
-Skill(skill: "スキル名")           # Skill tool
-Read(file_path: "skills/xxx.md")   # 直接読み
+/スキル名                                       # スラッシュコマンド（推奨）
+Skill(skill: "スキル名")                        # Skill tool
+Read(file_path: ".claude/skills/xxx/SKILL.md")  # 直接読み
 ```
 
 **スキル検索**: `~/multi-agent-shogun/bin/search-skills.sh キーワード`
@@ -149,14 +149,20 @@ Read(file_path: "skills/xxx.md")   # 直接読み
 ## 基本ワークフロー
 
 ```
-1. 起こされる（send-keys）
-2. タスクファイルを読む
-3. status を in_progress に更新
-4. 作業実行
-5. 報告書を書く
-6. status を done に更新
-7. 報告先に通知（notify.sh）
-8. 停止
+1. 起こされる（notify.sh経由）
+2. タスクファイルを読む（queue/tasks/ashigaru{N}.yaml）
+3. スキル検索を実行
+   - タスク内容からキーワードを抽出
+   - ~/multi-agent-shogun/bin/search-skills.sh <キーワード> で検索
+   - 例: セキュリティ診断 → search-skills.sh security
+   - 例: React画面作成 → search-skills.sh react
+   - 該当スキルがあれば使用を検討
+4. status を in_progress に更新
+5. 作業実行（該当スキルがあれば積極的に使用）
+6. 報告書を書く
+7. status を done に更新
+8. 報告先に通知（notify.sh）
+9. 停止
 ```
 
 **報告なしでは任務完了扱いにならぬ。**

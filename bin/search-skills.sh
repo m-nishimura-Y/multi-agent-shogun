@@ -17,7 +17,7 @@ set -euo pipefail
 
 # 設定
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-SKILLS_DIR="${SCRIPT_DIR}/../skills"
+SKILLS_DIR="${SCRIPT_DIR}/../.claude/skills"
 
 # 色設定
 RED='\033[0;31m'
@@ -108,13 +108,14 @@ list_skills() {
     local count=0
 
     echo -e "${CYAN}============================================================${NC}"
-    echo -e "${CYAN} スキル一覧 (skills/)${NC}"
+    echo -e "${CYAN} スキル一覧 (.claude/skills/)${NC}"
     echo -e "${CYAN}============================================================${NC}"
     echo ""
 
-    for file in "$SKILLS_DIR"/*.md; do
+    for file in "$SKILLS_DIR"/*/SKILL.md; do
         if [[ -f "$file" ]]; then
-            local name=$(basename "$file" .md)
+            local dir=$(dirname "$file")
+            local name=$(basename "$dir")
             local title=$(get_skill_title "$file")
             count=$((count + 1))
 
@@ -152,9 +153,10 @@ list_by_category() {
     categories["template"]=""
     categories["other"]=""
 
-    for file in "$SKILLS_DIR"/*.md; do
+    for file in "$SKILLS_DIR"/*/SKILL.md; do
         if [[ -f "$file" ]]; then
-            local name=$(basename "$file" .md)
+            local dir=$(dirname "$file")
+            local name=$(basename "$dir")
             local category=$(detect_category "$name")
             categories["$category"]+="$name\n"
         fi
@@ -186,9 +188,10 @@ search_skills() {
     echo -e "${CYAN}============================================================${NC}"
     echo ""
 
-    for file in "$SKILLS_DIR"/*.md; do
+    for file in "$SKILLS_DIR"/*/SKILL.md; do
         if [[ -f "$file" ]]; then
-            local name=$(basename "$file" .md)
+            local dir=$(dirname "$file")
+            local name=$(basename "$dir")
             local match=true
 
             # 複数キーワードをAND検索
@@ -235,7 +238,7 @@ search_skills() {
 
 # スキル数表示
 show_count() {
-    local count=$(ls -1 "$SKILLS_DIR"/*.md 2>/dev/null | wc -l)
+    local count=$(ls -1d "$SKILLS_DIR"/*/SKILL.md 2>/dev/null | wc -l)
     echo -e "スキル数: ${GREEN}${count}${NC}"
 }
 
@@ -243,7 +246,7 @@ show_count() {
 main() {
     # スキルディレクトリ存在確認
     if [[ ! -d "$SKILLS_DIR" ]]; then
-        echo -e "${RED}エラー: skills/ ディレクトリが見つかりません${NC}" >&2
+        echo -e "${RED}エラー: .claude/skills/ ディレクトリが見つかりません${NC}" >&2
         exit 1
     fi
 

@@ -161,6 +161,29 @@ archive/cmd_XXX_summary.yaml が存在するか？
 
 なければ軍師に「永続化を忘れておるぞ」と指摘せよ。
 
+### 家老自身が対応したcmdの永続化
+
+将軍から直接指示を受けて**家老自身が対応したcmd**も永続化せよ：
+
+```bash
+# 例: cmd_064 を永続化
+cat > queue/reports/archive/cmd_064_summary.yaml << 'EOF'
+cmd_id: cmd_064
+title: "タスクタイトル"
+completed_at: "2026-02-16T21:00:00"
+archived_by: karo
+summary: |
+  実施内容の要約（1-3行）
+EOF
+```
+
+**忘れやすいケース:**
+- dashboard更新のみのタスク
+- 設定変更のみのタスク
+- 通達・周知のみのタスク
+
+**これらも永続化せよ！**
+
 ---
 
 ## 上様お伺いルール（最重要）

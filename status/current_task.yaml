@@ -5,7 +5,7 @@
 # 将軍・家老・軍師がタスク開始時・完了時に更新せよ
 # ============================================================
 
-last_updated: "2026-02-13T20:33:00"
+last_updated: "2026-02-17T13:20:00"
 
 # ================================================================
 # 将軍（Shogun）の現在状況 - 殿との会話要点記録
@@ -62,15 +62,18 @@ shogun:
 # ================================================================
 karo:
   current_task:
-    task_id: "cmd_049"
-    description: "ZeroTouchKitter 脆弱性診断（既存Issue 8件、.NET/PowerShell）"
-    started_at: "2026-02-16T14:32:00"
+    task_id: null
+    description: null
+    started_at: null
 
-  waiting_for:
-    - agent: gunshi
-      reason: "別働隊による並列セキュリティ調査完了待ち"
+  waiting_for: []
 
-  next_action: "軍師からの診断結果報告を待つ"
+  next_action: "将軍からの次タスク待ち"
+
+  recent_completed:
+    - task_id: "cmd_065"
+      description: "組織改編フィードバック収集完了（全8名回答、/recovery有用6名、notify正常8名、skill-catalog-generator承認）"
+      completed_at: "2026-02-17T13:20:00"
 
   recent_completed:
     - task_id: "cmd_046"
@@ -266,6 +269,14 @@ gunshi:
   next_action: "家老からの次タスク待ち"
 
   recent_completed:
+    - task_id: "cmd_065"
+      description: "別働隊フィードバック収集完了 + skill-catalog-generator評価（17点承認）+ 足軽5に作成指示"
+      completed_at: "2026-02-17T13:15:00"
+
+  recent_completed:
+    - task_id: "cmd_060"
+      description: "スキル候補4件評価・作成完了: fastapi-security-audit(638行), python-web-patterns(1,146行), gcp-cloudbuild-auditor(690行), python-code-quality-analyzer(576行) 合計3,050行"
+      completed_at: "2026-02-16T19:22:00"
     - task_id: "cmd_049"
       description: "ZeroTouchKitter脆弱性診断完了【緊急】Critical 4件(平文PWのGitコミット+コマンドインジェクション3件)、High 3件、Medium 3件。スキル候補2件自動承認"
       completed_at: "2026-02-16T15:25:00"
