@@ -61,9 +61,23 @@ else
 fi
 echo ""
 
-# 役割に応じた指示書の冒頭を表示（禁止事項まで）
+# 役割に応じた指示書を全文表示
 echo "【汝の役割と禁止事項】"
-head -80 "$PROJECT_DIR/instructions/$INSTRUCTION_FILE" 2>/dev/null
+cat "$PROJECT_DIR/instructions/$INSTRUCTION_FILE" 2>/dev/null
+
+# 詳細マニュアルも全て表示（階層化フォルダ配下）
+ROLE_DIR="${INSTRUCTION_FILE%.md}"  # karo.md → karo
+if [ -d "$PROJECT_DIR/instructions/$ROLE_DIR" ]; then
+    echo ""
+    echo "【詳細マニュアル】"
+    for manual in "$PROJECT_DIR/instructions/$ROLE_DIR"/*.md; do
+        if [ -f "$manual" ]; then
+            echo ""
+            echo "--- $(basename "$manual") ---"
+            cat "$manual"
+        fi
+    done
+fi
 
 echo ""
 echo "════════════════════════════════════════════════════════════════"
