@@ -5,7 +5,7 @@
 # 将軍・家老・軍師がタスク開始時・完了時に更新せよ
 # ============================================================
 
-last_updated: "2026-02-17T13:20:00"
+last_updated: "2026-02-18T16:35:00"
 
 # ================================================================
 # 将軍（Shogun）の現在状況 - 殿との会話要点記録
@@ -62,15 +62,48 @@ shogun:
 # ================================================================
 karo:
   current_task:
-    task_id: null
-    description: null
-    started_at: null
+    task_id: cmd_080
+    description: "【全軍テスト】recovery.sh 改修後の役割ファイル読み込みテスト"
+    started_at: "2026-02-18T16:35:00"
 
-  waiting_for: []
+  waiting_for:
+    - agent: "本隊（足軽1-4）"
+      reason: "/recovery テスト実行中"
+    - agent: "軍師+別働隊（足軽5-8）"
+      reason: "/recovery テスト実行中"
 
-  next_action: "将軍からの次タスク待ち"
+  parallel_task:
+    task_id: cmd_079
+    description: "S-automation 支払伝票電子化 Phase 1+2 完了、Phase 3 待ち"
+    status: "Phase 1: 1,450行完了、Phase 2: 2,320行完了"
+
+  next_action: "全軍からの /recovery テスト結果報告を待つ"
 
   recent_completed:
+    - task_id: "cmd_076"
+      description: "security-audit-orchestrator --dry-run テスト成功（9スキル検出、cmd_070と高一致、本番運用可能）"
+      completed_at: "2026-02-18T10:40:00"
+
+    - task_id: "cmd_073"
+      description: "security-audit-orchestrator スキル作成（別働隊3名: 合計1,360行、6ステップ診断フロー）"
+      completed_at: "2026-02-17T19:40:00"
+
+    - task_id: "cmd_074"
+      description: "Obsidian関連スキル全軍周知（本隊4名並列: skill-catalog, mcp-guide, ashigaru.md, dashboard.md）"
+      completed_at: "2026-02-17T19:30:00"
+
+    - task_id: "cmd_072"
+      description: "脆弱性診断パッケージ化意見募集（家老・軍師ともに案2ベースハイブリッド案推奨）"
+      completed_at: "2026-02-17T19:00:00"
+
+    - task_id: "cmd_071"
+      description: "スキル候補2件評価（express-logging-auditor 17点承認、gcp-iap-auth-validator 12点却下）"
+      completed_at: "2026-02-17T18:05:00"
+
+    - task_id: "cmd_070"
+      description: "sga-mgt 脆弱性診断+Issue作成完了（C:2,H:9,M:21,L:9・7件Issue作成）"
+      completed_at: "2026-02-17T17:55:00"
+
     - task_id: "cmd_065"
       description: "組織改編フィードバック収集完了（全8名回答、/recovery有用6名、notify正常8名、skill-catalog-generator承認）"
       completed_at: "2026-02-17T13:20:00"
@@ -260,15 +293,29 @@ karo:
 # ================================================================
 gunshi:
   current_task:
-    task_id: null
-    description: null
-    started_at: null
+    task_id: cmd_079
+    description: "S-automation 支払伝票電子化 Phase 2: 基本設計4件（別働隊4名並列）"
+    started_at: "2026-02-18T16:05:00"
 
-  waiting_for: []
+  waiting_for:
+    - agent: "別働隊（足軽5-8）"
+      reason: "Phase 2 基本設計4件作成中"
 
-  next_action: "家老からの次タスク待ち"
+  next_action: "別働隊4名からの完了報告を待つ"
 
   recent_completed:
+    - task_id: "cmd_073"
+      description: "security-audit-orchestrator スキル作成完了（別働隊3名並列、合計約1,360行）"
+      completed_at: "2026-02-17T19:40:00"
+
+    - task_id: "cmd_072_opinion"
+      description: "脆弱性診断パッケージ化意見: 案2ハイブリッド推奨、追加提案3点（--dry-run、マッピング設定、状態永続化）"
+      completed_at: "2026-02-17T18:55:00"
+
+    - task_id: "cmd_071_eval"
+      description: "スキル評価完了: express-logging-auditor(17点)自動承認、gcp-iap-auth-validator(12点)却下"
+      completed_at: "2026-02-17T18:35:00"
+
     - task_id: "cmd_065"
       description: "別働隊フィードバック収集完了 + skill-catalog-generator評価（17点承認）+ 足軽5に作成指示"
       completed_at: "2026-02-17T13:15:00"

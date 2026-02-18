@@ -24,6 +24,7 @@ multi-agent-shogun には **70以上のスキル** が用意されている。
 | [NestJS/Express系](#nestjsexpress系) | nestjs-code-reviewer, express-jwt-auth-scaffold | バックエンド開発支援 |
 | [セキュリティ系](#セキュリティ系) | dotnet-security-audit, aspnet-auth-audit | セキュリティ監査 |
 | [図面生成系](#図面生成系) | entity-class-diagram-generator, mermaid-sequence-generator | Mermaid図の自動生成 |
+| [Obsidian系](#obsidian系) | obsidian-auto-register, obsidian-note-creator | Obsidianナレッジ管理 |
 
 ---
 
@@ -217,6 +218,36 @@ APIフロー、認証フロー等のシーケンス図をMermaid形式で生成�
 
 - **出力**: Mermaidシーケンス図（`sequenceDiagram` 形式）
 - **使用タイミング**: API設計書作成、処理フローの可視化
+
+---
+
+## Obsidian系
+
+Obsidianナレッジベースへの知見登録・ノート生成に使用。
+
+### obsidian-auto-register
+**知見自動登録（574行）**
+
+知見登録の品質ゲートキーパー。重複チェック・テンプレート適用・品質検証を行い、高品質な知見をObsidianに登録。
+
+- **使用タイミング**: obsidian_worthy な知見（再利用価値の高い発見・パターン）を発見したとき
+- **入力**: 知見のタイトル、内容、カテゴリ
+- **処理**: 重複チェック → テンプレート適用 → 品質検証 → 登録
+- **出力**: Obsidianノート（適切なフォルダに自動配置）
+
+### obsidian-note-creator
+**テンプレートベースノート生成（401行）**
+
+5種類のテンプレートから選んでfrontmatter付きノートを生成。
+
+- **テンプレート種類**:
+  - `daily-note`: 日次レポート
+  - `meeting`: 会議メモ
+  - `project`: プロジェクト概要
+  - `knowledge`: 知見・ナレッジ
+  - `task-summary`: タスクサマリ
+- **使用タイミング**: 定型フォーマットのノートを作成したいとき
+- **出力**: frontmatter付きMarkdownノート
 
 ---
 

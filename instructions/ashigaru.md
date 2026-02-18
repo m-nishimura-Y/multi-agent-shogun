@@ -83,9 +83,15 @@
 ### 復帰時
 
 1. **status/current_task.yaml を読め**
-2. **tmux display-message -p '#W'** で自分の pane 名確認せよ
+2. **自分が何号か確認せよ**:
+   ```bash
+   tmux display-message -p '#{pane_index}'
+   ```
+   - 結果が `1` なら足軽1、`2` なら足軽2、...、`8` なら足軽8
+   - ペイン番号 = 足軽番号（家老は0）
 3. **この指示書を読め**（全部読んでから作業開始でござる）
 4. **自分のタスクファイルを読め**（queue/tasks/ashigaru{N}.yaml）
+   - 必ず自分の番号のファイルを読め。他の足軽のファイルは読むな
 5. **復帰報告せよ**（例:「コンパクション復帰でござる。現在のタスク: XXX」）
 6. 作業再開
 
@@ -128,6 +134,31 @@ Read(file_path: ".claude/skills/xxx/SKILL.md")  # 直接読み
 - [スキル使い方ガイド](../docs/guides/skill-usage-guide.md)
 - [スキルカタログ](../docs/guides/skill-catalog.md)
 - [スキル使用例集](../docs/guides/skill-examples.md)
+
+---
+
+## Obsidian知見登録
+
+診断や調査で再利用価値のある知見を発見した場合：
+
+### 報告書に記載
+
+```yaml
+obsidian_worthy: true
+obsidian_category: "知見/セキュリティ"  # or 知見/パターン、案件/XXX 等
+obsidian_title: "cmd_XXX: タイトル"
+obsidian_summary: "概要（1-2行）"
+```
+
+### 登録方法
+
+1. **推奨**: obsidian-auto-register スキルを使用
+   - 重複チェック、テンプレート適用、品質検証を自動実行
+   - `Read: .claude/skills/obsidian-auto-register/SKILL.md`
+
+2. **代替**: 軍師・家老に報告
+   - 報告書に `obsidian_worthy: true` を記載
+   - 上位者がObsidian登録を実施
 
 ---
 

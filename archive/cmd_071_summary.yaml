@@ -1,0 +1,112 @@
+# ============================================================
+# cmd_071 サマリ: スキル候補2件評価
+# ============================================================
+cmd_id: cmd_071
+timestamp: "2026-02-17T18:30:00"
+status: in_progress
+executor: gunshi
+
+# ============================================================
+# タスク概要
+# ============================================================
+task:
+  title: "スキル候補2件評価（cmd_070診断より）"
+  source: "karo_to_gunshi.yaml"
+  evaluation_criteria: "/skill-evaluate"
+
+# ============================================================
+# 評価結果
+# ============================================================
+evaluations:
+  # --- 候補1: gcp-iap-auth-validator ---
+  - name: "gcp-iap-auth-validator"
+    proposer: "足軽1"
+    source: "cmd_070 認証・認可診断"
+    description: |
+      GCP IAP JWT検証の実装状況を診断するスキル。
+      X-Goog-IAP-JWT-Assertionヘッダーの検証、
+      署名検証（RS256）、クレーム検証（exp, aud, iss）をチェック。
+
+    scoring:
+      reusability: 3  # GCP限定、複数プロジェクトで使用可
+      complexity: 3   # JWT検証は既存スキルにコード例あり
+      stability: 4    # IAPは安定したサービス
+      value: 2        # 既存スキルで十分対応可能
+      total: 12
+
+    rejection_criteria_check:
+      R001_external_api: false  # 外部API認証不要
+      R002_vendor_lock: false   # GCPだがローカル解析
+      R003_score_below_14: true # 12点 < 14点
+      R004_duplicate: true      # gcp-iap-auth-audit と重複
+      R005_sensitive_data: false
+
+    judgment: "却下"
+    reason: |
+      1. スコア12点（基準14点未満）
+      2. 既存スキル gcp-iap-auth-audit のセクション3.1「IAPバイパス対策」で
+         JWT検証が既にカバー済み
+    recommendation: |
+      独立スキルではなく、既存スキル gcp-iap-auth-audit の
+      JWT検証セクションを詳細化する形で対応するのが適切。
+
+  # --- 候補2: express-logging-auditor ---
+  - name: "express-logging-auditor"
+    proposer: "足軽7"
+    source: "cmd_070 ログ・監査診断"
+    description: |
+      Express.jsアプリのログ・監査設定を診断するスキル。
+      morgan設定、console.log/error使用箇所、構造化ログライブラリ使用、
+      センシティブデータのログ出力、環境別ログレベル設定をチェック。
+
+    scoring:
+      reusability: 4  # Express.js全般で使用可
+      complexity: 4   # 手動30分→スキル5分
+      stability: 5    # console/morgan/winstonは安定
+      value: 4        # ログ問題は本番運用で頻出
+      total: 17
+
+    rejection_criteria_check:
+      R001_external_api: false
+      R002_vendor_lock: false
+      R003_score_below_14: false  # 17点 >= 14点
+      R004_duplicate: false       # express-security-auditはログ未カバー
+      R005_sensitive_data: false
+
+    judgment: "自動承認"
+    action:
+      assignee: "ashigaru5"
+      task_file: "queue/tasks/ashigaru5.yaml"
+      notification: "送信済み"
+      status: "assigned"
+
+# ============================================================
+# サマリ
+# ============================================================
+summary:
+  evaluated: 2
+  approved: 1
+  rejected: 1
+
+  approved_skills:
+    - name: "express-logging-auditor"
+      score: 17
+      assignee: "ashigaru5"
+
+  rejected_skills:
+    - name: "gcp-iap-auth-validator"
+      score: 12
+      reason: "既存スキルと重複（R004）、スコア未達（R003）"
+
+# ============================================================
+# 報告先
+# ============================================================
+report_to: karo (multiagent:0.0)
+
+# ============================================================
+# 完了条件
+# ============================================================
+done_when:
+  - "足軽5からexpress-logging-auditor作成完了報告"
+  - "gunshi_summary.yamlに集約"
+  - "家老に最終報告"

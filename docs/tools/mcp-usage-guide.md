@@ -1,7 +1,7 @@
 # MCP 使い方ガイド
 
-> **Version**: 1.0.0
-> **Last Updated**: 2026-02-13
+> **Version**: 1.1.0
+> **Last Updated**: 2026-02-17
 > **Author**: 軍師（cmd_022）
 
 ---
@@ -158,42 +158,84 @@ Obsidianノートの読み書き・検索を行うMCPサーバー。
 
 | ツール | 説明 |
 |--------|------|
-| `mcp__obsidian__read_note` | ノートを読み取り |
-| `mcp__obsidian__write_note` | ノートを書き込み（作成・更新） |
-| `mcp__obsidian__search` | ノートを検索 |
-| `mcp__obsidian__list_notes` | ノート一覧を取得 |
-| `mcp__obsidian__delete_note` | ノートを削除 |
+| `mcp__obsidian__obsidian_list_notes` | ノート一覧を取得（ディレクトリツリー表示） |
+| `mcp__obsidian__obsidian_read_note` | ノートを読み取り |
+| `mcp__obsidian__obsidian_update_note` | ノートを書き込み（作成・更新）※wholeFileモード |
+| `mcp__obsidian__obsidian_global_search` | ノートを全文検索 |
+| `mcp__obsidian__obsidian_delete_note` | ノートを削除 |
+| `mcp__obsidian__obsidian_search_replace` | ノート内の文字列置換 |
+| `mcp__obsidian__obsidian_manage_frontmatter` | frontmatterのget/set/delete |
+| `mcp__obsidian__obsidian_manage_tags` | タグの追加・削除・一覧 |
 
 ### 使用例
 
-#### 例1: ノートの読み取り
+#### 例1: ノート一覧の取得
 
 ```
-# ToolSearchでツールをロード
-ToolSearch(query: "obsidian")
+mcp__obsidian__obsidian_list_notes(
+  dirPath: "Projects"
+)
+→ Projects フォルダ以下のノート一覧がツリー形式で返される
+```
 
-# ノートを読み取り
-mcp__obsidian__read_note(
-  path: "Projects/multi-agent-shogun/memo.md"
+#### 例2: ノートの読み取り
+
+```
+mcp__obsidian__obsidian_read_note(
+  filePath: "Projects/multi-agent-shogun/memo.md"
 )
 ```
 
-#### 例2: ノートの書き込み
+#### 例3: ノートの作成・更新
 
 ```
-mcp__obsidian__write_note(
-  path: "Projects/multi-agent-shogun/meeting-notes/2026-02-13.md",
+mcp__obsidian__obsidian_update_note(
+  targetType: "filePath",
+  targetIdentifier: "Projects/multi-agent-shogun/meeting-notes/2026-02-17.md",
+  modificationType: "wholeFile",
+  wholeFileMode: "overwrite",
+  createIfNeeded: true,
+  overwriteIfExists: true,
   content: "# 会議メモ\n\n## 議題\n- 項目1\n- 項目2"
 )
 ```
 
-#### 例3: ノートの検索
+#### 例4: ノートの全文検索
 
 ```
-mcp__obsidian__search(
+mcp__obsidian__obsidian_global_search(
   query: "multi-agent"
 )
-→ 検索にマッチするノート一覧が返される
+→ 検索にマッチするノート一覧とマッチ箇所が返される
+```
+
+#### 例5: frontmatter の操作
+
+```
+# frontmatter のキーを取得
+mcp__obsidian__obsidian_manage_frontmatter(
+  filePath: "Projects/note.md",
+  operation: "get",
+  key: "tags"
+)
+
+# frontmatter のキーを設定
+mcp__obsidian__obsidian_manage_frontmatter(
+  filePath: "Projects/note.md",
+  operation: "set",
+  key: "status",
+  value: "completed"
+)
+```
+
+#### 例6: タグの管理
+
+```
+mcp__obsidian__obsidian_manage_tags(
+  filePath: "Projects/note.md",
+  operation: "add",
+  tags: ["project", "2026"]
+)
 ```
 
 ### 前提条件
@@ -216,8 +258,63 @@ mcp__obsidian__search(
 |------|--------|
 | 接続できない | Obsidianが起動しているか確認。プラグインが有効か確認。 |
 | 認証エラー | APIキーが正しく設定されているか確認 |
-| ノートが見つからない | パスが正しいか確認。`list_notes` で一覧を取得して確認 |
+| ノートが見つからない | パスが正しいか確認。`obsidian_list_notes` で一覧を取得して確認 |
 | ツールが見つからない | `ToolSearch(query: "obsidian")` で再検索 |
+
+### 関連スキル
+
+Obsidian MCP と連携して使用できるスキルがある。
+
+| スキル | 説明 | 用途 |
+|--------|------|------|
+| **obsidian-auto-register** | 品質ゲートキーパー付きノート登録 | 重複チェック・frontmatter自動付与 |
+| **obsidian-note-creator** | テンプレートベースのノート作成 | 定型フォーマットのノート作成 |
+
+#### obsidian-auto-register
+
+**概要**: 新規ノートを Obsidian に登録する前に、重複チェックと品質検証を行うスキル。
+
+**特徴**:
+- 既存ノートとの重複チェック（タイトル・内容の類似度判定）
+- frontmatter の自動付与（created, tags, source 等）
+- カテゴリ別の保存先自動判定
+
+**使用例**:
+```
+/obsidian-auto-register
+タイトル: セキュリティ診断結果
+内容: ...
+カテゴリ: 診断レポート
+```
+
+#### obsidian-note-creator
+
+**概要**: テンプレートを使用して定型フォーマットのノートを作成するスキル。
+
+**対応テンプレート**:
+- `meeting-notes`: 会議メモ
+- `project-summary`: プロジェクトサマリ
+- `decision-log`: 意思決定ログ
+- `knowledge-base`: ナレッジベース記事
+
+**使用例**:
+```
+/obsidian-note-creator
+テンプレート: meeting-notes
+タイトル: 2026-02-17 定例会議
+参加者: A, B, C
+```
+
+### MCP vs スキルの使い分け
+
+| 用途 | 推奨 |
+|------|------|
+| 単純なノート読み書き | **MCP** (`mcp__obsidian__obsidian_*`) |
+| 定型フォーマットのノート作成 | **obsidian-note-creator** |
+| 品質チェック付きの登録 | **obsidian-auto-register** |
+| 全文検索・一覧取得 | **MCP** (`obsidian_global_search`, `obsidian_list_notes`) |
+| frontmatter操作 | **MCP** (`obsidian_manage_frontmatter`) |
+| タグ管理 | **MCP** (`obsidian_manage_tags`) |
 
 ---
 

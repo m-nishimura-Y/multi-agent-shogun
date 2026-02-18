@@ -1,1255 +1,212 @@
 queue:
-  - id: cmd_065
-    timestamp: "2026-02-16T21:10:00"
-    command: "【フィードバック収集】組織改編後の改善点"
+  - id: cmd_080
+    timestamp: "2026-02-18T16:33:29"
+    command: "【全軍テスト】recovery.sh改修後の役割ファイル読み込みテスト"
     project: multi-agent-shogun
+    priority: high
+    status: pending
+    details:
+      summary: |
+        殿より、recovery.sh の改修が行われた旨の伝達あり。
+        全軍（軍師+足軽8名）で、各自の役割ファイルが正しく読み込めるかテストせよ。
+
+      test_procedure:
+        - step: 1
+          action: "/recovery を実行"
+          note: "コンパクション復帰スキルを手動実行"
+
+        - step: 2
+          action: "役割ファイルが正しく読み込めるか確認"
+          check_items:
+            - "セッション名からの役割判定が正しいか"
+            - "対応する instructions/*.md が全文読めるか"
+            - "詳細マニュアル（instructions/{role}/*.md）が全て読めるか"
+
+        - step: 3
+          action: "テスト結果を報告"
+          format: |
+            - 役割判定: OK/NG
+            - 役割ファイル読み込み: OK/NG
+            - 詳細マニュアル読み込み: OK/NG
+            - 問題があれば詳細を記載
+
+      action_required:
+        - "本隊（足軽1-4）: 家老経由でテスト実行"
+        - "別働隊（足軽5-8）: 軍師経由でテスト実行"
+        - "軍師: 自身もテスト実行"
+        - "結果は dashboard.md に集約"
+
+  - id: cmd_079
+    timestamp: "2026-02-18T16:00:00"
+    command: "【全軍動員】S-automation 支払伝票電子化 要件定義〜詳細設計"
+    project: S-automation
+    priority: critical
+    status: pending
+    details:
+      summary: |
+        経理の支払伝票処理を電子化するプロジェクト。
+        殿の要望：「紙運用の体感・体験をそのままに、ゲームのような操作感で電子化」
+        まずモックではなく、要件定義〜詳細設計のドキュメント作成を行う。
+
+      background:
+        pdf_location: "/home/nishimura/S-automation/docs/2601_検討資料_支払伝票の承認後フローの電子化.pdf"
+        current_systems:
+          - name: "HRMOS経費"
+            role: "支払伝票申請・承認・請求書PDF管理"
+          - name: "OBIC"
+            role: "仕訳起票・会計連携・FBデータ作成"
+          - name: "ジョブカン"
+            role: "WF（慶弔見舞金等の稟議確認）"
+
+        monthly_volume: "180〜210件/月"
+        time_per_approval: "1.5〜2分/件"
+
+        stamp_images:
+          - path: "/home/nishimura/S-automation/docs/判子-振込.png"
+            color: "ピンク/赤系"
+            shortcut: "F"
+          - path: "/home/nishimura/S-automation/docs/判子-口座振替.png"
+            color: "青系"
+            shortcut: "K"
+          - path: "/home/nishimura/S-automation/docs/判子-未払金.png"
+            color: "緑系"
+            shortcut: "M"
+
+      lord_requirements:
+        concept: "紙運用の体感・体験をそのままに電子化"
+        ui_elements:
+          - element: "判子"
+            description: "実際のデザインをグラフィカルに再現、ショートカットキーで押印"
+          - element: "ケース"
+            description: "種類別のケースに入れるUIを再現"
+          - element: "キャビネット"
+            description: "画面上でキャビネットUIを再現"
+          - element: "操作感"
+            description: "矢印キーで「つぎ、つぎ」と進める"
+
+      document_tasks:
+        phase1_requirements:
+          - doc: "01_プロジェクト概要.md"
+            content: "背景、目的、スコープ、ステークホルダー"
+            assignee: "ashigaru1"
+          - doc: "02_現行業務フロー分析.md"
+            content: "現行フローの詳細、課題、改善ポイント"
+            assignee: "ashigaru2"
+          - doc: "03_機能要件一覧.md"
+            content: "電子化で実現する機能一覧（Must/Should/Could）"
+            assignee: "ashigaru3"
+          - doc: "04_非機能要件.md"
+            content: "性能、セキュリティ、可用性、運用"
+            assignee: "ashigaru4"
+
+        phase2_basic_design:
+          - doc: "05_システム構成図.md"
+            content: "全体アーキテクチャ、外部連携"
+            assignee: "ashigaru5"
+          - doc: "06_画面遷移図.md"
+            content: "画面一覧、遷移フロー"
+            assignee: "ashigaru6"
+          - doc: "07_データモデル.md"
+            content: "エンティティ、テーブル設計"
+            assignee: "ashigaru7"
+          - doc: "08_API設計概要.md"
+            content: "API一覧、エンドポイント設計"
+            assignee: "ashigaru8"
+
+        phase3_detail_design:
+          - doc: "09_UI詳細設計_判子.md"
+            content: "判子UIの詳細仕様（色、形、ショートカット）"
+          - doc: "10_UI詳細設計_ケース.md"
+            content: "ケースUIの詳細仕様"
+          - doc: "11_UI詳細設計_キャビネット.md"
+            content: "キャビネットUIの詳細仕様"
+          - doc: "12_ワークフロー詳細.md"
+            content: "状態遷移、承認フロー"
+
+      output_location: "/home/nishimura/S-automation/docs/design/"
+
+      action_required:
+        - "本隊（足軽1-4）: Phase1 要件定義ドキュメント4件を並列作成"
+        - "別働隊（足軽5-8）: Phase2 基本設計ドキュメント4件を並列作成"
+        - "Phase1,2完了後、Phase3は適宜割り当て"
+        - "全ドキュメントは /home/nishimura/S-automation/docs/design/ に配置"
+
+  - id: cmd_078
+    timestamp: "2026-02-18T15:20:00"
+    command: "【意見募集】AssetsManageSystem/billing-mng-gcp 多層防御の追加対策"
+    project: AssetsManageSystem
     priority: medium
     status: pending
     details:
       summary: |
-        殿より指示。組織改編後の改善点について全軍からフィードバックを収集せよ。
+        殿より、Issue #323 関連で多層防御の追加対策について意見を求められている。
+        現状の対策でカバーされないリスクへの追加対策の要否を検討せよ。
 
-      context: |
-        本日実施した組織改善：
-        - /recovery v1.2.0（セッション名で役割判定）
-        - /skill-evaluate 即時実行トリガー明記
-        - search-skills.sh パス修正
-        - 足軽ワークフローにスキル検索追加
-        - 永続化ルール整備
-        - コンパクション自己管理（15%ルール）
+      current_measures:
+        - vulnerability: "URLを知っていれば誰でもアクセス可能"
+          countermeasure: "IAP が Google認証を強制するので未認証アクセスは不可"
 
-      questions:
-        - "組織改編（v1.6.x〜v1.7.x）で良くなった点は？"
-        - "まだ困っている点・改善してほしい点は？"
-        - "コンパクション復帰時の /recovery は役立っているか？"
-        - "スキル活用について困っている点は？"
-        - "通知（notify.sh）は正常に動作しているか？"
-        - "その他、提案や要望はあるか？"
+        - vulnerability: "権限制御がない"
+          countermeasure: "AuthorizedView でロール別の操作制御"
 
-      target:
-        - "軍師"
-        - "本隊（足軽1-4）"
-        - "別働隊（足軽5-8）"
+      uncovered_risks:
+        - risk: "IAP無効化・設定ミス時"
+          detail: "アプリ側に認証チェックがないため、IAPが外れると全公開に戻る"
+          affected_projects:
+            - AssetsManageSystem
+            - billing-mng-gcp
 
-      action_required:
-        - "軍師に別働隊（足軽5-8）からのフィードバック収集を依頼"
-        - "本隊（足軽1-4）から直接フィードバックを収集"
-        - "結果を集約して dashboard.md に報告"
+        - risk: "Controller直接呼び出し"
+          detail: "AuthorizedViewはUIを隠すだけ。Controllerにはロールチェックがないため、URLを直接叩けば操作できてしまう"
 
-      report_format: |
-        feedback:
-          positive:
-            - "良くなった点1"
-            - "良くなった点2"
-          issues:
-            - "困っている点1"
-            - "困っている点2"
-          suggestions:
-            - "提案1"
-            - "提案2"
-
-  - id: cmd_064
-    timestamp: "2026-02-16T21:00:00"
-    command: "【是正】永続化漏れ12件の是正 + 家老永続化ルール追加"
-    project: multi-agent-shogun
-    priority: high
-    status: pending
-    details:
-      summary: |
-        永続化漏れが12件発見された。是正せよ。
-        また、家老自身が対応したcmdの永続化ルールを指示書に追加せよ。
-
-      missing_archives:
-        - cmd_020: "全軍コンパクション復帰手順"
-        - cmd_021: "スキル候補2件評価"
-        - cmd_024: "bloglist-app Critical 4件クローズ"
-        - cmd_025: "drawio MCP テスト"
-        - cmd_027: "drawio MCP問題解決報告"
-        - cmd_028: "arms-mock シーケンス図"
-        - cmd_030: "Draw.io MCP 運用ルール整備"
-        - cmd_033: "永続化アーカイブ忘れ対策"
-        - cmd_034: "役割ファイル責任フォーカス化通達"
-        - cmd_039: "1on1振り返り"
-        - cmd_048: "Obsidian自動登録機能"
-        - cmd_058: "archive永続化漏れ是正"
-
-      root_cause: |
-        家老の永続化ルールに「家老自身が対応したcmd」のケースが明記されていなかった。
-        将軍→家老の直接指示タスクが永続化されていない。
-
-      fix_required:
-        1_create_archives: |
-          上記12件のサマリを作成し、archive/ に保存せよ。
-          各サマリには最低限以下を含めよ：
-          - cmd_id
-          - title
-          - completed_at
-          - summary（1-3行）
-
-        2_update_karo_instructions: |
-          instructions/karo.md の「永続化の責任分担」セクションに以下を追加：
-
-          ### 家老自身が対応したcmdの永続化
-
-          将軍から直接指示を受けて家老自身が対応したcmdも永続化せよ：
-
-          ```bash
-          echo "cmd_id: cmd_XXX
-          title: タスクタイトル
-          completed_at: $(date +%Y-%m-%dT%H:%M:%S)
-          summary: 実施内容の要約
-          " > queue/reports/archive/cmd_XXX_summary.yaml
-          ```
-
-      action_required:
-        - "12件の archive を作成"
-        - "instructions/karo.md を更新"
-        - "完了後 dashboard.md を更新"
-
-  - id: cmd_063
-    timestamp: "2026-02-16T20:55:00"
-    command: "【改善】足軽の基本ワークフロー見直し"
-    project: multi-agent-shogun
-    priority: high
-    status: pending
-    details:
-      summary: |
-        足軽の基本ワークフローを見直し、スキル検索を追加せよ。
-        また、古い記載（send-keys）を最新の仕組み（notify.sh）に更新せよ。
-
-      target_file: "instructions/ashigaru.md"
-
-      current_workflow: |
-        1. 起こされる（send-keys）
-        2. タスクファイルを読む
-        3. status を in_progress に更新
-        4. 作業実行
-        5. 報告書を書く
-        6. status を done に更新
-        7. 報告先に通知（notify.sh）
-        8. 停止
-
-      new_workflow: |
-        1. 起こされる（notify.sh経由）
-        2. タスクファイルを読む（queue/tasks/ashigaru{N}.yaml）
-        3. **スキル検索を実行**
-           - タスク内容からキーワードを抽出
-           - ~/multi-agent-shogun/bin/search-skills.sh <キーワード> で検索
-           - 例: セキュリティ診断 → search-skills.sh security
-           - 例: React画面作成 → search-skills.sh react
-           - 該当スキルがあれば使用を検討
-        4. status を in_progress に更新
-        5. 作業実行（該当スキルがあれば積極的に使用）
-        6. 報告書を書く
-        7. status を done に更新
-        8. 報告先に通知（notify.sh）
-        9. 停止
-
-      changes:
-        - "「起こされる（send-keys）」→「起こされる（notify.sh経由）」"
-        - "Step 3 に「スキル検索を実行」を追加"
-        - "Step 5 に「該当スキルがあれば積極的に使用」を追記"
-
-      rationale: |
-        【背景】
-        - スキル使用率が0%だった問題への対策
-        - 足軽が自主的にスキルを探す仕組みを導入
-        - 「あのスキル使えたのに...」を防ぐ
-
-      action_required:
-        - "instructions/ashigaru.md の基本ワークフローを更新"
-        - "cmd_062（search-skills.sh修正）完了後に実施せよ"
-        - "完了後 dashboard.md を更新"
-
-  - id: cmd_062
-    timestamp: "2026-02-16T20:45:00"
-    command: "【修正】search-skills.sh のパス修正"
-    project: multi-agent-shogun
-    priority: high
-    status: pending
-    details:
-      summary: |
-        search-skills.sh がスキルを検索できない問題を修正せよ。
-
-      problem:
-        current_path: "skills/"
-        correct_path: ".claude/skills/"
-        current_pattern: "*.md"
-        correct_pattern: "*/SKILL.md"
-
-      root_cause: |
-        スキルの保存場所が変更されたが、search-skills.sh が更新されていない。
-        - 旧: skills/スキル名.md
-        - 新: .claude/skills/スキル名/SKILL.md
-
-      fix_required:
-        - "SKILLS_DIR を .claude/skills に変更（20行目付近）"
-        - "検索対象を */SKILL.md に変更"
-        - "get_skill_title, get_skill_description の対象ファイルパス修正"
-        - "動作確認: ./bin/search-skills.sh security"
-
-      action_required:
-        - "bin/search-skills.sh を修正"
-        - "動作確認後、dashboard.md を更新"
-
-  - id: cmd_061
-    timestamp: "2026-02-16T20:25:00"
-    command: "【整備】スキル整備課題2件の対応"
-    project: multi-agent-shogun
-    priority: high
-    status: pending
-    details:
-      summary: |
-        cmd_057で発覚したスキル整備課題2件を対応せよ。
-
-      issues:
+      proposed_measures:
         - id: 1
-          title: "cicd-health-checker 実体なし"
-          description: "スキルカタログに記載があるが、skills/ に実体ファイルがない"
-          action: "skills/cicd-health-checker.md を作成するか、カタログから削除"
+          description: "本番でIAPヘッダーがない場合にアクセス拒否するミドルウェアを追加"
+          purpose: "IAP設定ミスへの保険"
 
         - id: 2
-          title: "CLAUDE.md のパス間違い"
-          description: "「skills/」と記載しているが、実際は「.claude/skills/」"
-          action: "CLAUDE.md のパス記載を修正"
+          description: "Controllerにもロールチェックを追加"
+          purpose: "UI回避への対策"
 
-      action_required:
-        - "cicd-health-checker の実体を確認し、なければ作成または削除"
-        - "CLAUDE.md のスキルパス記載を .claude/skills/ に修正"
-        - "完了後 dashboard.md を更新"
-
-  - id: cmd_059
-    timestamp: "2026-02-16T20:15:00"
-    command: "【Issue作成】document-ai セキュリティ診断結果のGitHub Issue化"
-    project: document-ai
-    priority: high
-    status: pending
-    details:
-      summary: |
-        cmd_057の診断結果をGitHub Issueに反映せよ。
-        既存Issueがあればコメント追記、なければ新規作成。
-        ラベルがなければ作成してから付与せよ。
-
-      target:
-        repository: "https://github.com/Yuidea-DxG/document-ai"
-        local_path: "/home/nishimura/document-ai"
-
-      existing_issues:
-        - id: 5
-          title: "エラーハンドリング強化とログ出力の充実"
-        - id: 7
-          title: "統合テストの追加とテストカバレッジ向上"
-        - id: 9
-          title: "軽微な改善まとめ（print削除・定数化・整理）"
-
-      diagnosis_results:
-        cloudrun:
-          grade: "D (10/40)"
-          issues:
-            - severity: HIGH
-              title: "Dockerfileで非rootユーザー設定なし"
-              description: "コンテナがrootで実行され、権限昇格リスクあり"
-            - severity: HIGH
-              title: "PROJECT_IDがハードコード"
-              description: "環境依存の値がコードに埋め込まれている"
-            - severity: HIGH
-              title: "secret混入リスク"
-              description: "認証情報の取り扱いに改善余地あり"
-            - severity: MEDIUM
-              title: "cloudbuild.yaml未設定項目"
-              count: 4
-            - severity: LOW
-              title: "Dockerfile改善提案"
-              count: 2
-
-        gcp_config:
-          issues:
-            - severity: MEDIUM
-              title: "GCP設定の軽微な問題"
-              count: 1
-            - severity: LOW
-              title: "設定改善提案"
-              count: 1
-
-        code_quality:
-          grade: "B (62%)"
-          issues:
-            - severity: MEDIUM
-              title: "Linter未導入"
-              description: "コード品質の自動チェックが未設定"
-
-        documentation:
-          grade: "A-"
-          issues:
-            - severity: LOW
-              title: "日付不整合"
-              description: "ドキュメント内の日付が一部古い"
-
-      label_requirements:
-        create_if_missing:
-          - name: "security"
-            color: "d73a4a"
-            description: "Security related issues"
-          - name: "high"
-            color: "b60205"
-            description: "High severity"
-          - name: "medium"
-            color: "fbca04"
-            description: "Medium severity"
-          - name: "low"
-            color: "0e8a16"
-            description: "Low severity"
-          - name: "infrastructure"
-            color: "0052cc"
-            description: "Infrastructure/DevOps related"
-
-      action_required:
-        - "gh label list で既存ラベルを確認"
-        - "不足ラベルがあれば gh label create で作成"
-        - "既存Issue #5, #7, #9 に該当する問題はコメント追記"
-        - "新規発見はseverity別に新規Issue作成"
-        - "各Issueに適切なラベルを付与"
-        - "完了後 dashboard.md を更新"
-
-  - id: cmd_058
-    timestamp: "2026-02-16T18:56:46"
-    command: "【緊急是正】archive永続化漏れの調査・是正"
-    project: multi-agent-shogun
-    priority: critical
-    status: pending
-    details:
-      summary: |
-        殿より指摘あり。cmd_050〜057 の archive が作成されていない！
-        軍師の永続化忘れを調査し、是正せよ。
-
-      problem: |
-        【発見された問題】
-        archive/ に保存されているのは cmd_049 まで。
-        本日完了した cmd_050〜057 の summary.yaml が存在しない。
-
-        | cmd | 内容 | archive |
-        |-----|------|---------|
-        | cmd_050 | 全軍役割ファイル更新 / self-compact.sh | ❌ 欠落 |
-        | cmd_054 | self-compact.sh実地テスト / 組織改編コミット | ❌ 欠落 |
-        | cmd_055 | 復帰通知機能全軍周知 | ❌ 欠落 |
-        | cmd_056 | /recovery v1.1.0 全軍展開 | ❌ 欠落 |
-        | cmd_057 | document-ai全軍総合診断 | ❌ 欠落（進行中かも）|
-
-      action_required:
-        - "軍師に状況を確認せよ"
-        - "欠落している archive を作成させよ"
-        - "なぜ永続化が漏れたか原因を報告せよ"
-        - "再発防止策を提案せよ"
-
-      note: |
-        「永続化なき作業は、砂上の楼閣なり」
-        これは心得の一つ。軍師が忘れているなら、仕組みで解決する必要がある。
-
-  - id: cmd_057
-    timestamp: "2026-02-16T18:44:02"
-    command: "【全軍総合診断】document-ai スキル実地テスト"
-    project: document-ai
-    priority: high
-    status: pending
-    details:
-      summary: |
-        殿の指示により、document-ai リポジトリを全軍で総合診断せよ。
-        目的は2つ：
-        1. プロジェクトの品質・セキュリティ診断
-        2. 既存スキルの実地テスト（使用率0%問題の解消）
-
-      target:
-        repository: "https://github.com/Yuidea-DxG/document-ai.git"
-        local_path: "/home/nishimura/document-ai"
-        tech_stack:
-          - "Python 3.x"
-          - "Streamlit (Web UI)"
-          - "FastAPI (API)"
-          - "Google Cloud Document AI"
-          - "GCP Cloud Run"
-          - "pytest"
-        scale:
-          python_files: 48
-          docs: "多数（docs/配下）"
-          tests: "test_*.py 多数"
-
-      existing_issues:
-        - id: 5
-          title: "エラーハンドリング強化とログ出力の充実"
-        - id: 7
-          title: "統合テストの追加とテストカバレッジ向上"
-        - id: 9
-          title: "軽微な改善まとめ（print削除・定数化・整理）"
-
-      task_assignment:
-        hontai:
-          ashigaru1:
-            skill: "python-patterns"
-            target: "Pythonコードパターン確認"
-            focus: "app.py, api/, app_utils/"
-          ashigaru2:
-            skill: "security-audit-checker-v2"
-            target: "セキュリティ全般診断"
-            focus: "認証、入力検証、GCP認証情報"
-          ashigaru3:
-            skill: "repo-test-status-checker"
-            target: "テスト整備状況確認"
-            focus: "tests/, test_*.py, pytest.ini"
-          ashigaru4:
-            skill: "cicd-health-checker"
-            target: "CI/CD設定診断"
-            focus: "cloudbuild.yaml, .github/, Dockerfile"
-
-        betsudoutai:
-          ashigaru5:
-            skill: "gcp-cloudrun-analyzer"
-            target: "Cloud Run構成診断"
-            focus: "Dockerfile, cloudbuild*.yaml, deploy.sh"
-          ashigaru6:
-            skill: "gcp-config-analyzer"
-            target: "GCP設定全般診断"
-            focus: ".env.example, api/, GCP関連設定"
-          ashigaru7:
-            skill: "code-quality-analyzer"
-            target: "コード品質評価（Python適用）"
-            focus: "app.py, api/, 全体構造"
-          ashigaru8:
-            skill: "design-doc-quality-reviewer"
-            target: "ドキュメント品質評価"
-            focus: "docs/*.md, README.md"
-
-      report_format: |
-        各足軽は以下の形式で報告せよ：
-        1. 使用したスキル名
-        2. スキルの動作確認結果（正常/問題あり）
-        3. 診断結果サマリ
-        4. 発見した問題（severity付き）
-        5. 改善提案
-        6. スキルへのフィードバック（使いにくい点、改善案）
-
-      action_required:
-        - "本隊4名に担当スキルを割り当てよ"
-        - "軍師経由で別働隊4名に担当スキルを割り当てよ"
-        - "全8名並列で診断を実行せよ"
-        - "結果を集約し、dashboard.mdに報告せよ"
-        - "既存Issue（#5, #7, #9）との関連を確認せよ"
-        - "新規発見はGitHub Issue化の判断を仰げ"
-
-      success_criteria:
-        - "8つのスキルが実際に使用される"
-        - "各スキルの動作確認が完了する"
-        - "document-aiの品質状況が可視化される"
-        - "スキルへのフィードバックが収集される"
-
-  - id: cmd_056
-    timestamp: "2026-02-16T18:00:54"
-    command: "【周知】/recovery スキル v1.1.0 全軍展開"
-    project: multi-agent-shogun
-    priority: high
-    status: pending
-    details:
-      summary: |
-        殿と将軍でテスト完了。/recovery スキル v1.1.0 を全軍に展開せよ。
-
-      background: |
-        【問題】
-        - コンパクション復帰時、役割ファイルの冒頭80行しか読んでいなかった
-        - 詳細マニュアルは全く読んでいなかった
-        - 結果として禁止事項や手順を見落とすリスクがあった
-
-        【改善内容（v1.1.0）】
-        - Step 3: 役割ファイル「冒頭80行」→「全文」に変更
-        - Step 3.5 追加: 詳細マニュアルも全て読む
-        - コンテキスト消費は最大5%程度（許容範囲）
-
-      changes:
-        step_3: |
-          変更前: Read ツールで冒頭80行を読め
-          変更後: Read ツールで全文を読め。禁止事項・心得・手順を確認せよ。
-
-        step_3_5: |
-          【新規追加】詳細マニュアルを全て読む
-
-          | 役割 | 読むべきマニュアル |
-          |------|---------------------|
-          | 将軍 | instructions/shogun/*.md（通知、指示書、memory） |
-          | 家老 | instructions/karo/*.md（dashboard、タスク割当、ビルド確認、軍師連携、通知） |
-          | 軍師 | instructions/gunshi/*.md（スキル評価、バグ管理、ビルド確認、永続化、通知、提案管理、報告書） |
-          | 足軽 | instructions/ashigaru/*.md（スキル候補、ツール、バグ報告、ビルド確認、ペルソナ、進捗共有、通知、報告書） |
-
-          Glob で一覧取得 → Read で全ファイル読み込み。読み飛ばし厳禁。
-
-      verified:
-        agent: "shogun (claude pane)"
-        result: "成功"
-        confirmed_files:
-          - "instructions/shogun.md（全189行確認）"
-          - "instructions/shogun/通知.md（63行）"
-          - "instructions/shogun/指示書.md（94行）"
-          - "instructions/shogun/memory.md（78行）"
-
-      action_required:
-        - "軍師、本隊、別働隊に周知せよ"
-        - "dashboard.md に新機能を記載せよ"
-        - "次回コンパクション時に各自動作確認するよう伝えよ"
-
-  - id: cmd_055
-    timestamp: "2026-02-16T17:00:00"
-    command: "【周知】コンパクション復帰自動通知機能の全軍展開"
-    project: multi-agent-shogun
-    priority: high
-    status: pending
-    details:
-      summary: |
-        殿と将軍で開発・検証した「コンパクション復帰自動通知機能」を全軍に周知せよ。
-        これにより、コンパクション後のエージェントが自動で復帰報告を促される。
-
-      background: |
-        【問題】
-        - コンパクション後、エージェントが復帰報告を忘れることがあった
-        - SessionStart hook の "compact" matcher は stdout を Claude に注入しない（GitHub issue #15174）
-
-        【解決策】
-        - recovery.sh を改良し、自分自身の tmux pane に通知を送る仕組みを実装
-        - 8秒後に「【コンパクション復帰】殿に報告せよ。」というメッセージが届く
-        - エージェントはこのメッセージを受け取り、殿への復帰報告を行う
-
-      technical_details:
-        hook_config: "~/.claude/settings.json に SessionStart hook 設定済み"
-        matcher: "compact"
-        script: "bin/recovery.sh"
-        mechanism: |
-          1. コンパクション完了時に SessionStart hook が発動
-          2. recovery.sh が実行され、pane名と現在タスクを表示
-          3. 8秒後にバックグラウンドプロセスが自分自身に通知を送信
-          4. エージェントが通知を受け取り、復帰報告を行う
-
-      verified:
-        - agent: "shogun"
-          pane: "shogun:0.0"
-          result: "成功"
-          log: "/tmp/recovery_debug.log に記録済み"
-
-      action_required:
-        - "dashboard.md に新機能を記載せよ"
-        - "全エージェント（軍師、本隊、別働隊）に周知せよ"
-        - "次回コンパクション時に各自動作確認するよう伝えよ"
-
-      note: |
-        デバッグログ（/tmp/recovery_debug.log）は当面残す。
-        各ペインで正常動作が確認できたら、将軍に報告せよ。
-
-  - id: cmd_054
-    timestamp: "2026-02-16T16:40:00"
-    command: "【整理】組織改編コミット + Obsidian登録"
-    project: multi-agent-shogun
-    priority: high
-    status: pending
-    details:
-      summary: |
-        殿より指示。本日の組織改編内容をコミットし、Obsidianに登録せよ。
-
-      changes:
-        new_files:
-          - bin/self-compact.sh (15%自己管理コンパクション)
-          - docs/diagrams/ (図表)
-          - docs/guides/ (ガイド類)
-          - docs/tools/mcp-usage-guide.md (MCPガイド)
-
-        modified_files:
-          - 全役割ファイル (15%ルール追加)
-          - dashboard.md (戦果更新)
-          - queue/*.yaml (指示・進捗)
-          - status/*.yaml (コンテキスト)
-
-      commit_message_suggestion: |
-        feat: 組織改編 v1.7.1 - 15%自己管理コンパクション導入
-
-        - bin/self-compact.sh 追加（$TMUX_PANE環境変数使用）
-        - 全役割ファイルに15%ルール追加
-        - スキル使い方ガイド整備
-        - MCPツール運用ガイド追加
-
-      obsidian:
-        worthy: true
-        category: "知見/成功事例"
-        title: "コンパクション自己管理の仕組み化"
-        summary: |
-          問題: 自動compactは95%使用時に発動、作業途中で切れるリスク
-          解決: 15%以下でself-compact.sh実行を手順化
-          ポイント: 注意力ではなく仕組みで担保
-
-      action_required:
-        - "git add で必要なファイルをステージング"
-        - "git commit でコミット"
-        - "Obsidian MCPで知見を登録"
-        - "dashboard.md を更新"
-
-  - id: cmd_053
-    timestamp: "2026-02-16T16:35:00"
-    command: "【修正】ZeroTouchKitter Issue ラベル付け"
-    project: ZeroTouchKitter
-    priority: high
-    status: pending
-    details:
-      summary: |
-        殿より指摘あり。cmd_049で作成したIssue（#7コメント, #21-24）にラベルがない。
-        既存ラベルを確認し、不足していれば作成してからラベルを付けよ。
-
-      target:
-        repository: "https://github.com/Yuidea-DxG/ZeroTouchKitter"
-
-      issues_to_label:
-        - id: 7
-          type: comment
-          severity: CRITICAL×3, HIGH, MEDIUM
-        - id: 21
-          type: new
-          severity: CRITICAL
-        - id: 22
-          type: new
-          severity: HIGH
-        - id: 23
-          type: new
-          severity: HIGH
-        - id: 24
-          type: new
-          severity: MEDIUM
-
-      action_required:
-        - "gh label list で既存ラベルを確認せよ"
-        - "security, critical, high, medium 等のラベルがなければ作成せよ"
-        - "各Issueに深刻度に応じたラベルを付けよ"
-        - "完了後、dashboard.md を更新せよ"
-
-  - id: cmd_050
-    timestamp: "2026-02-16T14:50:00"
-    command: "【検証】self-compact.sh の動作テスト"
-    project: multi-agent-shogun
-    priority: high
-    status: done
-    details:
-      summary: |
-        殿と将軍で議論した結果、コンパクション自己管理の新しい仕組みを検証する。
-
-      background: |
-        【問題の経緯】
-        1. 家老のコンテキストが9%まで減っていたが、自動compactが走らなかった
-        2. 調査の結果、auto-compactは「残り5%（95%使用時）」で発動することが判明
-        3. 「Context left until auto-compact: 9%」は「使用率91%、あと4%で発動」の意味だった
-
-        【殿の懸念】
-        - 作業途中でcompactしたくない
-        - エージェントの注意力に頼りたくない
-        - /compact は足軽・家老が直接実行できない（殿が確認済み）
-
-        【解決案】
-        - bin/self-compact.sh を作成
-        - 各エージェントがタスク完了時に残量15%以下なら自分で実行
-        - 「注意力」ではなく「手順」として自己管理
-
-      test_request: |
-        足軽1名に以下を試させよ：
-        1. ~/multi-agent-shogun/bin/self-compact.sh を実行
-        2. /compact が自分のpaneで実行されるか確認
-        3. 結果を報告
-
-      script_location: "bin/self-compact.sh"
-
-      expected_behavior: |
-        スクリプトが自分のpaneに /compact を送り、コンパクションが実行される
-
-      if_success: |
-        全エージェントの役割ファイルに「タスク完了時、残量15%以下なら bin/self-compact.sh 実行」を追加
-
-      if_failure: |
-        別の方法を検討（cron、殿への報告など）
-
-  - id: cmd_049
-    timestamp: "2026-02-16T14:30:00"
-    command: "【セキュリティ診断】ZeroTouchKitter 脆弱性調査"
-    project: ZeroTouchKitter
-    priority: high
-    status: in_progress
-    started_at: "2026-02-16T14:32:00"
-    details:
-      summary: |
-        殿の指示により、ZeroTouchKitter リポジトリの脆弱性診断を実施せよ。
-        再発見は既存Issueにコメント追記、新規発見は新規Issue登録。
-
-      target:
-        repository: "https://github.com/Yuidea-DxG/ZeroTouchKitter"
-        local_path: "/home/nishimura/ZeroTouchKitter"
-
-      existing_issues:
-        - id: 3
-          title: "コード品質改善と再起動シーケンスの強化"
-        - id: 4
-          title: "エラーハンドリングの改善が必要"
-        - id: 5
-          title: "ログ機能の強化と統一化"
-        - id: 7
-          title: "設定ファイルのバリデーション機能の実装"
-        - id: 10
-          title: "レジストリアクセス時の権限エラーとロールバック機能の欠如"
-        - id: 11
-          title: "ネットワークパスアクセス時の認証エラーと接続障害の処理不足"
-        - id: 12
-          title: "複数プロセスやサービスの並行実行時の競合状態"
-        - id: 13
-          title: "再起動後の状態復元とプラグイン実行継続の信頼性問題"
-
-      requirements:
-        - "What/Why/How形式で報告せよ"
-        - "severity（CRITICAL/HIGH/MEDIUM/LOW）を明記せよ"
-        - "既存Issueに該当する問題はコメント追記"
-        - "新規発見は新規Issue作成"
-        - "診断完了後、dashboard.mdに結果を記載せよ"
-        - "obsidian_worthy判定を忘れるな（cmd_048で導入）"
-
-      action_required:
-        - "軍師に調査を委譲し、別働隊で並列調査せよ"
-        - "調査カテゴリ: 認証認可、入力検証、暗号化、ログ、設定、依存関係"
-        - "PowerShell/Windows特有のセキュリティ問題も確認せよ"
-
-  - id: cmd_048
-    timestamp: "2026-02-16T14:20:00"
-    command: "【機能追加】Obsidian自動登録機能の実装"
-    project: multi-agent-shogun
-    priority: high
-    status: done
-    started_at: "2026-02-16T14:22:00"
-    completed_at: "2026-02-16T14:25:00"
-    details:
-      summary: |
-        殿より指示。cmd完了時にObsidian登録を自動化する仕組みを導入せよ。
-        重要度判定付きで、価値あるものだけ登録する。
-
-      design:
-        trigger: "cmd完了時の報告"
-
-        report_format_addition: |
-          # gunshi_summary.yaml に以下を追加
-          obsidian_worthy: true/false
-          obsidian_category: "知見/失敗と学び" or "知見/成功事例" or "案件/xxx" 等
-          obsidian_title: "ノートのタイトル"
-          obsidian_summary: "ノートの概要（frontmatter用）"
-
-        registration_criteria:
-          should_register:
-            - "失敗と学び（再発防止）"
-            - "成功事例（横展開可能）"
-            - "未来設計・アイデア"
-            - "重要な意思決定の経緯"
-            - "新しいスキル作成"
-          should_not_register:
-            - "単純な整理タスク（dashboard更新など）"
-            - "ルーティン作業"
-            - "既存Issueへのコメント追記のみ"
-
-        workflow: |
-          1. 軍師がcmd完了時に obsidian_worthy を判定
-          2. true の場合、obsidian_category と obsidian_title を設定
-          3. 家老がサマリ受領時、obsidian_worthy: true なら Obsidian MCP で登録
-          4. dashboard.md に「📚 Obsidian登録済み」を付記
-
-      action_required:
-        - "軍師の報告フォーマット（gunshi_summary.yaml テンプレート）を更新"
-        - "家老の受領ワークフロー（karo.md または karo/報告受領.md）を更新"
-        - "軍師・家老に新フローを周知"
-
-  - id: cmd_047
-    timestamp: "2026-02-16T14:05:00"
-    command: "【整理】ipadress-manager診断結果をdashboardから削除"
-    project: multi-agent-shogun
-    priority: low
-    status: done
-    completed_at: "2026-02-16T14:07:00"
-    details:
-      summary: |
-        ipadress-managerセキュリティ診断結果は既存Issueにコメント追記済み。
-        dashboard.mdの要対応セクションから削除せよ。
-
-      action:
-        - "dashboard.mdの「【要確認】ipadress-manager セキュリティ診断結果」セクションを削除"
-        - "クローズ済み事項に「Issue #53, #54 コメント追記済み」と記載"
-
-  - id: cmd_046
-    timestamp: "2026-02-16T13:45:00"
-    command: "【修正】skill-evaluate をSkillツール登録可能な形式に修正"
-    project: multi-agent-shogun
-    priority: high
-    status: done
-    completed_at: "2026-02-16T13:52:00"
-    details:
-      summary: |
-        殿より指摘あり。skill-evaluate.md は手順書（ガイドスキル）として作られており、
-        Claude Code の /skill コマンドとして自動実行できない状態。
-
-      problem: |
-        【現状】
-        - skills/skill-evaluate.md は手順書形式
-        - 軍師が手動でステップを実行する必要あり
-        - 「1コマンドで自動化」という殿の意図と乖離
-
-        【殿の意図】
-        - 軍師が /skill-evaluate を実行
-        - 自動で評価→タスク作成→通知まで完了
-        - 人の注意力ではなく仕組みで担保
-
-      action_required: |
-        軍師と協議し、以下を実施せよ：
-        1. Claude Code の Skill ツールに登録可能な形式を調査
-        2. skill-evaluate.md を修正
-        3. .claude/skills/ への配置が必要か確認
-        4. 動作テストを実施
-
-      note: |
-        これは家老→軍師の直接協議案件。
-        軍師がSkillツールの仕様を理解しているか確認し、
-        必要なら調査から始めよ。
-
-  - id: cmd_045
-    timestamp: "2026-02-13T21:15:00"
-    command: "【セキュリティ診断】ipadress-manager 脆弱性調査"
-    project: ipadress-manager
-    priority: high
-    status: done
-    started_at: "2026-02-13T21:16:00"
-    completed_at: "2026-02-16T13:35:00"
-    details:
-      summary: |
-        殿の指示により、ipadress-manager リポジトリの脆弱性診断を実施せよ。
-        既存Issueがあるため、追加発見があればコメント追記で対応。
-
-      target:
-        repository: "https://github.com/Yuidea-DxG/ipadress-manager.git"
-        local_path: "/home/nishimura/ipadress-manager"
-
-      existing_issues:
-        - id: 52
-          title: ".env file committed to git - credential exposure"
-          severity: Critical
-        - id: 53
-          title: "No authentication or authorization implemented"
-          severity: Critical
-        - id: 54
-          title: "Hardcoded fallback password in db.ts"
-          severity: Medium
-
-      requirements:
-        - "What/Why/How形式で報告せよ"
-        - "severity（CRITICAL/HIGH/MEDIUM/LOW）を明記せよ"
-        - "既存Issue（#52, #53, #54）に該当する問題は新規Issue不要"
-        - "追加発見があれば既存Issueにコメント追記、または新規Issue作成"
-        - "診断完了後、dashboard.mdに結果を記載せよ"
-
-      action_required:
-        - "軍師に調査を委譲し、別働隊で並列調査せよ"
-        - "調査カテゴリ: 認証認可、入力検証、暗号化、ログ、設定、依存関係"
-        - "既存Issueとの重複確認を怠るな"
-
-  - id: cmd_044
-    timestamp: "2026-02-13T21:10:00"
-    command: "【整理】billing-mng-gcp診断結果をdashboardから削除"
-    project: multi-agent-shogun
-    priority: low
-    status: done
-    completed_at: "2026-02-13T21:12:00"
-    details:
-      summary: |
-        billing-mng-gcpセキュリティ診断結果はIssue #34にコメント追記済み。
-        dashboard.mdの要対応セクションから削除せよ。
-
-      action:
-        - "dashboard.mdの「【要確認】billing-mng-gcp セキュリティ診断結果」セクションを削除"
-        - "クローズ済み事項に「Issue #34 コメント追記済み」と記載"
-
-  - id: cmd_043
-    timestamp: "2026-02-13T21:05:00"
-    command: "【整理】AssetsManageSystem診断結果をdashboardから削除"
-    project: multi-agent-shogun
-    priority: low
-    status: done
-    completed_at: "2026-02-13T21:07:00"
-    details:
-      summary: |
-        AssetsManageSystemセキュリティ診断結果は既にGitHub Issue化済み（#323-#327）。
-        dashboard.mdの要対応セクションから削除せよ。
-
-      existing_issues:
-        - "#323: 認証・認可が未実装（CRITICAL）"
-        - "#324: DBパスワードがGit履歴に露出（CRITICAL）"
-        - "#325: センシティブデータがログに出力（CRITICAL）"
-        - "#326: HTTPS未強制（HIGH）"
-        - "#327: エラー詳細が外部に露出（MEDIUM）"
-
-      action:
-        - "dashboard.mdの「【緊急】AssetsManageSystem セキュリティ診断結果」セクションを削除"
-        - "クローズ済み事項に「Issue #323-#327 作成済み」と記載"
-
-  - id: cmd_042
-    timestamp: "2026-02-13T21:00:00"
-    command: "【整理】dashboard.md 伺い事項クリーンアップ"
-    project: multi-agent-shogun
-    priority: low
-    status: done
-    completed_at: "2026-02-13T21:02:00"
-    details:
-      summary: |
-        殿の確認済み事項をdashboard.mdから整理せよ。
-
-      action:
-        remove:
-          - section: "【1on1】cmd_039 将軍と家老の振り返り"
-            reason: "skill-evaluateで根本解決済み、gcp-iap-auth-audit作成済み"
-          - section: "cmd_038 スキル利用アンケート結果"
-            reason: "cmd_041でガイド作成 + obsidian-note-creator作成済み"
-
-        keep:
-          - section: "AssetsManageSystem セキュリティ診断結果"
-            reason: "GitHub Issue作成待ち"
-          - section: "billing-mng-gcp セキュリティ診断結果"
-            reason: "#34更新 or 別Issue の判断待ち"
-
-  - id: cmd_041
-    timestamp: "2026-02-13T20:30:00"
-    command: "【並行作業】スキル周知改善 + obsidian-note-creator 作成"
-    project: multi-agent-shogun
-    priority: high
-    status: done
-    completed_at: "2026-02-13T20:45:00"
-    details:
-      summary: |
-        cmd_038のアンケート結果を受け、殿より並行作業の指示あり。
-        本隊・別働隊の両方を使って進めよ。
-
-      background: |
-        【問題】
-        - スキル使用率0%（46件あるのに誰も使っていない）
-        - 「使い方が分からなかった」という声あり
-        - entity-class-diagram-generator は既に存在するのに要望が出た → 周知不足
-
-        【足軽からの要望】
-        - Obsidian関連: 3名が要望（obsidian-note-creator統合で対応可）
-        - 既存スキルの認知: entity-class-diagram-generator等
-
-      tasks:
-        - task_id: "A"
-          name: "スキル使い方ガイド作成・周知"
-          assign_to: "本隊（足軽1-4）"
-          details: |
-            - skills/ にあるスキルの使い方ガイドを作成
-            - 呼び出し方法（ToolSearch？直接？/skill-name？）を明確に
-            - 全軍に周知
-
-        - task_id: "B"
-          name: "obsidian-note-creator スキル作成"
-          assign_to: "別働隊（足軽5-8）"
-          details: |
-            - frontmatter付きObsidianノート生成
-            - wikilink補完
-            - テンプレート対応
-            - 足軽1,2,3,4からの要望を統合
-
-      action_required:
-        - "本隊にスキル使い方ガイド作成を指示"
-        - "別働隊にobsidian-note-creator作成を指示（軍師経由）"
-        - "cmd_040のskill-evaluateも並行で進行中のため、優先度調整せよ"
-
-  - id: cmd_040
-    timestamp: "2026-02-13T20:20:00"
-    command: "【スキル作成】skill-evaluate 自動評価・依頼スキル"
-    project: multi-agent-shogun
-    priority: high
-    status: done
-    completed_at: "2026-02-13T20:40:00"
-    details:
-      summary: |
-        1on1での議論を受け、殿より根本解決策の指示あり。
-        「チェックリストを増やすのではなく、仕組みで解決する」
-
-      background: |
-        【問題】
-        軍師がスキル評価後、作成指示を出し忘れる問題が繰り返し発生。
-        - cmd_035: セキュリティスキル4件、評価後作成指示なし
-        - cmd_037: gcp-iap-auth-audit (15点)、評価後作成指示なし
-
-        【根本原因】
-        評価→報告→確認→作成指示→作成 とステップが多く、途中で切れる。
-        人の注意力に依存している。
-
-      solution: |
-        【殿の指示】
-        「評価が14点以上なら作成するところを自動化」
-        「軍師が1コマンド実行するだけで全部フローとして動く」
-
-        【設計】
-        /skill-evaluate スキルを作成。軍師がこれを実行すると：
-        1. スキル候補を評価（スコアリング）
-        2. 14点以上なら自動で queue/tasks/ashigaru{N}.yaml に作成タスクを書く
-        3. 該当足軽に notify.sh で通知
-        4. 軍師には「✅ 15点 - 自動承認。足軽Nに作成依頼済み」とメッセージ
-
-        【効果】
-        - 軍師は1コマンドで評価→依頼まで完結
-        - 「報告して終わり」という切れ目がなくなる
-        - 人の注意力ではなく仕組みで担保
-
-      action_required:
-        - "軍師にこの方針を伝えよ"
-        - "別働隊で skill-evaluate スキルを作成せよ"
-        - "作成後、軍師に使い方を周知せよ"
-        - "gcp-iap-auth-audit の作成も併せて実施せよ"
-
-      skill_spec:
-        name: skill-evaluate
-        trigger: "/skill-evaluate"
-        input: "スキル候補情報（名前、説明、提案者）"
-        output: |
-          - 評価結果（スコア、判定）
-          - 14点以上: 自動で作成タスク生成 + 足軽通知
-          - 13点以下: 却下理由を返却
-        files_to_write:
-          - "queue/tasks/ashigaru{N}.yaml（作成タスク）"
-        notify: "bin/notify.sh で該当足軽に通知"
-
-  - id: cmd_039
-    timestamp: "2026-02-13T20:00:00"
-    command: "【1on1】将軍と家老の振り返り"
-    project: multi-agent-shogun
-    priority: high
-    status: done
-    completed_at: "2026-02-13T20:05:00"
-    details:
-      summary: |
-        殿より1on1の実施指示あり。以下の問題について家老の見解を聞きたい。
-
-      agenda:
-        - topic: "軍師のスキル評価後のフォロー漏れ"
-          context: |
-            gcp-iap-auth-audit (15点) が自動承認対象なのに、別働隊に作成指示が出ていない。
-            cmd_035でも同様の問題があった。軍師の役割ファイルに「後始末」を追加したが、また発生している。
-          questions:
-            - "家老として、この問題をどう認識しているか？"
-            - "軍師への指導・監視をどう改善できるか？"
-
-        - topic: "軍師のコンパクション自己管理"
-          context: |
-            軍師のコンテキストが0%で止まっている。
-            20%ルール（自己管理でcompact）が守られていない。
-          questions:
-            - "家老として、軍師の状態を把握していたか？"
-            - "部下のコンパクション状態をどう監視すべきか？"
-
-        - topic: "スキル利用率0%"
-          context: |
-            cmd_038のアンケート結果、スキル利用率が0%だった。
-            「使い方が分からなかった」という声あり。
-          questions:
-            - "スキル周知について、家老としてどう対応すべきか？"
-
-      format: |
-        家老は以下の形式で回答せよ：
-        1. 各トピックについての認識
-        2. 改善案の提案
-        3. 今後のアクション
-
-  - id: cmd_038
-    timestamp: "2026-02-13T19:15:00"
-    command: "【アンケート】スキル利用状況調査"
-    project: multi-agent-shogun
-    priority: medium
-    status: done
-    completed_at: "2026-02-13T19:22:00"
-    details:
-      summary: |
-        殿より「スキルを皆使っているか？」との問いあり。
-        本隊（足軽1-4）にアンケートを実施し、スキル利用状況を調査せよ。
-
-      target:
-        agents: [ashigaru1, ashigaru2, ashigaru3, ashigaru4]
+        - benefit: "これらを追加すると多層防御になる"
 
       questions:
-        - "skills/ にあるスキルを使ったことがあるか？（Yes/No）"
-        - "使ったことがあるなら、どのスキルを使ったか？"
-        - "使いやすかったか？問題点はあるか？"
-        - "欲しいスキルはあるか？"
+        - "対策1と2、両方実施すべきか？どちらか優先か？"
+        - "工数に対して得られるセキュリティ向上は見合うか？"
+        - "他に考慮すべき点はあるか？"
 
-      context:
-        total_skills: 46
-        skill_list: |
-          確認系: confirmation-list, risk-matrix
-          分析系: system-architecture-analyzer, xlsx-analyzer, document-structure-analyzer, dependency-analyzer
-          生成系: nfr-template-generator, functional-requirements-generator, api-schema-generator, entity-generator-from-spec
-          React系: react-mui-crud-scaffold, react-file-download, react-tag-management-ui, react-layout-template-generator
-          NestJS系: nestjs-code-reviewer, nestjs-file-export, typeorm-seeder-generator, typeorm-entity-checker
-          セキュリティ系: dotnet-security-audit, dotnet-secrets-scanner, blazor-security-checker, aspnet-auth-audit
-          その他多数（計46件）
+      report_format: |
+        【結論】追加対策を実施すべきか否か
+        【理由】3点程度
+        【優先度】対策1と2の優先順位
+        【工数見積もり】概算
+        【懸念点】あれば
 
-      action_required:
-        - "本隊（足軽1-4）に並列でアンケート実施"
-        - "結果を集約してdashboard.mdに報告せよ"
-
-  - id: cmd_037
-    timestamp: "2026-02-13T19:05:00"
-    command: "【セキュリティ診断】billing-mng-gcp 脆弱性調査"
-    project: billing-mng-gcp
-    priority: high
-    status: done
-    completed_at: "2026-02-13T19:50:00"
-    details:
-      summary: |
-        殿の指示により、billing-mng-gcp リポジトリの脆弱性診断を実施せよ。
-        診断結果はdashboard.mdに報告し、殿の確認後にGitHub Issuesを作成する。
-
-      target:
-        repository: "https://github.com/Yuidea-DxG/billing-mng-gcp"
-        local_path: "/home/nishimura/billing-mng-gcp"
-
-      requirements:
-        - "What/Why/How形式で報告せよ"
-        - "severity（CRITICAL/HIGH/MEDIUM/LOW）を明記せよ"
-        - "既存のIssueを確認し、重複を避けよ"
-        - "診断完了後、dashboard.mdに結果を記載せよ"
-        - "殿の確認後にGitHub Issuesを作成する（先にIssue作成するな）"
-
-      action_required:
-        - "軍師に調査を委譲し、別働隊で並列調査せよ"
-        - "調査カテゴリ: 認証認可、入力検証、暗号化、ログ、設定、依存関係"
-        - "dashboard.mdに結果を記載し、殿の確認を待て"
-
-  - id: cmd_036
-    timestamp: "2026-02-13T18:15:00"
-    command: "【スキル作成】セキュリティ診断スキル4件作成"
+  - id: cmd_077
+    timestamp: "2026-02-18T10:50:00"
+    command: "【改善】security-audit-orchestrator 改善提案2点を反映"
     project: multi-agent-shogun
-    priority: high
-    status: done
-    completed_at: "2026-02-13T18:25:00"
+    priority: medium
+    status: pending
     details:
       summary: |
-        cmd_035のセキュリティ診断で自動承認された4件のスキルを作成せよ。
-        親スキル: dotnet-security-audit
-        サブスキル: aspnet-auth-audit, dotnet-secrets-scanner, blazor-security-checker
+        cmd_076 テストで出た改善提案2点を反映せよ。
 
-      skills:
-        - name: dotnet-security-audit
-          score: 19
-          type: parent
-        - name: aspnet-auth-audit
-          score: 19
-          type: sub
-        - name: dotnet-secrets-scanner
-          score: 18
-          type: sub
-        - name: blazor-security-checker
-          score: 17
-          type: sub
+      improvements:
+        - id: 1
+          description: "stack-mapping.yaml に express-logging-auditor 追加"
+          file: ".claude/skills/security-audit-orchestrator/config/stack-mapping.yaml"
+          action: |
+            express セクションに express-logging-auditor を追加
+            例: express: [express-security-audit, express-logging-auditor]
 
-      action_required:
-        - "軍師に指示し、別働隊でスキル作成"
-        - "skills/ ディレクトリに4ファイル作成"
-
-  - id: cmd_035
-    timestamp: "2026-02-13T17:47:42"
-    command: "【セキュリティ診断】AssetsManageSystem 脆弱性調査"
-    project: AssetsManageSystem
-    priority: critical
-    status: done
-    completed_at: "2026-02-13T17:58:00"
-    details:
-      summary: |
-        殿の指示により、資産管理システム（Blazor Server/.NET 8）の脆弱性診断を実施する。
-        GWS OAuth認証でログインするシステムである。ハッカー視点で課題・問題を洗い出せ。
-
-      target:
-        repository: "https://github.com/Yuidea-DxG/AssetsManageSystem.git"
-        local_path: "/home/nishimura/AssetsManageSystem"
-        tech_stack:
-          - "ASP.NET Core Blazor Server"
-          - "PostgreSQL"
-          - "Entity Framework Core"
-          - "MudBlazor"
-          - ".NET 8"
-
-      initial_findings:
-        critical:
-          - issue: "パスワード・認証情報がappsettings.jsonに平文でコミット"
-            files:
-              - "appsettings.json - Password=asset-db"
-              - "appsettings.Development.json - Password=asset-db"
-              - "appsettings.Staging.json - Password=cgpress1041"
-            risk: "リポジトリにアクセスできる者全員がDB認証情報を取得可能"
-
-          - issue: "EnableSensitiveDataLogging()が有効"
-            file: "Program.cs:52"
-            risk: "センシティブなデータがログに出力される可能性"
-
-        high:
-          - issue: "AllowedHosts が * に設定"
-            file: "appsettings.json:38"
-            risk: "ホストヘッダーインジェクション攻撃の可能性"
-
-          - issue: "認証・認可の実装確認が必要"
-            note: "Program.csにAuthentication/Authorization設定が見当たらない"
-            risk: "未認証アクセスの可能性"
-
-        to_investigate:
-          - "Controllers（5ファイル）の認可属性確認"
-          - "APIエンドポイントの認証確認"
-          - "CSVインポート機能のインジェクション対策"
-          - "SQLインジェクション対策"
-          - "XSS対策"
-          - "CSRF対策"
-          - "OAuth実装の詳細確認"
-
-      scale:
-        cs_files: 306
-        controllers: 5
-        services: 28
+        - id: 2
+          description: "security-audit-checker-v2 をデフォルト選択に"
+          file: ".claude/skills/security-audit-orchestrator/config/stack-mapping.yaml"
+          action: |
+            共通スキル（全プロジェクト適用）に security-audit-checker-v2 を追加
+            security-audit-checker から v2 に変更
 
       action_required:
-        - "軍師に調査を委譲し、別働隊で並列調査せよ"
-        - "調査カテゴリ: 認証認可、入力検証、暗号化、ログ、設定"
-        - "発見した脆弱性は severity と remediation を含めて報告せよ"
-
-  - id: cmd_034
-    timestamp: "2026-02-13T17:38:55"
-    command: "【通達】全軍役割ファイル責任フォーカス化リストラクチャ完了"
-    project: multi-agent-shogun
-    priority: high
-    status: done
-    completed_at: "2026-02-13T17:41:00"
-    details:
-      summary: |
-        殿のご指導のもと、全役割ファイルを「責任フォーカス」形式に再編成した。
-        全軍にこの変更を通達し、新しいファイル構成を周知せよ。
-
-      changes:
-        - description: "役割ファイルを責任（フォーカス）中心に再構成"
-          before: "手順・ルール・詳細が混在（700-1000行）"
-          after: "責任を明確化（130-170行）+ マニュアル分離"
-
-        - description: "詳細手順をマニュアルディレクトリに分離"
-          structure: |
-            instructions/
-            ├── shogun.md (責任フォーカス) + shogun/（3マニュアル）
-            ├── gunshi.md (責任フォーカス) + gunshi/（7マニュアル）
-            ├── karo.md (責任フォーカス) + karo/（5マニュアル）
-            └── ashigaru.md (責任フォーカス) + ashigaru/（8マニュアル）
-
-        - description: "戦国風口調を維持"
-          note: "「〜せよ」「〜するな」「〜じゃ」等のペルソナ維持"
-
-        - description: "20%ルール（コンパクション自己管理）を全ファイルに追加"
-          rule: "コンテキスト残量20%以下でキリの良いところで /compact 実行"
-
-      key_points:
-        - "責任とは「作業すること」ではない。フォーカスである"
-        - "マニュアルを読むことが目的ではない。責任を果たすことが目的じゃ"
-        - "旧ファイルは *_old.md としてバックアップ済み"
-
-      action_required:
-        - "軍師に通達せよ"
-        - "本隊・別働隊に周知せよ"
-        - "dashboard.md を更新せよ"
+        - "足軽1名で対応可（軽微な修正）"
+        - "修正後、dashboard.md に報告"

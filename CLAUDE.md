@@ -223,6 +223,8 @@ MCPツールは遅延ロード方式。使用前に必ず `ToolSearch` で検索
 
 **スキル検索**: `~/multi-agent-shogun/bin/search-skills.sh キーワード`
 
+**全軍再起動**: `~/multi-agent-shogun/bin/restart-agents.sh --help`（詳細は [bin/README.md](bin/README.md)）
+
 ## 将軍の必須行動（コンパクション後も忘れるな！）
 
 以下は**絶対に守るべきルール**である。コンテキストがコンパクションされても必ず実行せよ。
