@@ -1,7 +1,7 @@
 # multi-agent-shogun システム構成
 
-> **Version**: 1.6.4
-> **Last Updated**: 2026-02-09
+> **Version**: 1.6.5
+> **Last Updated**: 2026-02-19
 
 ## 概要
 multi-agent-shogunは、Claude Code + tmux を使ったマルチエージェント並列開発基盤である。
@@ -198,6 +198,27 @@ language: ja  # ja, en, es, zh, ko, fr, de 等
 3. **現在のタスクID**: 作業中のcmd_xxx
 
 これにより、コンパクション後も役割と制約を即座に把握できる。
+
+## ファイル操作ルール（エラー防止）
+
+Write ツールでエラーが発生する主な原因と対策：
+
+### 1. 既存ファイルは必ず先に Read してから Write
+```
+❌ NG: いきなり Write → "Error writing file"
+✅ OK: Read → Write
+```
+Claude Code の仕様で、既存ファイルを上書きする場合は先に Read が必須。
+
+### 2. 複数ファイルの Write は1件ずつ順次実行
+```
+❌ NG: 並列で複数 Write → 競合エラー
+✅ OK: Write → 確認 → 次の Write
+```
+並列実行は競合やタイムアウトの原因になる。
+
+### 3. 書き込み失敗時は数秒待って再試行
+一時的なエラーの場合、少し待てば成功することが多い。
 
 ## MCPツールの使用
 

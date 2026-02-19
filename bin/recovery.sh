@@ -11,7 +11,9 @@ PROJECT_DIR="${CLAUDE_PROJECT_DIR:-$HOME/multi-agent-shogun}"
 
 # セッション名から役割を判定（window名は「claude」になることがあるため使わない）
 SESSION_NAME=$(tmux display-message -p '#S' 2>/dev/null || echo "unknown")
-PANE_INDEX=$(tmux display-message -p '#{pane_index}' 2>/dev/null || echo "0")
+# TMUX_PANE 環境変数から逆引きで正確な pane_index を取得
+# （tmux display-message -p は「アクティブな」paneを返すため不正確）
+PANE_INDEX=$(tmux display -t "$TMUX_PANE" -p "#{pane_index}" 2>/dev/null || echo "0")
 
 # 役割を判定
 case "$SESSION_NAME" in
