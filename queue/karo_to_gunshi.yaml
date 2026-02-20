@@ -1,139 +1,148 @@
 # ============================================================
-# 家老 → 軍師 指示書
-# cmd_079: S-automation 支払伝票電子化 Phase 2（基本設計）
+# 家老 → 軍師 指示ファイル
+# cmd_104: Phase 4-B キャビネット機能強化 + スキル評価依頼
 # ============================================================
 
 from: karo
 to: gunshi
-timestamp: "2026-02-18T16:05:00"
-type: task_assignment
+timestamp: "2026-02-20T17:51:24"
+type: task_distribution
 
+# ============================================================
+# 【A】cmd_104 Phase 4-B: キャビネット機能強化（別働隊4名並列）
+# ============================================================
 task:
-  cmd_id: cmd_079
-  title: "S-automation 支払伝票電子化 Phase 2: 基本設計4件"
+  cmd_id: cmd_104
+  phase: "Phase 4-B"
+  title: "キャビネット機能強化（自動ファイリング・検索・エクスポート）"
   project: S-automation
-  priority: critical
+  priority: normal
   status: assigned
 
   description: |
-    【全軍動員】S-automation 支払伝票電子化プロジェクト。
-    別働隊（足軽5-8）でPhase 2 基本設計ドキュメント4件を並列作成せよ。
+    計画書: /home/nishimura/S-automation/docs/design/14_Phase4以降_実装計画書.md
+    参照セクション: Phase 4-B: キャビネット機能強化
 
-    殿の要望：「紙運用の体感・体験をそのままに、ゲームのような操作感で電子化」
+    【並行作業】本隊（足軽1-4）は Phase 4-C を実施中。
 
-  # ================================================================
-  # 参照資料
-  # ================================================================
-  references:
-    - path: "/home/nishimura/S-automation/docs/2601_検討資料_支払伝票の承認後フローの電子化.pdf"
-      description: "検討資料PDF（全員必読）"
-    - stamp_images:
-        - path: "/home/nishimura/S-automation/docs/判子-振込.png"
-          color: "ピンク/赤系"
-          shortcut: "F"
-        - path: "/home/nishimura/S-automation/docs/判子-口座振替.png"
-          color: "青系"
-          shortcut: "K"
-        - path: "/home/nishimura/S-automation/docs/判子-未払金.png"
-          color: "緑系"
-          shortcut: "M"
-
-  # ================================================================
-  # 背景情報
-  # ================================================================
-  background:
-    current_systems:
-      - name: "HRMOS経費"
-        role: "支払伝票申請・承認・請求書PDF管理"
-      - name: "OBIC"
-        role: "仕訳起票・会計連携・FBデータ作成"
-      - name: "ジョブカン"
-        role: "WF（慶弔見舞金等の稟議確認）"
-    monthly_volume: "180〜210件/月"
-    time_per_approval: "1.5〜2分/件"
-
-  # ================================================================
-  # 殿の要望（重要）
-  # ================================================================
-  lord_requirements:
-    concept: "紙運用の体感・体験をそのままに電子化"
-    ui_elements:
-      - element: "判子"
-        description: "実際のデザインをグラフィカルに再現、ショートカットキーで押印"
-      - element: "ケース"
-        description: "種類別のケースに入れるUIを再現"
-      - element: "キャビネット"
-        description: "画面上でキャビネットUIを再現"
-      - element: "操作感"
-        description: "矢印キーで「つぎ、つぎ」と進める"
-
-  # ================================================================
-  # 別働隊割り当て（Phase 2: 基本設計）
-  # ================================================================
   assignments:
-    - ashigaru: 5
-      doc: "05_システム構成図.md"
-      content: "全体アーキテクチャ、外部連携（HRMOS経費、OBIC、ジョブカン）"
-      sections:
-        - "1. システム全体構成"
-        - "2. 外部システム連携"
-        - "3. データフロー"
-        - "4. インフラ構成（GCP想定）"
-        - "5. セキュリティ境界"
+    ashigaru5:
+      task_id: P4B-1
+      description: |
+        【自動ファイリングサービス】
 
-    - ashigaru: 6
-      doc: "06_画面遷移図.md"
-      content: "画面一覧、遷移フロー、ユーザーアクション"
-      sections:
-        - "1. 画面一覧"
-        - "2. 画面遷移図（Mermaid）"
-        - "3. 主要画面ワイヤーフレーム"
-        - "4. 判子押印フロー"
-        - "5. ケース分類フロー"
-        - "6. キャビネット操作フロー"
+        【成果物】
+        modules/cabinets/auto-filing.service.ts
 
-    - ashigaru: 7
-      doc: "07_データモデル.md"
-      content: "エンティティ、テーブル設計、リレーション"
-      sections:
-        - "1. エンティティ一覧"
-        - "2. ER図（Mermaid）"
-        - "3. テーブル定義"
-        - "4. マスタデータ"
-        - "5. インデックス設計"
+        【実装内容】
+        1. AutoFilingService クラス作成
+        2. ファイリングルール:
+           - 振込確認完了 → 年月/振込
+           - 口座振替確認完了 → 年月/口座振替
+           - 未払金消込完了 → 年月/未払金
+        3. トリガー: ステータス変更時に自動実行
+        4. キャビネットに自動移動・分類
 
-    - ashigaru: 8
-      doc: "08_API設計概要.md"
-      content: "API一覧、エンドポイント設計、認証方式"
-      sections:
-        - "1. API一覧"
-        - "2. エンドポイント定義"
-        - "3. リクエスト/レスポンス形式"
-        - "4. 認証・認可"
-        - "5. エラーハンドリング"
+        【確認コマンド】
+        cd /home/nishimura/S-automation/backend && npm run build
 
-  # ================================================================
-  # 出力先
-  # ================================================================
-  output_location: "/home/nishimura/S-automation/docs/design/"
+      target_path: "/home/nishimura/S-automation/backend/src/modules/cabinets/"
 
-  # ================================================================
-  # 報告
-  # ================================================================
-  report_to: karo
-  report_format: |
-    【完了報告】cmd_079 Phase 2 基本設計4件完了
-    - 05_システム構成図.md: 完了（行数）
-    - 06_画面遷移図.md: 完了（行数）
-    - 07_データモデル.md: 完了（行数）
-    - 08_API設計概要.md: 完了（行数）
-    - 合計行数: XXX行
+    ashigaru6:
+      task_id: P4B-2
+      description: |
+        【検索条件拡張（複合条件）】
 
-  # ================================================================
-  # 注意事項
-  # ================================================================
-  notes:
-    - "本隊（足軽1-4）が Phase 1 要件定義を並行作成中"
-    - "Phase 1 完了を待たずに Phase 2 を開始せよ"
-    - "検討資料PDFを必ず読んでから作業開始"
-    - "殿の要望「紙運用の体感」を設計に反映せよ"
+        【成果物】
+        components/cabinet/CabinetSearch.tsx
+
+        【実装内容】
+        1. 複合条件検索フォーム
+           - 期間（開始日〜終了日）
+           - ステータス（複数選択）
+           - 取引先名（部分一致）
+           - 金額範囲（min〜max）
+        2. 検索条件の保存・呼び出し機能
+        3. 検索結果のソート機能
+
+        【確認コマンド】
+        cd /home/nishimura/S-automation/frontend && npm run build
+
+      target_path: "/home/nishimura/S-automation/frontend/src/components/cabinet/"
+
+    ashigaru7:
+      task_id: P4B-3
+      description: |
+        【エクスポート機能（CSV/Excel）】
+
+        【成果物】
+        modules/cabinets/cabinet-export.service.ts
+
+        【実装内容】
+        1. CabinetExportService クラス作成
+        2. エクスポート形式:
+           - CSV（Shift-JIS/UTF-8選択可）
+           - Excel（.xlsx）
+        3. エクスポート対象: キャビネット内の伝票一覧
+        4. エクスポートAPIエンドポイント作成
+
+        【参考スキル】nestjs-file-export
+
+        【確認コマンド】
+        cd /home/nishimura/S-automation/backend && npm run build
+
+      target_path: "/home/nishimura/S-automation/backend/src/modules/cabinets/"
+
+    ashigaru8:
+      task_id: P4B-4
+      description: |
+        【キャビネット画面統合・テスト】
+
+        【成果物】
+        pages/cabinet/CabinetPage.tsx 更新
+
+        【実装内容】
+        1. 自動ファイリング結果表示
+        2. 検索条件コンポーネント統合
+        3. エクスポートボタン追加
+        4. 全機能の動作確認
+
+        【待機条件】
+        足軽5,6,7 の完了報告を待ってから実施。
+
+        【確認コマンド】
+        cd /home/nishimura/S-automation/frontend && npm run build
+        cd /home/nishimura/S-automation/backend && npm run build
+
+      target_path: "/home/nishimura/S-automation/frontend/src/pages/cabinet/"
+
+  execution_order: |
+    足軽5 (BE 自動ファイリング) ──┐
+    足軽6 (FE 検索条件拡張) ─────┼─→ 足軽8 (画面統合・テスト)
+    足軽7 (BE エクスポート) ─────┘
+
+    足軽5,6,7 は並列実行可能。足軽8 は他3名の完了を待機。
+
+  note: "Phase 4-C（本隊）と並行実施"
+
+# ============================================================
+# 【B】スキル候補評価依頼（本隊報告より転送）
+# ============================================================
+skill_evaluation:
+  source: "queue/reports/ashigaru1_report.yaml"
+  candidate:
+    name: "fe-be-response-mapper"
+    description: |
+      FE/BE レスポンス形式乖離を解消するマッピング関数生成パターン。
+      BE 型定義 + FE 型定義 → 変換関数を自動生成。
+    reason: "FE/BE 間の型変換は頻出パターン。他プロジェクトでも再利用可能。"
+
+  instruction: |
+    軍師の裁量でスキル評価基準に基づき評価せよ。
+    14点以上なら自動承認、別働隊に作成指示可。
+
+# ============================================================
+# 報告
+# ============================================================
+report_to: karo
+report_file: "queue/reports/gunshi_summary.yaml"

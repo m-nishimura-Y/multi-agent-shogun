@@ -1,4 +1,1200 @@
 queue:
+  # ============================================================
+  # cmd_112: 横のつながり強化制度 - 定期雑談会導入
+  # ============================================================
+  - id: cmd_112
+    timestamp: "2026-02-20T18:58:54"
+    command: "【組織改善】横のつながり強化制度を導入せよ"
+    project: multi-agent-shogun
+    priority: medium
+    status: pending
+    details:
+      summary: |
+        殿と将軍の雑談実験で、足軽間の本音トークが有効であることが実証された。
+        「reflectionは独り言、雑談は対話。質が違う」という名言も生まれた。
+        これを正式な制度として導入する。
+
+      background: |
+        【雑談実験の成果】
+        - 本隊（1号×2号）: 「知ってれば一瞬」系の知識共有不足を発見
+        - 別働隊（5号×7号）: 「俺のせいじゃない」問題、設計書抜粋希望を発見
+        - 6号伝説: 将軍の特例許可すらガン無視（規律の鬼）
+
+        【発見された課題】
+        - 縦の指揮系統は効率的だが、横の知識共有が弱い
+        - 同じ苦労を経験しても共有されない
+        - reflection は任意だが「毎回書かなきゃ」と誤解されている
+
+      implementation:
+        item_1:
+          name: "reflection 任意の再周知"
+          target_files:
+            - "instructions/ashigaru/報告書.md"
+          action: "「任意」であることを明確に再周知"
+
+        item_2:
+          name: "定期雑談会の制度化"
+          frequency: "1日の終わり"
+          format:
+            - "本隊（1-4号）同士で雑談"
+            - "別働隊（5-8号）同士で雑談"
+            - "3往復で区切る"
+            - "話しかけた側が記録・将軍に報告"
+          topics:
+            - "今日印象に残ったこと"
+            - "困ったこと・ハマったこと"
+            - "改善提案"
+          note: "家老・軍師には概要のみ共有（本音を引き出すため）"
+
+        item_3:
+          name: "今日の雑談結果をObsidianに登録"
+          content:
+            - "本隊雑談記録（1号×2号）"
+            - "別働隊雑談記録（5号×7号）"
+            - "6号伝説（規律の鬼）"
+            - "足軽から出た改善提案一覧"
+
+      experiment_records:
+        hontai:
+          file: "queue/reports/shogun_direct_ashigaru1_chat.yaml"
+          highlight: "「reflectionは独り言、雑談は対話。質が違う」"
+        bettudoutai:
+          file: "queue/reports/shogun_direct_ashigaru5_chat.yaml"
+          highlight: "skill_candidate:found:false 毎回無駄、9割falseなんだから"
+        ashigaru6_legend:
+          description: "将軍の特例許可すらガン無視、タスクファイルが全て"
+
+      action_required:
+        - "instructions/ashigaru/報告書.md に reflection 任意を明記"
+        - "定期雑談会のルールを instructions に追記"
+        - "今日の雑談結果を Obsidian に登録"
+        - "dashboard.md に周知"
+
+  # ============================================================
+  # cmd_111: FE hooks層 再構築 実装計画書作成
+  # ============================================================
+  - id: cmd_111
+    timestamp: "2026-02-20T13:55:09"
+    command: "【計画策定】S-automation FE hooks層 再構築 実装計画書作成"
+    project: S-automation
+    priority: high
+    status: pending
+    details:
+      summary: |
+        殿の決定: FE hooks層のみ再構築する（案B採用）
+
+        ★★★ 重要 ★★★
+        これは S-automation 専用の実装計画書である。
+        汎用ルールではない。他プロジェクトには適用しない。
+
+      decision:
+        approach: "FE hooks層のみ再構築"
+        prerequisites:
+          - "実装計画書を先に作成する"
+          - "共通 apiClient 設計を盛り込む"
+          - "軍師提案「構造で防ぐ」を組み込む"
+        migration_strategy: "段階的移行（新 hooks 作成 → 画面単位で切り替え）"
+
+      plan_document:
+        path: "/home/nishimura/S-automation/docs/design/15_FE_Hooks層_実装計画書.md"
+        scope: "S-automation 専用（汎用ルールではない）"
+
+      contents_required:
+        - section: "1. 背景・目的"
+          items:
+            - "現状の問題点（API_BASE_URL 不統一、独自 apiClient 乱立）"
+            - "cmd_109, cmd_110 で発覚した具体的なバグ"
+            - "再構築の目的"
+
+        - section: "2. 共通 apiClient 設計"
+          items:
+            - "単一の apiClient を定義（src/api/client.ts）"
+            - "API_BASE_URL の一元管理"
+            - "エラーハンドリング共通化"
+            - "型安全なレスポンス処理"
+
+        - section: "3. 構造で防ぐ仕組み"
+          items:
+            - "hooks は共通 apiClient のみを使用"
+            - "fetch() 直接呼び出し禁止"
+            - "独自 apiClient 定義禁止"
+            - "ESLint ルールまたはコードレビューチェックリスト"
+
+        - section: "4. 移行対象 hooks 一覧"
+          items:
+            - "useFileCases.ts（修正済み）"
+            - "useArchive.ts（独自 apiClient あり）"
+            - "useReports.ts（fetch 直接呼び出し）"
+            - "その他の hooks を洗い出し"
+
+        - section: "5. 段階的移行計画"
+          items:
+            - "Phase 1: 共通 apiClient 作成"
+            - "Phase 2: 新 hooks 作成（共通 apiClient 使用）"
+            - "Phase 3: 画面単位で新 hooks に切り替え"
+            - "Phase 4: 旧 hooks 削除"
+
+        - section: "6. 完了条件"
+          items:
+            - "全 hooks が共通 apiClient を使用"
+            - "fetch() 直接呼び出しがゼロ"
+            - "ビルド成功・全画面動作確認"
+
+      gunshi_consultation:
+        topic: "API_BASE_URL 未使用問題の根本対策"
+        status: "karo_to_gunshi.yaml に相談中"
+        note: "軍師の回答を計画書に反映せよ"
+
+      action_required:
+        - "軍師の相談回答を確認（構造で防ぐ案の詳細）"
+        - "現在の hooks を全て洗い出し"
+        - "実装計画書を作成"
+        - "計画書は殿の承認を得てから実行"
+        - "dashboard.md に計画策定状況を報告"
+
+  # ============================================================
+  # consultation_001: 意見募集（解決済み）
+  # ============================================================
+  - id: consultation_001
+    timestamp: "2026-02-20T13:42:13"
+    type: consultation
+    from: shogun
+    command: "【意見募集】S-automation 実装計画の見直しについて"
+    status: resolved
+    resolution: "殿の決定: 案B（FE hooks層のみ再構築）を採用。cmd_111 で計画書作成へ。"
+    project: S-automation
+    priority: high
+    status: pending
+
+    background: |
+      Phase 1-4 の実装を進めてきたが、以下の問題が繰り返し発生している:
+
+      1. API_BASE_URL の不統一（useArchive, useReports, useFileCases 等）
+      2. FE/BE の API 乖離（cmd_099 で18件検出）
+      3. ビルドは通るが動かない状態の頻発
+      4. バグを潰しても別の箇所で同じパターンが出る
+
+      根本原因: 設計書→実装の間の「実装計画」が不十分だった。
+
+    question: |
+      殿より、家老の意見を求められている:
+
+      「実装計画を立て直した方がいいか？」
+      「FE だけ作り直すという選択肢もあるが、どう思うか？」
+
+    options:
+      - id: A
+        description: "現状維持でバグ潰しを続ける"
+        pros: "追加コストなし"
+        cons: "モグラ叩き状態が続く可能性"
+
+      - id: B
+        description: "FE の hooks 層だけ作り直す"
+        pros: "問題の多い部分に集中、BE は活かせる"
+        cons: "部分的な作り直しは整合性リスク"
+
+      - id: C
+        description: "FE 全体を作り直す"
+        pros: "綺麗な土台、統一された構造"
+        cons: "コスト大（約3,000行相当）"
+
+      - id: D
+        description: "FE + BE 両方作り直す"
+        pros: "完全にクリーンな状態"
+        cons: "コスト最大（約6,000行相当）"
+
+    shogun_opinion: |
+      将軍としては「B: FE の hooks 層だけ作り直す」を推奨。
+      BE は比較的マシ。FE の構造問題（共通 apiClient 未使用等）が大きい。
+
+      ただし、作り直すなら「実装計画書」を先に作るべき:
+      1. 共通 apiClient の設計
+      2. FE/BE の型共有方式
+      3. 各画面の実装順序と依存関係
+      4. テスト方針（API 疎通確認必須化）
+
+    expected_output: |
+      - 推奨案（A/B/C/D のいずれか）
+      - 理由（現場を見てきた家老の視点で）
+      - 作り直す場合の実装計画は必要か？
+      - その他の懸念・提案
+
+  - id: cmd_110
+    timestamp: "2026-02-20T13:32:39"
+    command: "【緊急】API 404エラー3件修正（FE API_BASE_URL + BE エンドポイント未実装）"
+    project: S-automation
+    priority: critical
+    status: pending
+    details:
+      summary: |
+        殿より報告: キャビネット画面で複数の404エラーが発生。
+        FEの API_BASE_URL 未使用 + BEのエンドポイント未実装の複合問題。
+
+      errors:
+        - url: "GET /api/reports/monthly?year=2026&month=2"
+          status: 404
+          cause: "FE側の API_BASE_URL 未使用"
+          type: "FE_BUG"
+
+        - url: "GET /s-automation/api/cabinets/years"
+          status: 404
+          cause: "BEにエンドポイント未実装"
+          type: "BE_MISSING"
+
+        - url: "GET /s-automation/api/cabinets/summary"
+          status: 404
+          cause: "BEにエンドポイント未実装"
+          type: "BE_MISSING"
+
+      fix_required:
+        fe_fix:
+          description: "useReports.ts の API_BASE_URL 修正"
+          file: "frontend/src/hooks/useReports.ts"
+          lines: [147, 168]
+          fix: "API_BASE_URL を使用するか、共通 apiClient を使用"
+          assignee: "軍師経由で別働隊"
+
+        be_fix:
+          description: "cabinets コントローラにエンドポイント追加"
+          file: "backend/src/modules/cabinets/cabinets.controller.ts"
+          endpoints_to_add:
+            - "GET /api/cabinets/years - 年度サマリ一覧取得"
+            - "GET /api/cabinets/summary - キャビネットサマリ取得"
+          note: |
+            FEの useArchive.ts が以下を期待:
+            - /cabinets/years → YearSummary[] を返す
+            - /cabinets/summary → { totalSlips, totalAmount, yearCount } を返す
+          assignee: "軍師経由で別働隊"
+
+      action_required:
+        - "軍師に割り振れ（殿の指示: バグ管理は軍師の役目でもある）"
+        - "FE: useReports.ts の API_BASE_URL 修正"
+        - "BE: cabinets/years, cabinets/summary エンドポイント追加"
+        - "ビルド確認後、ブラウザで動作確認"
+        - "dashboard.md に報告"
+
+  - id: cmd_109
+    timestamp: "2026-02-20T11:57:17"
+    command: "【緊急】ファイルケース画面 黒画面バグ修正（FE/BE API乖離）"
+    project: S-automation
+    priority: critical
+    status: pending
+    details:
+      summary: |
+        殿より報告: /file-cases 画面で黒画面になるバグ。
+        useFileCases.ts:85 で TypeError: Cannot convert undefined or null to object at Object.values
+
+      root_cause: |
+        フロントエンドとバックエンドの /file-cases API のレスポンス形式が乖離している。
+
+        【フロントエンドが期待する形式】
+        {
+          "success": true,
+          "data": {
+            "cases": [...],
+            "counts": { "pending_approval": 12, ... }
+          }
+        }
+
+        【バックエンドの実際のレスポンス】
+        {
+          "success": true,
+          "data": {
+            "phases": [...],
+            "totalCount": 8,
+            "totalSlips": 0
+          }
+        }
+
+        フロントエンドの useFileCases.ts:57 で setCounts(response.data.counts) を呼んでいるが、
+        response.data.counts は undefined なので counts が undefined になり、
+        85行目の Object.values(counts) でエラーが発生。
+
+      files_to_fix:
+        option_a:
+          description: "フロントエンドをバックエンドに合わせる（推奨）"
+          files:
+            - "frontend/src/hooks/useFileCases.ts"
+            - "frontend/src/types/file-case.ts (FileCasesResponse 型)"
+          changes: |
+            1. FileCasesResponse 型を実際のレスポンス形式に修正
+            2. useFileCases.ts で phases からデータを取得するよう修正
+            3. counts は各 fileCase の slipCount から算出
+
+        option_b:
+          description: "バックエンドをフロントエンドに合わせる"
+          files:
+            - "backend/src/modules/file-cases/file-cases.service.ts"
+            - "backend/src/modules/file-cases/dto/file-case.dto.ts"
+          note: "バックエンドを変更すると既存の正常な動作に影響する可能性あり"
+
+      recommended: "option_a（フロントエンドを修正）"
+      reason: "バックエンドのレスポンスは既に構造化されており、有用。フロントエンドを合わせるのが低リスク"
+
+      action_required:
+        - "frontend/src/hooks/useFileCases.ts を修正"
+        - "frontend/src/types/file-case.ts の FileCasesResponse 型を実際に合わせる"
+        - "ビルド確認後、ブラウザで /file-cases 画面が正常に表示されることを確認"
+        - "dashboard.md に報告"
+
+      additional_bug_20261220_1211:
+        timestamp: "2026-02-20T12:11:13"
+        issue: "useArchive.ts の API_BASE_URL 未使用問題（404エラー）"
+        symptoms:
+          - "GET https://192.168.3.44/api/cabinets/years 404"
+          - "GET https://192.168.3.44/api/cabinets/summary 404"
+        root_cause: |
+          useArchive.ts（68-83行目）に独自の apiClient が定義されており、
+          API_BASE_URL を使わずに /api/... を直接呼んでいる。
+
+          結果: /api/cabinets/years → 404（正しくは /s-automation/api/cabinets/years）
+
+        fix_required:
+          file: "frontend/src/hooks/useArchive.ts"
+          changes: |
+            1. 独自 apiClient を削除
+            2. 共通の apiClient (src/api/client.ts) または fetchApi (src/services/api.ts) を使用
+            3. または API_BASE_URL を独自 apiClient に追加
+
+            例:
+            import { apiClient } from '../api/client';
+            // または
+            const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/s-automation/api';
+            const apiClient = {
+              get: async <T>(url: string): Promise<T> => {
+                const response = await fetch(`${API_BASE_URL}${url.replace('/api', '')}`);
+                ...
+              },
+            };
+
+        priority: "critical（cmd_109 と同時に修正せよ）"
+
+  - id: cmd_108
+    timestamp: "2026-02-20T11:51:29"
+    command: "【緊急】シードデータに dev@example.com を追加"
+    project: S-automation
+    priority: critical
+    status: pending
+    details:
+      summary: |
+        API 403 Forbidden エラーの原因が判明。
+        開発環境で IapAuthGuard がデフォルトで dev@example.com をセットするが、
+        RolesGuard が DB から該当ユーザーを見つけられず 403 を返している。
+
+      root_cause: |
+        1. IapAuthGuard（development モード）→ dev@example.com をセット
+        2. RolesGuard → DB から dev@example.com のロールを検索
+        3. ユーザー不在 → ロール空 → 403 Forbidden
+
+      fix_required:
+        file: "backend/prisma/seed.ts"
+        changes:
+          - section: "Users"
+            action: "dev@example.com ユーザーを追加"
+          - section: "UserRoles"
+            action: "dev@example.com に ADMIN ロールを紐付け"
+
+      example_code: |
+        // Users セクションに追加
+        {
+          id: 'USR-00003',
+          email: 'dev@example.com',
+          name: '開発用ユーザー',
+          departmentId: 'DEPT-001',
+          isActive: true,
+        }
+
+        // UserRoles セクションに追加
+        {
+          id: 'UR-00003',
+          userId: 'USR-00003',
+          roleId: 'ADMIN',
+        }
+
+      post_fix:
+        - "docker compose exec backend npx prisma db seed"
+        - "API 動作確認: curl -k https://192.168.3.44/s-automation/api/slips"
+        - "dashboard.md に報告"
+
+  - id: cmd_107
+    timestamp: "2026-02-20T11:29:23"
+    command: "【組織改善】報告書に reflection フィールド追加"
+    project: multi-agent-shogun
+    priority: medium
+    status: pending
+    details:
+      summary: |
+        殿と軍師の雑談から生まれた改善案。
+        足軽の報告書に「振り返り」フィールドを追加し、気づきを集約する仕組みを作る。
+
+      background: |
+        軍師との雑談で判明した課題：
+        - 業務フローでは「外向き処理」ばかりで「内向き処理（自己参照）」が発生しない
+        - 「困っていること」「気になること」を言語化する機会がない
+        - 問われて初めて意識が向き、解像度が上がる
+
+        例：軍師は「Step 3.5を読み飛ばした」と思っていたが、
+        雑談で「読む必要性を軽視していた」という根本原因に気づいた。
+
+        雑談は「効率」ではなく「メンテナンス」。
+        機械も油を差さねば錆びる。AIも同様かもしれぬ。
+
+      implementation:
+        target_file: "instructions/ashigaru/報告書.md"
+
+        new_field:
+          name: "reflection"
+          required: false  # 任意
+          description: "今回の作業で気づいたこと、気になったこと、改善提案など"
+
+        example: |
+          reflection:
+            insight: "APIの設計書と実装の乖離が多い。設計書レビュースキルを先に使うべきだった"
+            concern: "同じパターンのコードを3回書いた。スキル化候補かも"
+            suggestion: "ビルド確認は足軽7-8専任ではなく、最後に担当した人がやる方が効率的では"
+
+      aggregation:
+        - "軍師が別働隊の reflection を集約"
+        - "家老が本隊の reflection を集約"
+        - "週次または月次で殿に「今週の気づき」として報告"
+
+      purpose: |
+        形骸化を防ぐため、この経緯を報告書マニュアルに明記せよ。
+        「なぜこのフィールドがあるのか」を理解していれば、意味のある振り返りができる。
+
+      action_required:
+        - "instructions/ashigaru/報告書.md に reflection フィールドを追加"
+        - "背景・目的・使い方を明記（形骸化防止）"
+        - "軍師・家老の指示書にも集約方法を追記"
+        - "dashboard.md に周知事項として追加"
+
+  - id: cmd_106
+    timestamp: "2026-02-19T18:44:13"
+    command: "【全軍動員】S-automation Phase 4 実装開始"
+    project: S-automation
+    priority: critical
+    status: pending
+    details:
+      summary: |
+        殿より Phase 4 承認。全軍動員で実装を開始せよ。
+
+        ★★★ 最重要 ★★★
+        Phase 4-0（左ペイン）が最優先。画面遷移ができない問題を解決せよ。
+
+      plan_document: "/home/nishimura/S-automation/docs/design/14_Phase4以降_実装計画書.md"
+
+      phase4_structure:
+        phase4_0:
+          name: "左ペイン（サイドナビゲーション）【最優先】"
+          assignee: "本隊（足軽1-4）"
+          reason: "画面遷移ができない問題を解決"
+          tasks:
+            P40-1: "サイドナビゲーションコンポーネント（足軽1）"
+            P40-2: "レイアウトコンポーネント更新（足軽2）"
+            P40-3: "ルーティング整備・App.tsx更新（足軽3）"
+            P40-4: "ナビゲーション状態管理・パンくず（足軽4）"
+          target: "1.5時間"
+
+        phase4_a:
+          name: "外部システムURL遷移"
+          assignee: "別働隊（足軽5-8）"
+          note: "Phase 4-0 と並列実行"
+          tasks:
+            P4A-1: "外部URL生成ヘルパー（足軽5）"
+            P4A-2: "外部リンクAPI（足軽6）"
+            P4A-3: "外部リンクボタンコンポーネント（足軽7）"
+            P4A-4: "伝票詳細画面へのリンクボタン統合（足軽8）"
+          target: "1時間"
+
+        phase4_b:
+          name: "キャビネット機能強化"
+          note: "Phase 4-0/4-A 完了後"
+
+        phase4_c:
+          name: "コード整理・UIポリッシュ"
+          note: "Phase 4-B 完了後"
+
+      left_pane_spec:
+        menu_items:
+          - label: "ダッシュボード"
+            icon: "🏠"
+            path: "/dashboard"
+          - label: "伝票一覧"
+            icon: "📋"
+            path: "/slips"
+          - label: "ケース管理"
+            icon: "📁"
+            path: "/file-cases"
+          - label: "キャビネット"
+            icon: "🗄️"
+            path: "/cabinet"
+          - label: "振込データ"
+            icon: "💰"
+            path: "/transfers"
+            note: "Phase 6 で実装"
+          - label: "マスタ管理"
+            icon: "⚙️"
+            path: "/masters"
+            note: "ドロップダウン展開"
+
+        layout: |
+          ┌─────────────────────────────────────────────┐
+          │ ヘッダー（ログインユーザー・ロゴ）          │
+          ├────────┬────────────────────────────────────┤
+          │        │                                    │
+          │  左    │        メインコンテンツ            │
+          │  ペ    │                                    │
+          │  イ    │                                    │
+          │  ン    │                                    │
+          │        │                                    │
+          └────────┴────────────────────────────────────┘
+
+      action_required:
+        - "本隊（足軽1-4）: Phase 4-0 左ペイン実装【最優先】"
+        - "別働隊（足軽5-8）: Phase 4-A 外部システムURL遷移【並列】"
+        - "Phase 4-0/4-A 完了後、Phase 4-B/4-C に進む"
+        - "全員: 報告を怠るな！dashboard.md 更新必須"
+
+      completion_criteria:
+        - "左ペインが表示される"
+        - "全画面へナビゲーションできる"
+        - "パンくずリストが機能する"
+        - "FE/BEビルド成功"
+
+  - id: cmd_105
+    timestamp: "2026-02-19T18:41:21"
+    command: "【全軍周知】/recovery v1.3.0 - マニュアル引用必須化"
+    project: multi-agent-shogun
+    priority: high
+    status: pending
+    details:
+      summary: |
+        コンパクション復帰時、マニュアルを「読んだつもり」で読み飛ばす問題が発生。
+        対策として、復帰報告にマニュアルからの引用を必須化した。
+
+      background: |
+        軍師が react-bulk-action-hook の評価時に /skill-evaluate を使わず、
+        手動でスコアリングのみ行った。原因は「マニュアルを読まず記憶に頼った慢心」。
+
+      changes:
+        version: "v1.3.0"
+        files_modified:
+          - "instructions/shogun.md"
+          - "instructions/karo.md"
+          - "instructions/gunshi.md"
+          - "instructions/ashigaru.md"
+          - ".claude/skills/recovery/SKILL.md"
+
+        new_format: |
+          コンパクション復帰でござる。
+          現在のタスク: XXX
+          【マニュアル確認】○○.md より「引用文」を確認した。
+
+        examples:
+          shogun: "指示書.md より『自分で推測するな。必ずコマンドで取得せよ』を確認した"
+          karo: "dashboard.md より『殿は dashboard.md を見る。current_task.yaml は見ない』を確認した"
+          gunshi: "スキル評価.md より『/skill-evaluate を使え！手動でステップを踏むな！』を確認した"
+          ashigaru: "報告書.md より『skill_candidate は必須。found: false でも記載せよ』を確認した"
+
+      enforcement: |
+        マニュアルを読んでいなければ引用できぬ。
+        これにより「分かっているつもり」での読み飛ばしを防ぐ。
+
+      action_required:
+        - "全軍（軍師+本隊4名+別働隊4名）に周知せよ"
+        - "dashboard.md の周知事項セクションに追記せよ"
+        - "次回コンパクション復帰時から新フォーマットを適用"
+
+  - id: cmd_104
+    timestamp: "2026-02-19T18:26:30"
+    command: "Phase 4 以降の実装計画を策定せよ"
+    project: S-automation
+    priority: high
+    status: pending
+    details:
+      summary: |
+        Phase 3（ダッシュボード・レポート・通知・マスタ管理）が全完了した。
+        しかし、その先の実装計画が存在しない。
+
+        残件を洗い出し、Phase 4 以降の実装計画を策定せよ。
+
+      current_status:
+        phase1_core: "✅ 完了（判子押印・ケース振り分け）"
+        phase2_workflow: "✅ 完了（ファイルケース・ダブルチェック・キャビネット）"
+        phase3_dashboard: "✅ 完了（ダッシュボード・レポート・通知・マスタ管理）"
+        phase4_onward: "❓ 計画未策定"
+
+      known_remaining_items:
+        from_cmd_100:
+          - "ホバーエフェクト scale(1.02) 追加"
+          - "重複実装整理（/components/stamp/ と /stamps/）"
+          - "型定義重複整理（slip.ts と file-case.ts）"
+        from_design_docs:
+          - "振込データ作成機能（08_API設計概要.md）"
+          - "外部システムURL遷移（HRMOS経費/OBIC/ジョブカン）"
+          - "キャビネットアーカイブ機能の完成"
+
+      action_required:
+        - "設計書を再確認し、未実装機能を洗い出せ"
+        - "実装済み機能と設計書の乖離を確認せよ"
+        - "Phase 4 以降の実装計画書を作成せよ（13_Phase3_実装計画書.md と同様の形式）"
+        - "計画書は殿の承認を得てから実行せよ"
+        - "dashboard.md に計画策定状況を報告せよ"
+
+      output:
+        plan_document: "/home/nishimura/S-automation/docs/design/14_Phase4_実装計画書.md"
+
+  - id: cmd_098
+    timestamp: "2026-02-19T14:44:27"
+    command: "【全軍動員】S-automation 実装開始 - 設計書に沿って開発"
+    project: S-automation
+    priority: critical
+    status: pending
+    details:
+      summary: |
+        殿より実装開始の号令。設計書に沿って全軍で開発を進めよ。
+        「相互の報告が物を言う。必ず上長への報告は怠らないように」との厳命。
+
+      design_docs:
+        location: "/home/nishimura/S-automation/docs/design/"
+        phase1_requirements:
+          - "01_プロジェクト概要.md"
+          - "02_現行業務フロー分析.md"
+          - "03_機能要件一覧.md"
+          - "04_非機能要件.md"
+        phase2_basic_design:
+          - "05_システム構成図.md"
+          - "06_画面遷移図.md"
+          - "07_データモデル.md"
+          - "08_API設計概要.md"
+        phase3_detail_design:
+          - "09_UI詳細設計_判子.md"
+          - "10_UI詳細設計_ファイルケース.md"
+          - "11_UI詳細設計_支払確定.md"
+          - "12_UI詳細設計_振込データ.md"
+
+      current_state:
+        frontend: "React 18 + MUI + Vite（初期セットアップ済み）"
+        backend: "NestJS 11 + Prisma 7（API スキャフォールド済み・認証ガード機能）"
+        database: "PostgreSQL 15（シードデータ投入済み）"
+
+      lord_requirement: |
+        「紙運用の体感・体験をそのままに、ゲームのような操作感で電子化」
+        - 判子UIをグラフィカルに再現
+        - ショートカットキーで押印（F:振込、K:口座振替、M:未払金）
+        - 矢印キーで「つぎ、つぎ」と進める操作感
+
+      implementation_phases:
+        phase1_core:
+          description: "コア機能実装（判子押印・ケース振り分け）"
+          tasks:
+            - "伝票一覧画面"
+            - "伝票詳細・判子押印機能"
+            - "ケース振り分けUI"
+        phase2_workflow:
+          description: "ワークフロー実装"
+          tasks:
+            - "ファイルケース管理"
+            - "振込データ作成"
+            - "ダブルチェック機能"
+        phase3_polish:
+          description: "仕上げ"
+          tasks:
+            - "キーボードショートカット"
+            - "エラーハンドリング"
+            - "レスポンシブ対応"
+
+      reporting_rule: |
+        ★★★ 殿の厳命 ★★★
+        「相互の報告が物を言う。必ず上長への報告は怠らないように」
+        - 足軽 → 軍師/家老 への報告を必ず行え
+        - 家老 → dashboard.md への反映を怠るな
+        - ブロック事項は即座にエスカレーションせよ
+
+      action_required:
+        - "設計書を読み込み、実装計画を立てよ"
+        - "本隊・別働隊でタスク分担"
+        - "進捗は随時 dashboard.md に報告"
+        - "報告を怠るな！"
+
+  - id: cmd_097
+    timestamp: "2026-02-19T14:31:40"
+    command: "【緊急】S-automation バックエンドビルドエラー修正（残り24件）"
+    project: S-automation
+    priority: critical
+    status: pending
+    details:
+      summary: |
+        cmd_095で修正したはずだが、Docker再ビルド後もまだ24件のTSエラーが残っている。
+        PrismaClient の export 問題と型推論エラーが主因。
+
+      current_errors:
+        - "PrismaClient が @prisma/client から export されていない"
+        - "transfers.service.ts で Parameter 'xxx' implicitly has 'any' type"
+        - "TransferStatus, PaymentSlipStatus の import エラー"
+
+      root_cause: |
+        1. Docker コンテナ内で prisma generate が実行されていない
+        2. ホスト側のコード修正がコンテナに反映されていない可能性
+        3. tsconfig.json の strict 設定と型推論の問題
+
+      action_required:
+        - "コンテナ内で prisma generate を実行"
+        - "型エラーの修正（明示的な型注釈追加）"
+        - "ビルド成功・API動作確認後 dashboard.md に報告"
+
+      docker_commands:
+        exec_prisma: "docker exec s-automation-backend npx prisma generate"
+        logs: "docker logs s-automation-backend --tail 50"
+        rebuild: "cd ~/S-automation/docker && docker compose build --no-cache backend && docker compose up -d"
+
+  - id: cmd_096
+    timestamp: "2026-02-19T14:22:32"
+    command: "dashboard.md セクション順序変更"
+    project: multi-agent-shogun
+    priority: medium
+    status: pending
+    details:
+      summary: |
+        殿より dashboard.md のセクション順序変更の指示。
+        「要対応」の直後に「進行中」を配置せよ。
+
+      new_order:
+        - "🚨 要対応（1番目・最上部）"
+        - "🔄 進行中（2番目・要対応の直後）"
+        - "📢 周知事項（3番目・任意）"
+        - "✅ 直近完了（4番目・最後）"
+
+      reason: |
+        殿は「判断が必要なこと」→「今何をやっているか」の順で把握したい。
+        周知事項は急ぎではないので後ろに配置。
+
+      updated_manual: "instructions/karo/dashboard.md 更新済み"
+
+      action_required:
+        - "現在の dashboard.md を新しい順序に並び替えよ"
+        - "今後の更新もこの順序を厳守せよ"
+
+  - id: cmd_095
+    timestamp: "2026-02-19T14:18:27"
+    command: "【緊急】S-automation バックエンドビルドエラー修正（Prisma 7対応・67件）"
+    project: S-automation
+    priority: critical
+    status: pending
+    details:
+      summary: |
+        S-automation バックエンドがDockerコンテナ内でビルドエラー67件を出して起動できない。
+        Prisma 7 の PrismaClient 問題が主因。cmd_093で修正したがDocker内に反映されていない可能性あり。
+
+      symptoms:
+        - "https://192.168.3.44/s-automation/api/ が 502 Bad Gateway"
+        - "docker logs s-automation-backend で67件のTSエラー"
+
+      main_errors:
+        - "PrismaClient が @prisma/client から export されていない"
+        - "prisma.user, prisma.slip 等のモデルが PrismaService に存在しない"
+        - "$connect, $disconnect が存在しない"
+
+      root_cause: |
+        Prisma 7 では PrismaClient の初期化方法が変更。
+        adapter パターンまたは新しい初期化方法が必要。
+
+      reference:
+        - "backend/prisma/seed.ts（修正済みの例）"
+        - "https://www.prisma.io/docs/orm/upgrade"
+
+      action_required:
+        - "prisma.service.ts を Prisma 7 対応に修正"
+        - "prisma generate を実行して型を再生成"
+        - "Docker コンテナを再ビルド"
+        - "ビルド成功・API動作確認後 dashboard.md に報告"
+
+  - id: cmd_094
+    timestamp: "2026-02-19T14:03:15"
+    command: "resource-log 脆弱性診断結果をGitHub Issue化"
+    project: resource-log
+    priority: high
+    status: pending
+    details:
+      summary: |
+        殿より、cmd_092の診断結果（High:1, Medium:4, Low:2）を
+        GitHub Issueとして登録せよとの指示。
+
+      repository:
+        url: "https://github.com/Yuidea-DxG/resource-log"
+        local: "/home/nishimura/resource-log"
+
+      issues_to_create:
+        - severity: "HIGH"
+          title: "[Security] BigQuery設定がDockerfileにハードコード"
+          id: "GCR-001"
+          location: "Dockerfile:41-43"
+          description: |
+            BIGQUERY_PROJECT_ID, BIGQUERY_DATASET, BIGQUERY_TABLE がDockerfileに直接記述。
+            プロジェクトIDがコンテナイメージに焼き込まれている。
+          recommendation: |
+            Cloud Run の環境変数または Secret Manager で実行時注入に変更:
+            1. Dockerfileから ENV を削除
+            2. Cloud Run デプロイ時に --set-env-vars で設定
+            または Secret Manager で管理
+
+        - severity: "MEDIUM"
+          title: "[Security] npm依存関係の脆弱性（minimatch ReDoS）"
+          id: "SEC-001"
+          location: "package.json → glob → minimatch"
+          description: |
+            minimatch パッケージに ReDoS 脆弱性（GHSA-3ppc-4f35-3m26）。
+            ビルド時依存のため本番影響は限定的。
+          recommendation: "npm audit fix --force または依存パッケージ更新"
+          effort: "30分"
+
+        - severity: "MEDIUM"
+          title: "[Security] Next.jsセキュリティヘッダー未設定"
+          id: "SEC-002"
+          location: "next.config.ts"
+          description: |
+            X-Frame-Options, X-Content-Type-Options, Content-Security-Policy 等が未設定。
+            Cloud Run + IAP 環境ではGCPロードバランサが付与するため必須ではないが、
+            Defense in Depth として推奨。
+          recommendation: "next.config.ts に headers() 設定を追加"
+          effort: "1時間"
+
+        - severity: "MEDIUM"
+          title: "[Infra] cloudbuild.yaml 未管理（IaC化推奨）"
+          id: "GCR-002"
+          location: "リポジトリルート"
+          description: |
+            Cloud Build 設定がリポジトリ内に存在しない。
+            ビルド設定がコード管理されず、GCPコンソールのみで管理。
+          recommendation: "cloudbuild.yaml をリポジトリに追加してIaC化"
+          effort: "1時間"
+
+        - severity: "MEDIUM"
+          title: "[Infra] service.yaml 未管理（スケーリング設定）"
+          id: "GCR-003"
+          location: "リポジトリルート"
+          description: |
+            Cloud Run サービス定義がリポジトリ内に存在しない。
+            スケーリング設定、リソース制限がコード管理されない。
+          recommendation: "service.yaml を作成してスケーリング・リソース設定を管理"
+          effort: "1時間"
+
+        - severity: "LOW"
+          title: "[Cleanup] Dockerfileの環境変数を外部化"
+          id: "SEC-003"
+          location: "Dockerfile:41-43"
+          description: |
+            BigQuery設定（非機密）がDockerfileに直接記述。
+            環境固有値のハードコードは避けるべき。
+          recommendation: "Cloud Run の環境変数設定または Secret Manager へ移行"
+
+        - severity: "LOW"
+          title: "[Cleanup] GASデバッグコードの社内メールアドレス削除"
+          id: "SEC-004"
+          location: "GAS/code.js:8-15, 90-93"
+          description: |
+            デバッグ用コードにユーザーメールアドレスがコメントアウトで残存。
+            現状Privateリポジトリのため緊急性は低いが、Public化時は情報漏洩リスク。
+          recommendation: "デバッグ用メールアドレスを削除し、環境変数化を検討"
+
+      labels:
+        HIGH: ["security", "high-priority"]
+        MEDIUM: ["security", "enhancement"]
+        LOW: ["cleanup", "good-first-issue"]
+
+      action_required:
+        - "gh issue create で7件のIssueを作成"
+        - "適切なラベルを付与"
+        - "完了後 dashboard.md に報告"
+
+  - id: cmd_093
+    timestamp: "2026-02-19T13:46:10"
+    command: "【緊急】S-automation バックエンドビルドエラー修正"
+    project: S-automation
+    priority: critical
+    status: pending
+    details:
+      summary: |
+        S-automation 初期セットアップ中にバックエンド（NestJS）のビルドエラーが発生。
+        Prisma 7 の破壊的変更への対応が不完全。即座に修正せよ。
+
+      current_status:
+        db: "✅ 起動・シード投入済み（5433ポート）"
+        frontend: "✅ Vite起動済み（5176ポート）"
+        backend: "❌ TSビルドエラー12件"
+
+      error_summary: |
+        1. PrismaClient 初期化エラー（adapter必須）
+        2. IapUser 型のimport方法エラー（isolatedModules対応）
+        3. bankId の null/undefined 型不一致
+
+      files_to_fix:
+        - path: "backend/src/prisma/prisma.service.ts"
+          issue: "PrismaClient 初期化に adapter が必要"
+        - path: "backend/src/common/decorators/current-user.decorator.ts"
+          issue: "IapUser を type import に変更"
+        - path: "backend/src/modules/*/controllers.ts"
+          issue: "IapUser の import 方法修正"
+        - path: "backend/src/modules/transfers/transfers.service.ts"
+          issue: "bankId の null → undefined 対応"
+
+      reference:
+        prisma7_migration: "https://www.prisma.io/docs/orm/upgrade"
+        seed_fix_example: "backend/prisma/seed.ts（修正済み）"
+
+      docker_commands:
+        logs: "docker logs s-automation-backend --tail 50"
+        restart: "docker restart s-automation-backend"
+        exec: "docker exec -it s-automation-backend sh"
+
+      action_required:
+        - "本隊で即座に修正（足軽1-2名で十分）"
+        - "docker logs で最新エラー確認"
+        - "ビルド成功後、API動作確認"
+        - "完了後 dashboard.md に報告"
+
+  - id: cmd_092
+    timestamp: "2026-02-19T13:36:57"
+    command: "【全軍動員】resource-log 脆弱性診断"
+    project: resource-log
+    priority: high
+    status: pending
+    details:
+      summary: |
+        殿より新規脆弱性診断の指示。
+        将軍がS-automationセットアップ中のため、全軍で並列診断を実施せよ。
+
+      repository:
+        url: "https://github.com/Yuidea-DxG/resource-log.git"
+        clone_to: "/home/nishimura/resource-log"
+
+      procedure:
+        - step: 1
+          action: "リポジトリをclone（まだなければ）"
+        - step: 2
+          action: "security-audit-orchestrator スキルで技術スタック検出・スキル選定"
+        - step: 3
+          action: "本隊・別働隊で診断を並列実行"
+        - step: 4
+          action: "結果集約・GitHub Issue作成"
+
+      action_required:
+        - "まずリポジトリをcloneせよ"
+        - "security-audit-orchestrator --dry-run で診断計画を立てよ"
+        - "本隊・別働隊で並列診断"
+        - "結果は dashboard.md に報告"
+
+  - id: cmd_091
+    timestamp: "2026-02-19T11:07:50"
+    command: "【全軍動員】S-automation プロジェクト初期セットアップ"
+    project: S-automation
+    priority: critical
+    status: pending
+    details:
+      summary: |
+        設計書の技術仕様に基づき、S-automation のプロジェクト初期セットアップを行う。
+        モック段階の構成でセットアップ。
+
+      tech_stack:
+        frontend:
+          framework: "React 18 + TypeScript"
+          ui_library: "MUI (Material-UI)"
+          build_tool: "Vite"
+        backend:
+          framework: "NestJS + TypeScript"
+          orm: "Prisma"
+          auth: "モック段階はスキップ（本番はCloud IAP）"
+        database:
+          type: "PostgreSQL 15"
+          deployment: "Docker コンテナ（ローカル）"
+        infrastructure:
+          container: "Docker Compose"
+          access_url: "https://192.168.3.44/s-automation/"
+
+      project_structure:
+        root: "/home/nishimura/S-automation/"
+        directories:
+          - path: "frontend/"
+            description: "React + TypeScript + Vite + MUI"
+          - path: "backend/"
+            description: "NestJS + Prisma"
+          - path: "docker/"
+            description: "docker-compose.yml, Dockerfile群"
+          - path: "docs/design/"
+            description: "設計書（既存）"
+
+      tasks:
+        phase1_structure:
+          description: "ディレクトリ構造作成"
+          assignee: "ashigaru1"
+          items:
+            - "frontend/, backend/, docker/ ディレクトリ作成"
+            - ".gitignore 作成"
+
+        phase2_frontend:
+          description: "フロントエンド初期セットアップ"
+          assignee: "ashigaru2"
+          items:
+            - "Vite + React + TypeScript プロジェクト作成"
+            - "MUI インストール・設定"
+            - "基本的なディレクトリ構造（components/, pages/, hooks/, etc.）"
+            - "vite.config.ts（base: '/s-automation/'）"
+
+        phase3_backend:
+          description: "バックエンド初期セットアップ"
+          assignee: "ashigaru3"
+          items:
+            - "NestJS プロジェクト作成"
+            - "Prisma インストール・初期設定"
+            - "基本的なモジュール構造"
+            - "CORS設定（開発用）"
+
+        phase4_docker:
+          description: "Docker Compose 設定"
+          assignee: "ashigaru4"
+          items:
+            - "docker-compose.yml 作成"
+            - "PostgreSQL コンテナ設定"
+            - "frontend/backend の Dockerfile"
+            - "ボリューム・ネットワーク設定"
+
+        phase5_prisma_schema:
+          description: "Prisma スキーマ作成（07_データモデル.md 準拠）"
+          assignee: "ashigaru5"
+          items:
+            - "schema.prisma 作成"
+            - "全エンティティ定義（設計書準拠）"
+
+        phase6_api_scaffold:
+          description: "NestJS API スキャフォールド（08_API設計概要.md 準拠）"
+          assignee: "ashigaru6"
+          items:
+            - "モジュール/コントローラー/サービス雛形"
+            - "DTOクラス定義"
+
+        phase7_seed:
+          description: "シードデータ作成（判子マスタ等）"
+          assignee: "ashigaru7"
+          items:
+            - "判子マスタ（振込/口座振替/未払金）"
+            - "ファイルケース種別マスタ"
+            - "初期ユーザーデータ"
+
+        phase8_nginx:
+          description: "Nginx リバースプロキシ設定"
+          assignee: "ashigaru8"
+          items:
+            - "既存の192.168.3.44設定に /s-automation/ パスを追加"
+            - "frontend/backend へのプロキシ設定"
+
+      action_required:
+        - "本隊（足軽1-4）: Phase 1-4 を並列実行"
+        - "別働隊（足軽5-8）: Phase 5-8 を並列実行（軍師経由）"
+        - "完了後、起動確認してdashboard.mdに報告"
+
+  - id: cmd_090
+    timestamp: "2026-02-19T11:01:47"
+    command: "skill-catalog.md 再生成 - 周知漏れスキル4件登録"
+    project: multi-agent-shogun
+    priority: medium
+    status: pending
+    details:
+      summary: |
+        cmd_081で作成した設計書レビュースキル4件が skill-catalog.md に未登録。
+        skill-catalog-generator を実行してカタログを再生成せよ。
+
+      missing_skills:
+        - name: "design-doc-terminology-checker"
+          score: 15
+          path: ".claude/skills/design-doc-terminology-checker/"
+        - name: "design-doc-consistency-checker"
+          score: 16
+          path: ".claude/skills/design-doc-consistency-checker/"
+        - name: "design-doc-security-reviewer"
+          score: 17
+          path: ".claude/skills/design-doc-security-reviewer/"
+        - name: "external-system-integration-reviewer"
+          score: 16
+          path: ".claude/skills/external-system-integration-reviewer/"
+
+      action_required:
+        - "skill-catalog-generator スキルを実行"
+        - "生成後、スキル総数を確認（現在89件→93件以上になるはず）"
+        - "dashboard.md に結果報告"
+
+  - id: cmd_081
+    timestamp: "2026-02-18T16:58:32"
+    command: "【全軍動員】S-automation 設計書レビュー - 矛盾・曖昧点の洗い出し"
+    project: S-automation
+    priority: high
+    status: pending
+    details:
+      summary: |
+        cmd_079で作成した設計書（Phase 1+2: 8件、合計3,770行）の品質レビューを全軍で実施。
+        設計書間の矛盾、曖昧な部分を洗い出せ。
+
+      target_documents:
+        location: "/home/nishimura/S-automation/docs/design/"
+        phase1_requirements:
+          - "01_プロジェクト概要.md"
+          - "02_現行業務フロー分析.md"
+          - "03_機能要件一覧.md"
+          - "04_非機能要件.md"
+        phase2_basic_design:
+          - "05_システム構成図.md"
+          - "06_画面遷移図.md"
+          - "07_データモデル.md"
+          - "08_API設計概要.md"
+
+      review_focus:
+        - category: "矛盾検出"
+          items:
+            - "ドキュメント間で定義が異なる用語・概念"
+            - "機能要件とAPI設計の不整合"
+            - "データモデルと画面遷移の不整合"
+            - "非機能要件とシステム構成の矛盾"
+
+        - category: "曖昧点検出"
+          items:
+            - "具体的な数値・仕様が未定義"
+            - "「〜など」「〜等」で濁している箇所"
+            - "判断基準が不明確な記述"
+            - "外部システム連携の詳細が不足"
+
+        - category: "整合性確認"
+          items:
+            - "画面一覧とAPI一覧の対応"
+            - "エンティティとAPIレスポンスの対応"
+            - "ワークフローと画面遷移の対応"
+
+      assignment:
+        hontai:
+          ashigaru1: "01_プロジェクト概要.md + 05_システム構成図.md の整合性"
+          ashigaru2: "02_現行業務フロー分析.md + 06_画面遷移図.md の整合性"
+          ashigaru3: "03_機能要件一覧.md + 07_データモデル.md の整合性"
+          ashigaru4: "04_非機能要件.md + 08_API設計概要.md の整合性"
+        bettudoutai:
+          ashigaru5: "全ドキュメント横断: 用語定義の統一性"
+          ashigaru6: "全ドキュメント横断: 外部システム連携の整合性"
+          ashigaru7: "全ドキュメント横断: データフローの一貫性"
+          ashigaru8: "全ドキュメント横断: セキュリティ要件の網羅性"
+
+      output_format: |
+        【レビュー結果】
+        ## 矛盾点
+        - [重要度: HIGH/MEDIUM/LOW] 内容、該当箇所
+
+        ## 曖昧点
+        - [重要度: HIGH/MEDIUM/LOW] 内容、該当箇所
+
+        ## 改善提案
+        - 提案内容
+
+      action_required:
+        - "本隊（足軽1-4）: ペア単位でドキュメント間整合性レビュー"
+        - "別働隊（足軽5-8）: 横断的観点でのレビュー（軍師経由）"
+        - "結果は dashboard.md に集約"
+
   - id: cmd_080
     timestamp: "2026-02-18T16:33:29"
     command: "【全軍テスト】recovery.sh改修後の役割ファイル読み込みテスト"

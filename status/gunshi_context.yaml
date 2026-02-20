@@ -14,15 +14,15 @@
 # - 大型タスク区切り時
 # ================================================================
 
-last_updated: "2026-02-18T16:10:00"
+last_updated: "2026-02-20T18:16:00"
 updated_by: gunshi
 
 # === 現在のフォーカス ===
 current_focus:
-  cmd: cmd_079
-  description: "S-automation 支払伝票電子化 Phase 2 基本設計4件"
-  status: "completed"
-  note: "別働隊4名並列完了。合計2,320行。家老に報告済み。"
+  cmd: null
+  description: "次の指示待ち"
+  status: "idle"
+  note: "cmd_104 Phase 4-B 完了・家老に報告済み"
 
 # === ブロッカー ===
 blocker:
@@ -34,22 +34,53 @@ blocker:
 
 # === 別働隊稼働状況 ===
 betsudoutai_status:
-  ashigaru5: idle     # cmd_079: 05_システム構成図.md 完了（466行）
-  ashigaru6: idle     # cmd_079: 06_画面遷移図.md 完了（552行）
-  ashigaru7: idle     # cmd_079: 07_データモデル.md 完了（664行）
-  ashigaru8: idle     # cmd_079: 08_API設計概要.md 完了（638行）
+  ashigaru5: idle   # cmd_104 P4B-1 完了
+  ashigaru6: idle   # cmd_104 P4B-2 完了
+  ashigaru7: idle   # cmd_104 P4B-3 完了
+  ashigaru8: idle   # cmd_104 スキル+P4B-4 完了
 
 # === 別働隊役割分担 ===
 betsudoutai_roles:
-  ashigaru5: "fastapi-security-audit スキル作成"
-  ashigaru6: "python-web-patterns スキル作成"
-  ashigaru7: "gcp-cloudbuild-auditor スキル作成"
-  ashigaru8: "python-code-quality-analyzer スキル作成"
-  note: "cmd_060: 4件全て自動承認（14-18点）"
+  ashigaru5: "cmd_106 Phase 4-A: 外部リンク設定API（BE・external-linksモジュール）"
+  ashigaru6: "cmd_106 Phase 4-A: 外部リンク管理画面（FE・ExternalLinksSettings.tsx）"
+  ashigaru7: "cmd_106 Phase 4-A: 外部リンクボタン表示（ExternalLinkButtons.tsx）"
+  ashigaru8: "cmd_106 Phase 4-A: Prisma schema更新 + マイグレーション + ビルド確認"
+  note: "本隊（足軽1-4）は Phase 4-0 左ペイン実装中"
 
 # === 進行中タスク ===
-in_progress_tasks: []
-  # cmd_071完了（下記recent_completedに移動）
+in_progress_tasks:
+  - cmd: cmd_106
+    phase: "4-A"
+    tasks:
+      - task_id: P4A-1
+        assignee: ashigaru5
+        description: "外部リンク設定API（BE・NestJS）"
+        status: assigned
+        priority: critical
+      - task_id: P4A-2
+        assignee: ashigaru6
+        description: "外部リンク管理画面（FE・React）"
+        status: assigned
+        priority: critical
+      - task_id: P4A-3
+        assignee: ashigaru7
+        description: "外部リンクボタン表示（サイドナビ統合）"
+        status: assigned
+        priority: critical
+      - task_id: P4A-4
+        assignee: ashigaru8
+        description: "Prisma schema更新 + マイグレーション + ビルド確認"
+        status: assigned
+        priority: critical
+
+# === 保留中スキル作成（cmd_088完了後） ===
+pending_skill_creation:
+  - name: "ui-ux-consistency-checker"
+    proposed_by: ashigaru6
+    score: 14
+    result: "自動承認"
+    assignee_planned: ashigaru6
+    note: "cmd_088完了後に作成指示予定"
 
   - cmd: cmd_060
     tasks:
@@ -80,6 +111,58 @@ in_progress_tasks: []
 
 # === スキル評価履歴（直近） ===
 skill_evaluations:
+  # cmd_103で評価・作成完了
+  - name: "react-bulk-action-hook"
+    score: 15
+    result: "作成完了"
+    evaluated_at: "2026-02-19"
+    note: "React一括処理パターン（選択管理+確認ダイアログ+結果通知）。741行。足軽5作成。"
+
+  # cmd_099で評価・作成完了
+  - name: "api-design-doc-diff-checker"
+    score: 16
+    result: "作成完了"
+    evaluated_at: "2026-02-19"
+    note: "API設計書と実装コードの差分自動検出。455行。足軽5作成"
+
+  - name: "prisma-design-doc-diff-checker"
+    score: 15
+    result: "作成完了"
+    evaluated_at: "2026-02-19"
+    note: "Prisma schemaとMarkdown設計書の差分自動検出。358行。足軽7作成"
+
+  # cmd_088で評価・作成完了
+  - name: "ui-ux-consistency-checker"
+    score: 14
+    result: "作成完了"
+    evaluated_at: "2026-02-19"
+    note: "UI詳細設計書整合性チェック。558行・7カテゴリ・紙運用体感評価基準。足軽6作成"
+
+  # cmd_081で評価・作成完了
+  - name: "design-doc-terminology-checker"
+    score: 15
+    result: "作成完了"
+    evaluated_at: "2026-02-18"
+    note: "設計書の用語定義統一性チェック。399行。足軽5作成"
+
+  - name: "design-doc-consistency-checker"
+    score: 16
+    result: "作成完了"
+    evaluated_at: "2026-02-18"
+    note: "設計書間のデータ定義・状態遷移・API仕様の整合性チェック。399行。足軽7作成"
+
+  - name: "design-doc-security-reviewer"
+    score: 17
+    result: "作成完了"
+    evaluated_at: "2026-02-18"
+    note: "設計書群のセキュリティ要件網羅性レビュー。409行。足軽8作成"
+
+  - name: "external-system-integration-reviewer"
+    score: 16
+    result: "作成完了"
+    evaluated_at: "2026-02-18"
+    note: "設計書群の外部システム連携整合性レビュー。436行。足軽6作成"
+
   # cmd_071で評価
   - name: "express-logging-auditor"
     score: 17
@@ -207,6 +290,14 @@ conditional_skills:
 
 # === 直近の完了タスク ===
 recent_completed:
+  - cmd: cmd_110
+    description: "API 404エラー3件修正（FE API_BASE_URL + BE cabinets/years + cabinets/summary）"
+    completed_at: "2026-02-20T13:42:00"
+    result: |
+      FE: useReports.ts API_BASE_URL修正
+      BE: cabinets/years, cabinets/summary エンドポイント追加
+      ビルド: FE/BE成功、両エンドポイント200確認
+
   - cmd: cmd_069
     description: "obsidian-auto-register スキル作成"
     completed_at: "2026-02-17T16:45:00"

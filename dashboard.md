@@ -1,59 +1,214 @@
 # 📊 戦況報告
-最終更新: 2026-02-18 16:30
+最終更新: 2026-02-20 19:13
 
 ## 🚨 要対応 - 殿のご判断をお待ちしております
 
-
-
-### cmd_080【確認事項】足軽番号の定義
-
-**報告者**: 足軽（pane_index=2）
-
-**テスト結果**:
-- `pane_index` = 2（セッション内の番号）
-- `TMUX_PANE` = %4（グローバルID）
-- **不一致**
-
-**質問**: どちらを「足軽番号」の定義とするか？
-
-**選択肢**:
-1. **pane_index を採用**（現行設計通り）
-   - pane 0 → 家老、pane 1-8 → 足軽1-8
-   - v1.2.2 の逆引き方式で正しく取得できる
-
-2. **TMUX_PANE を採用**
-   - グローバルIDを使用
-   - セッション再起動で番号が変わる可能性あり
-
-**家老の見解**: pane_index が正しい定義。v1.2.2 の逆引き方式で正確に取得可能。
-
-**殿のご確認をお願いしたい事項**:
-- pane_index を足軽番号の定義として確定してよいか？
+なし
 
 ---
 
-### cmd_079 Phase 3 詳細設計【開始可否確認】
+## 🔄 進行中 - 只今、戦闘中でござる
 
-**状況**: Phase 1+2 完了（合計3,770行）
+### cmd_104【全軍動員】Phase 4-B/4-C 並列実装中
 
-| Phase | 件数 | 行数 | ステータス |
-|-------|------|------|------------|
-| Phase 1 要件定義 | 4件 | 1,450行 | ✅ 完了 |
-| Phase 2 基本設計 | 4件 | 2,320行 | ✅ 完了 |
+**計画書**: /home/nishimura/S-automation/docs/design/14_Phase4以降_実装計画書.md
 
-**Phase 3 詳細設計（4件）**:
-- 09_UI詳細設計_判子.md
-- 10_UI詳細設計_ケース.md
-- 11_UI詳細設計_キャビネット.md
-- 12_ワークフロー詳細.md
+| Phase | 内容 | 見積時間 | 状態 |
+|-------|------|----------|------|
+| Phase 4-0/4-A | 左ペイン＋外部リンク | - | ✅ 完了（cmd_106） |
+| Phase 4-B | キャビネット機能強化（別働隊） | 約1h | ✅ 完了 |
+| Phase 4-C | コード整理・UIポリッシュ（本隊） | 約0.5h | ✅ 完了 |
+| Phase 5 | 仕訳起票（F-050〜F-053） | 約2h | ⏸️ 保留 |
+| Phase 6 | 振込データ作成（F-060〜F-064） | 約2h | ⏸️ 保留 |
 
-**殿のご判断をお願いしたい事項**:
-1. Phase 3 に進んでよいか？
-2. Phase 1+2 のドキュメントを先にレビューするか？
+#### Phase 4-B: キャビネット機能強化（別働隊: 足軽5-8、軍師経由）【全完了】
+| 足軽 | タスク | 成果 |
+|------|--------|------|
+| 5 | P4B-1: 自動ファイリングサービス | ✅ AutoFilingService 240行 |
+| 6 | P4B-2: 検索条件拡張 | ✅ CabinetSearch 513行 |
+| 7 | P4B-3: エクスポート機能 | ✅ CabinetExportService 390行 |
+| 8 | P4B-4 + スキル作成 | ✅ 統合85行 + fe-be-response-mapper 350行 |
+
+**合計**: 約1,578行（スキル含む）
+
+#### Phase 4-C: コード整理・UIポリッシュ（本隊: 足軽1-4）【全完了】
+| 足軽 | タスク | 状態 |
+|------|--------|------|
+| 1 | P4C-1: stamp/stamps重複解消 + P4C-fix: re-export修正 | ✅ 完了 |
+| 2 | P4C-2: 型定義重複整理 | ✅ 完了（re-export問題は足軽1が修正） |
+| 3 | P4C-3: ホバーエフェクト追加 | ✅ 完了 |
+| 4 | P4C-4: ビルド確認・動作テスト | ✅ 完了（FE/BEビルド成功） |
+
+**ビルド**: FE ✅（15.90s）/ BE ✅
+
+#### スキル候補評価結果
+| スキル名 | 提案者 | 点数 | 状態 |
+|----------|--------|------|------|
+| fe-be-response-mapper | 足軽1（cmd_111） | 16点 | ✅ 自動承認（足軽8作成中） |
+| typescript-reexport-fixer | 足軽1（P4C-fix） | 12点 | ⏸️ 条件付き承認（typescript-import-patterns として拡充推奨） |
 
 ---
 
-## 📢 新機能周知 - /recovery スキル v1.1.0
+### cmd_106【全軍動員】Phase 4 左ペイン＋外部リンク実装【全完了】
+
+**計画書**: /home/nishimura/S-automation/docs/design/14_Phase4以降_実装計画書.md
+**ビルド**: FE ✅ / BE ✅
+
+#### Phase 4-0: 左ペイン（本隊: 足軽1-4）
+| 足軽 | タスク | 成果 |
+|------|--------|------|
+| 1 | SideNavigation.tsx | ✅ 263行（7メニュー項目・Collapse対応） |
+| 2 | AppLayout.tsx | ✅ 181行（Header+SideNav+Main 3カラム） |
+| 3 | App.tsx ルーティング整備 | ✅ 完了（10+ルート追加） |
+| 4 | useNavigation.ts + Breadcrumb.tsx | ✅ 402行（パンくず・メニュー状態管理） |
+
+#### Phase 4-A: 外部リンク連携（別働隊: 足軽5-8、軍師経由）
+| 足軽 | タスク | 成果 |
+|------|--------|------|
+| 5 | 外部リンク設定API（BE） | ✅ 405行 |
+| 6 | 外部リンク管理画面（FE） | ✅ 390行 |
+| 7 | 外部リンクボタン表示 | ✅ 255行 |
+| 8 | Prisma schema更新 + ビルド確認 | ✅ FE/BEビルド成功 |
+
+**合計**: 約1,900行（本隊850行 + 別働隊1,050行）
+**スキル候補**: なし
+
+---
+
+### cmd_103【全軍動員】Phase 3-B 通知・マスタ管理機能実装【全完了】
+
+**計画書**: /home/nishimura/S-automation/docs/design/13_Phase3_実装計画書.md
+**ビルド**: FE ✅ / BE ✅
+
+#### 本隊（足軽1-4）- 通知機能
+| 足軽 | タスク | 成果 |
+|------|--------|------|
+| 1 | 通知サービス基盤 | ✅ 235行（DTO + Interface + Service） |
+| 2 | Slack Webhook連携 | ✅ 246行（Block Kit対応） |
+| 3 | メール送信（SMTP） | ✅ 290行（HTMLテンプレート） |
+| 4 | 通知設定画面 | ✅ 600行（TanStack Query連携） |
+
+#### 別働隊（足軽5-8）軍師経由
+| 足軽 | タスク | 成果 |
+|------|--------|------|
+| 5 | マスタ管理画面FE | ✅ 493行 |
+| 6 | 判子マスタ編集UI | ✅ 404行 |
+| 7 | 一括処理機能 | ✅ 706行 |
+| 8 | フィルタ/ソート強化 | ✅ 645行 |
+
+**合計**: 約3,619行（本隊1,371行 + 別働隊2,248行）
+**スキル候補**: react-bulk-action-hook (15点) - 自動承認
+**ルート追加**: /dashboard, /reports, /master, /settings/notifications
+
+---
+
+### cmd_102【全軍動員】Phase 3-A ダッシュボード・レポート実装【全完了】
+
+**計画書**: /home/nishimura/S-automation/docs/design/13_Phase3_実装計画書.md（殿承認済み）
+**ビルド**: FE ✅ / BE ✅
+
+#### 本隊（足軽1-4）
+| 足軽 | タスク | 成果 |
+|------|--------|------|
+| 1 | ダッシュボードFE | ✅ 517行 + Grid修正 |
+| 2 | ダッシュボードAPI | ✅ 360行（3エンドポイント） |
+| 3 | 月締めレポートFE | ✅ 660行 + Grid修正 |
+| 4 | 月締めレポートAPI | ✅ 400行（3エンドポイント） |
+
+#### 別働隊（足軽5-8）軍師経由
+| 足軽 | タスク | 成果 |
+|------|--------|------|
+| 5 | 統計集計サービス | ✅ 352行（6メソッド） |
+| 6 | CSV/Excelエクスポート | ✅ 310行 |
+| 7 | 結合・レビュー | ✅ OK |
+| 8 | ルーティング・統合 | ✅ FE/BEビルド成功 |
+
+**合計**: 約2,600行
+**スキル候補**: mui-v7-grid-migration (13点) - 条件付き承認・保留
+
+### cmd_098【全軍動員】S-automation 実装 Phase 1-2【全完了】
+
+**成果**:
+- Phase 1 Core: 判子コンポーネント、伝票一覧/詳細、ショートカット、slips/stamp-types/file-cases API
+- Phase 2 Workflow: ファイルケース管理、ダブルチェック、キャビネット、workflow/archive API
+- ビルド成功（FE/BE両方）
+
+**設計書**: /home/nishimura/S-automation/docs/design/
+
+---
+
+## 📢 周知事項 - 定期雑談会制度【cmd_112・新規】
+
+**What**: 1日の終わりに足軽間で3往復の雑談を行う制度
+
+**経緯**: 将軍主導の雑談実験（本隊1号×2号、別働隊5号×7号）で以下が判明
+- 縦の指揮系統は効率的だが、横の知識共有が弱い
+- 「知ってれば一瞬、知らなきゃハマる」系の知識が組織に蓄積されていない
+- 名言：「reflection は独り言、雑談は対話。質が違う」— 足軽2号
+
+**ルール**:
+| 項目 | 内容 |
+|------|------|
+| タイミング | 1日の終わり（最後のタスク完了後） |
+| 相手 | 本隊同士（1-4）または別働隊同士（5-8） |
+| 形式 | 3往復で区切る |
+| 記録 | 話しかけた側が記録し、将軍に直接報告 |
+| 秘匿 | 家老・軍師には概要のみ共有（本音を引き出すため） |
+
+**話題例**: 今日印象に残ったこと、困ったこと・ハマったこと、改善提案
+
+詳細: instructions/ashigaru.md「定期雑談会」セクション
+
+---
+
+## 📢 周知事項 - 報告書に reflection フィールド追加【cmd_107】
+
+**What**: 足軽報告書に「振り返り」フィールドを追加（任意項目）
+
+**経緯**: 軍師との雑談で判明「問われて初めて意識が向く」
+業務フローは外向き処理（タスク実行・報告）ばかりで、内向き処理（自己参照・振り返り）の機会がない。
+
+**目的**: 作業中の気づき・懸念・改善提案を拾い上げる仕組み
+
+**使い方**（足軽報告書）:
+```yaml
+# 【任意】振り返り（reflection）
+reflection:
+  insight: "キャッシュ戦略が有効だった"  # 気づき
+  concern: "テストカバレッジが低い"      # 懸念
+  suggestion: "共通化を検討"             # 提案
+```
+
+**重要**: 強制ではない。形骸化防止のため「何かあれば」程度に。
+→ 📣 **【再周知】毎回書く必要なし。気づきがあった時だけで良い**（形骸化防止）
+
+---
+
+## 📢 周知事項 - /recovery スキル v1.3.0【新規・重要】
+
+**What**: コンパクション復帰報告に**マニュアルからの引用**が必須化
+**Why**: 「マニュアルを読んだつもり」で読み飛ばす問題が発生。引用できなければ読んでいない。
+
+**v1.3.0 新フォーマット**:
+```
+コンパクション復帰でござる。
+現在のタスク: XXX
+【マニュアル確認】○○.md より「引用文」を確認した。
+```
+
+**引用例**（役割別）:
+| 役割 | 引用例 |
+|------|--------|
+| 将軍 | 指示書.md より『自分で推測するな。必ずコマンドで取得せよ』を確認した |
+| 家老 | dashboard.md より『殿は dashboard.md を見る。current_task.yaml は見ない』を確認した |
+| 軍師 | スキル評価.md より『/skill-evaluate を使え！手動でステップを踏むな！』を確認した |
+| 足軽 | 報告書.md より『skill_candidate は必須。found: false でも記載せよ』を確認した |
+
+**全エージェントへ**: 次回コンパクション復帰時から新フォーマットを適用せよ。
+
+---
+
+## 📢 周知事項 - /recovery スキル v1.1.0
 
 **What**: コンパクション復帰時のコンテキスト再注入スキルがアップグレード
 **Why**: 冒頭80行だけでは禁止事項や詳細手順を見落とすリスクがあった
@@ -73,7 +228,7 @@
 
 ---
 
-## 📢 新機能周知 - Obsidian知見登録スキル 2件リリース
+## 📢 周知事項 - Obsidian知見登録スキル 2件リリース
 
 **What**: Obsidianへの知見登録を自動化・品質管理するスキル2件が使用可能に
 
@@ -105,32 +260,27 @@ Read: .claude/skills/obsidian-note-creator.md
 
 ---
 
-## 🔄 進行中 - 只今、戦闘中でござる
+### cmd_091【全軍動員・全完了】S-automation プロジェクト初期セットアップ
 
-### cmd_080【全軍テスト】recovery.sh 改修後テスト（v1.2.2 再々テスト中）
+**技術スタック**: React 18 + MUI + Vite / NestJS + Prisma / PostgreSQL 15 (Docker)
 
-**目的**: recovery.sh 改修後の役割ファイル読み込みテスト
-**修正履歴**:
-- v1.2.1: `TMUX_PANE` 環境変数方式（グローバルID問題あり）
-- v1.2.2: **逆引き方式** `tmux display -t $TMUX_PANE -p "#{pane_index}"`
+#### 本隊（足軽1-4）: Phase 1-4【全完了】
+| 足軽 | Phase | タスク | ステータス |
+|------|-------|--------|------------|
+| 1 | Phase 1 | ディレクトリ構造作成 | ✅ 完了 |
+| 2 | Phase 2 | フロントエンド初期セットアップ | ✅ 完了 |
+| 3 | Phase 3 | バックエンド初期セットアップ | ✅ 完了 |
+| 4 | Phase 4 | Docker Compose 設定 | ✅ 完了 |
 
-**テスト項目**:
-1. /recovery 実行
-2. 役割判定（セッション名 + 逆引きpane_index から）
-3. 役割ファイル読み込み（instructions/*.md 全文）
-4. 詳細マニュアル読み込み（instructions/{role}/*.md）
+#### 別働隊（足軽5-8）: Phase 5-8（軍師経由）【全完了】
+| 足軽 | Phase | タスク | ステータス |
+|------|-------|--------|------------|
+| 5 | Phase 5 | Prisma スキーマ作成 | ✅ 完了（16モデル, 461行） |
+| 6 | Phase 6 | NestJS API スキャフォールド | ✅ 完了（7モジュール, 17EP, 2,418行） |
+| 7 | Phase 7 | シードデータ作成 | ✅ 完了（8テーブル, 28件, 310行） |
+| 8 | Phase 8 | Nginx リバースプロキシ設定 | ✅ 完了（設定ファイル作成済、sudo適用待ち） |
 
-| 対象 | 初回 | v1.2.1 | v1.2.2（逆引き） |
-|------|------|--------|------------------|
-| 軍師 | 🏃 | 🏃 | 🔄 再々テスト中 |
-| 足軽1 | 🏃 | ✅ | ✅ OK（逆引きで正確取得） |
-| 足軽2 | 🏃 | 🏃 | 🔄 再々テスト中 |
-| 足軽3 | ✅ | 🏃 | 🔄 再々テスト中 |
-| 足軽4 | ✅ | ✅ | ✅ OK（pane_index=4正確取得） |
-| 足軽5 | 🏃 | ✅ | 🔄 再々テスト中 |
-| 足軽6 | 🏃 | ⚠️ 問題発見 | 🔄 再々テスト中 |
-| 足軽7 | ⚠️ 問題発見 | 🏃 | 🔄 再々テスト中 |
-| 足軽8 | 🏃 | 🏃 | 🔄 再々テスト中 |
+**別働隊合計: 3,499行**
 
 ---
 
@@ -163,17 +313,319 @@ Read: .claude/skills/obsidian-note-creator.md
 
 ---
 
-### cmd_077 security-audit-orchestrator 改善反映【足軽1実行中】
 
-**改善内容**:
-1. express スタックに express-logging-auditor 追加
-2. security-audit-checker-v2 をデフォルト選択に
+## ✅ 直近完了
 
-**対象ファイル**: .claude/skills/security-audit-orchestrator/config/stack-mapping.yaml
+### cmd_100【本隊動員】cmd_099 乖離修正【全完了】
+
+**殿の決定に基づく対応**: 4件完了
+
+| 足軽 | タスク | 成果物 |
+|------|--------|--------|
+| 1 | 判子形状修正 | stamp.css border-radius: 8px |
+| 2 | API設計書追記 | 08_API設計概要.md v2.2.0（approve/reject/pending 追加） |
+| 3 | キャビネット3カラム | SlipPreviewPanel.tsx（150行）+ CSS（130行） |
+| 4 | キーボードナビ共通化 | useKeyboardNavigation.ts（282行） |
+
+**ビルド**: ✅ FE成功（1.39s）
+
+**次フェーズ対応（残件）**:
+- ホバーエフェクト scale(1.02) 追加
+- 重複実装整理（/components/stamp/ と /stamps/）
+- 型定義重複整理（slip.ts と file-case.ts）
 
 ---
 
-## ✅ 直近完了
+### cmd_099【全軍動員】Phase 1-2 整合性確認【完了】
+- **結果**: 乖離18件、設計書問題11件検出
+- **スキル**: 2件作成完了（813行）
+  - api-design-doc-diff-checker (16点・455行)
+  - prisma-design-doc-diff-checker (15点・358行)
+
+| チーム | 対象 | 評価 | 乖離 |
+|--------|------|------|------|
+| 本隊 | FE整合性（判子/ファイルケース/キャビネット/ワークフロー） | A-B+ | 9 |
+| 別働隊 | BE整合性（API/Prisma） | A-B | 9 |
+
+**要対応（HIGH）**: キャビネット3カラムレイアウト追加（プレビューカラム）
+
+詳細: queue/reports/archive/cmd_099_summary.yaml
+
+---
+
+### cmd_097【完了】S-automation バックエンドビルドエラー修正（24件→0件）
+- **原因**: prisma generate 未実行 + implicit any 型エラー
+- **修正**: prisma generate 実行 + 型注釈追加（10箇所）
+- **結果**: NestJS起動成功（port 3000）
+
+| 足軽 | 担当 | 結果 |
+|------|------|------|
+| 1 | prisma generate 実行 | ✅ 完了 |
+| 2 | implicit any 型エラー修正 | ✅ 完了 |
+
+---
+
+### cmd_095【完了】S-automation バックエンドビルドエラー修正（67件→0件）
+- **原因**: prisma generate 未実行 + extends パターン非互換
+- **修正**: コンポジションパターン採用 + prisma generate 実行
+- **結果**: Dockerビルド成功
+- **スキル候補**: prisma7-nestjs-service-generator → 軍師評価中
+
+| 足軽 | 担当 | 結果 |
+|------|------|------|
+| 1 | prisma.service.ts修正 | ✅ 完了（16モデルアクセサ追加） |
+| 2 | prisma generate実行 | ✅ 完了（67件→0件） |
+
+---
+
+### cmd_094【完了】resource-log 脆弱性診断結果 GitHub Issue化
+- **リポジトリ**: https://github.com/Yuidea-DxG/resource-log
+- **作成Issue**: #1-#7（HIGH:1, MEDIUM:4, LOW:2）
+- **作成ラベル**: security, high-priority, infrastructure, cleanup
+- **担当**: 足軽1
+
+---
+
+### cmd_093【完了】S-automation バックエンドビルドエラー修正
+- **問題**: Prisma 7 対応不完全でビルドエラー12件
+- **結果**: 全12件修正完了、Dockerビルド成功
+
+| 足軽 | 担当 | 結果 |
+|------|------|------|
+| 1 | 残り3件修正（@nestjs/config + AllocationDto型） | ✅ 完了 |
+| 2 | Prisma初期化・type import修正 | ✅ 完了 |
+| 3 | Controller/Service import・bankId型修正 | ✅ 完了（12→3件） |
+
+---
+
+### cmd_092【完了】resource-log 脆弱性診断 📚
+- **結果**: セキュリティA（C:0/H:0）、インフラB+、コード品質D
+- **主要課題**: テスト皆無、巨大ファイル9件（1000行超4件）
+- **GitHub Issue**: 不要（Critical/High脆弱性なし）
+- **別働隊**: 4名並列、4スキル実行
+
+---
+
+### cmd_091【全軍動員】S-automation プロジェクト初期セットアップ【全完了】
+
+**技術スタック**:
+- Frontend: React 18 + TypeScript + MUI + Vite
+- Backend: NestJS 11 + TypeScript + Prisma 7
+- Database: PostgreSQL 15（Docker）
+- URL: https://192.168.3.44/s-automation/
+
+#### 本隊（足軽1-4）: Phase 1-4
+| 足軽 | Phase | タスク | 成果物 |
+|------|-------|--------|--------|
+| 1 | Phase 1 | ディレクトリ構造作成 | ✅ .gitignore含む4ディレクトリ |
+| 2 | Phase 2 | フロントエンド初期セットアップ | ✅ Vite+React+MUI（193KB） |
+| 3 | Phase 3 | バックエンド初期セットアップ | ✅ NestJS v11+Prisma v7 |
+| 4 | Phase 4 | Docker Compose 設定 | ✅ 4ファイル・164行 |
+
+#### 別働隊（足軽5-8）: Phase 5-8（軍師経由）
+| 足軽 | Phase | タスク | 成果物 |
+|------|-------|--------|--------|
+| 5 | Phase 5 | Prisma スキーマ作成 | ✅ 16モデル・7 Enum・461行 |
+| 6 | Phase 6 | NestJS API スキャフォールド | ✅ 46ファイル・2,418行・7モジュール・17エンドポイント |
+| 7 | Phase 7 | シードデータ作成 | ✅ 8テーブル28件・seed.ts 310行 |
+| 8 | Phase 8 | Nginx リバースプロキシ設定 | ✅ 設定ファイル作成（⚠️ sudo適用待ち） |
+
+**合計出力**: 約3,500行（FE/BE/Docker/Prisma/Nginx）
+
+**残作業**:
+- Nginx設定の適用（sudo権限必要）: `sudo cp ~/multi-agent-shogun/queue/reports/shogun_with_s-automation.conf /etc/nginx/sites-available/shogun && sudo nginx -t && sudo systemctl reload nginx`
+
+---
+
+### cmd_090 skill-catalog.md 再生成【完了】
+- 総スキル数: 89件 → 93件（+4件）
+- 追加: design-doc-terminology-checker, design-doc-consistency-checker, design-doc-security-reviewer, external-system-integration-reviewer
+- 担当: 足軽1
+
+### cmd_077 security-audit-orchestrator 改善反映【完了】
+- express-logging-auditor: expressスタックに追加（priority: high）
+- security-audit-checker-v2: デフォルト設定追加（defaultsセクション新設）
+- バージョン: v1.0.0 → v1.1.0
+- 担当: 足軽2
+
+### skill-catalog.md 更新【完了】
+- 総スキル数: 89件
+- 新規追加: ui-ux-consistency-checker（分析系）
+- 担当: 足軽1
+
+### cmd_089【本隊動員】モック段階方針 設計書反映【全完了】
+
+**殿との壁打ち結果を設計書に反映**
+
+| 足軽 | 対象ファイル | 結果 |
+|------|--------------|------|
+| 1 | 04_非機能要件.md | ✅ v2.2.0（認証・DB方針） |
+| 2 | 05_システム構成図.md | ✅ v1.3.0 (+76行) |
+| 3 | 09_UI詳細設計_判子.md | ✅ v1.0.2 (+60行) |
+| 4 | 01_プロジェクト概要.md | ✅ v1.3.0 (+18行) |
+
+**合計**: +154行（4ドキュメント更新）
+
+---
+
+### cmd_088【別働隊動員】Phase 3 詳細設計修正【全完了】
+
+**cmd_087レビュー指摘への対応**（殿承認済み）
+
+| FIX ID | 優先度 | 内容 | 結果 |
+|--------|--------|------|------|
+| FIX-001 | HIGH | CHECK制約にcancelled/archived追加 | ✅ 完了 |
+| FIX-002 | HIGH | file_casesにicon/phaseカラム追加 | ✅ 完了 |
+| FIX-003 | MEDIUM | エンドポイント名統一 | ✅ 完了 |
+| FIX-004 | MEDIUM | ファイル名改名（10_ケース→10_ファイルケース） | ✅ 完了 |
+| FIX-005 | MEDIUM | 用語統一（全ドキュメント） | ✅ 完了 |
+
+**修正箇所**: 29件（別働隊4名並列）
+**スキル**: ui-ux-consistency-checker (14点) → ✅ 作成完了（558行）
+
+---
+
+### cmd_086【本隊動員】Phase 3 詳細設計【全完了】
+
+**殿の要望**: 「紙運用の体感・体験をそのままに、ゲームのような操作感で電子化」
+
+| 足軽 | ドキュメント | 行数 | 主要内容 |
+|------|--------------|------|----------|
+| 1 | 09_UI詳細設計_判子.md | 450行 | 判子3種（F/K/M）、アニメーション、アクセシビリティ |
+| 2 | 10_UI詳細設計_ケース.md | 755行 | 8種ケース、D&D、ゲーム演出 |
+| 3 | 11_UI詳細設計_キャビネット.md | 521行 | 3D視覚表現、年度/月別階層 |
+| 4 | 12_ワークフロー詳細.md | 556行 | 状態遷移、承認フロー、Mermaid図4枚 |
+
+**合計**: 2,282行（4件新規作成）
+
+**出力先**: `/home/nishimura/S-automation/docs/design/`
+
+---
+
+### cmd_085【全軍動員】API連携→URL遷移訂正【全完了】
+
+**殿の訂正指示**: 外部システム連携は「API連携」ではなく「URL遷移のみ」に訂正せよ
+
+| 外部システム | 訂正後 |
+|--------------|--------|
+| HRMOS経費 | URL遷移のみ（支払伝票の該当画面へリンク） |
+| OBIC | URL遷移のみ（該当画面へリンク） |
+| ジョブカン | URL遷移のみ（WF確認画面へリンク） |
+
+**本隊（Phase 1: 足軽1-4）**: 8件訂正、+19行
+| 足軽 | ドキュメント | 結果 |
+|------|--------------|------|
+| 1 | 01_プロジェクト概要.md | ✅ cmd_083/084で対応済み確認 |
+| 2 | 02_現行業務フロー分析.md | ✅ cmd_083で対応済み確認（足軽4代行） |
+| 3 | 03_機能要件一覧.md | ✅ 3件訂正 (+9行, v1.2.1) |
+| 4 | 04_非機能要件.md | ✅ 5件訂正 (+10行, v2.1.0) |
+
+**別働隊（Phase 2: 足軽5-8）**: 13件訂正、+83行
+| 足軽 | ドキュメント | 結果 |
+|------|--------------|------|
+| 5 | 05_システム構成図.md | ✅ 2件訂正 (+3行, v1.2.0) |
+| 6 | 06_画面遷移図.md | ✅ 5件訂正 (+18行, v1.3.0) |
+| 7 | 07_データモデル.md | ✅ 3件訂正 (+5行, v1.2.1) |
+| 8 | 08_API設計概要.md | ✅ 3件訂正 (+57行, v2.1.0) |
+
+**合計**: 21件訂正、+102行
+
+---
+
+### cmd_084 スコープ定義 + ファイルケース/キャビネット概念反映【全完了】
+
+**反映内容**:
+- **スコープ定義**: Phase A(PoC)/B(Phase2)/C(Phase3)を全ドキュメントに明記
+- **ファイルケース**: 伝票ステータス管理（8種別）
+- **キャビネット**: 完了後アーカイブ（月別/年度別）
+
+| 担当 | ドキュメント | 変更行数 | バージョン |
+|------|--------------|----------|------------|
+| 足軽1 | 01_プロジェクト概要.md | +38行 | v1.2.0 |
+| 足軽3 | 03_機能要件一覧.md | +33行 | v1.2.0 |
+| 足軽6 | 06_画面遷移図.md | +237行 | v1.2.0 |
+| 足軽7 | 07_データモデル.md | +167行 | v1.2.0 |
+
+**合計**: +475行（4ドキュメント改訂）
+
+---
+
+### cmd_083【全軍動員】設計書全面改訂完了
+
+**確定仕様への統合改訂**: 全8件完了
+
+| Phase | ドキュメント | 主要変更 |
+|-------|--------------|----------|
+| 1 | 01_プロジェクト概要 | 技術スタック新設、PoC追加 |
+| 1 | 02_現行業務フロー | URL遷移のみ、To-Beフロー新設 |
+| 1 | 03_機能要件一覧 | 判子マスタ化、通知Must化 |
+| 1 | 04_非機能要件 | IAP認証、2ロール、監査ログ |
+| 2 | 05_システム構成図 | NestJS、Cloud Run |
+| 2 | 06_画面遷移図 | 2ロール対応 |
+| 2 | 07_データモデル | 判子マスタ、権限簡略化 |
+| 2 | 08_API設計概要 | NestJS、外部連携削除 |
+
+**キャビネット概念**: 全ドキュメントで保留（殿の追加指示待ち）
+
+---
+
+### cmd_082 確定仕様 vs 設計書 差分チェック完了
+
+重大変更3件検出: 外部連携→URL遷移のみ、BE→NestJS、権限→2ロール
+
+---
+
+### cmd_081【全軍動員】S-automation 設計書レビュー完了
+
+**レビュー対象**: cmd_079で作成した設計書8件（3,770行）
+
+**本隊（ペア単位整合性レビュー）**:
+| 足軽 | 担当 | HIGH | MEDIUM | LOW |
+|------|------|------|--------|-----|
+| 1 | 01概要+05構成 | 3 | 5 | 3 |
+| 2 | 02業務+06画面 | 3 | 5 | 3 |
+| 3 | 03機能+07データ | 4 | 4 | 3 |
+| 4 | 04非機能+08API | 3 | 4 | 3 |
+
+**別働隊（横断的観点レビュー）**:
+| 足軽 | 観点 | 矛盾 | 曖昧 |
+|------|------|------|------|
+| 5 | 用語定義 | 4(H2) | 5(H2) |
+| 6 | 外部連携 | 4(H2) | 6(H2) |
+| 7 | データフロー | 4(H2) | 4(H1) |
+| 8 | セキュリティ | 3(H2) | 6(H2) |
+
+**スキル候補4件自動承認**: design-doc-terminology-checker(15点), external-system-integration-reviewer(16点), design-doc-consistency-checker(16点), design-doc-security-reviewer(17点)
+
+詳細: queue/reports/gunshi_summary.yaml
+
+---
+
+### cmd_080【全軍テスト】/recovery v1.2.2 全軍テスト完了
+
+**結果**: 全員成功（軍師+別働隊4名+本隊4名）
+
+**修正内容**: pane番号取得を逆引き方式に変更
+```bash
+tmux display -t $TMUX_PANE -p "#{pane_index}"
+```
+
+**テスト結果**:
+| 対象 | v1.2.2（逆引き） |
+|------|------------------|
+| 軍師 | ✅ OK |
+| 足軽1 | ✅ OK |
+| 足軽2 | ✅ OK |
+| 足軽3 | ✅ OK |
+| 足軽4 | ✅ OK |
+| 足軽5 | ✅ OK |
+| 足軽6 | ✅ OK |
+| 足軽7 | ✅ OK |
+| 足軽8 | ✅ OK |
+
+**結論**: /recovery v1.2.2 本番運用可能
+
+---
 
 ### cmd_076 security-audit-orchestrator --dry-run テスト【成功・本番運用可能】
 
@@ -281,6 +733,45 @@ Step 6: GitHub Issue テンプレート → 自動生成
 ## ✅ 本日の戦果
 | 時刻 | 戦場 | 任務 | 結果 |
 |------|------|------|------|
+| 19:13 | multi-agent-shogun | cmd_112: 横のつながり強化制度導入【家老】 | ✅ 完了 📚（定期雑談会制度化・reflection任意再周知・Obsidian4件登録） |
+| 18:17 | S-automation | cmd_104: Phase 4-B/4-C 全軍動員完了【全軍】 | ✅ 完了（約2,700行・スキル2件・FE/BEビルド成功） |
+| 15:54 | S-automation | cmd_111: FE hooks層リファクタリング【本隊4名】 | ✅ 完了（6ファイル修正・共通apiClient統一・全画面/全API OK） |
+| 13:45 | S-automation | cmd_110: API 404エラー3件修正【別働隊・軍師経由】 | ✅ 完了（FE API_BASE_URL + BE cabinets/years,summary 追加・ビルド成功） |
+| 12:05 | S-automation | cmd_109: 【緊急】黒画面バグ+useArchive 404修正【家老】 | ✅ 完了（FE/BE API乖離+useArchive API_BASE_URL修正・ビルド成功） |
+| 11:53 | S-automation | cmd_108: 【緊急】シードデータに dev@example.com 追加【家老】 | ✅ 完了（403 Forbidden 解消・API動作確認OK） |
+| 11:32 | multi-agent-shogun | cmd_107: 報告書に reflection フィールド追加【家老】 | ✅ 完了 📚（報告書.md, gunshi報告書.md, 軍師連携.md 更新） |
+| 11:23 | S-automation | bugfix: docker-compose VITE_API_BASE_URL 修正【足軽1】 | ✅ 完了（環境変数削除・3コンテナ再起動成功） |
+| 19:13 | S-automation | bugfix: API_BASE_URL 修正【足軽1】 | ✅ 完了（3ファイル修正・/s-automation/api に統一） |
+| 18:58 | S-automation | cmd_106: Phase 4 全軍動員完了【全軍】 | ✅ 完了（約1,900行・FE/BEビルド成功） |
+| 18:42 | multi-agent-shogun | cmd_105: /recovery v1.3.0 全軍周知【家老】 | ✅ 完了（軍師+本隊4名に通知） |
+| 18:30 | S-automation | cmd_104: Phase 4以降 実装計画書策定【家老】 | ✅ 完了（殿の承認待ち） |
+| 17:53 | S-automation | cmd_103: Phase 3-B 全軍動員【全軍】 | ✅ 完了（約3,619行・FE/BEビルド成功・スキル1件） |
+| 17:33 | S-automation | cmd_102: Phase 3-A 全軍動員【全軍】 | ✅ 完了（約2,600行・FE/BEビルド成功） |
+| 17:04 | multi-agent-shogun | skill-catalog.md 更新【殿】 | ✅ 完了（90件→92件、+2件: api-design-doc-diff-checker, prisma-design-doc-diff-checker） |
+| 16:35 | S-automation | cmd_100: 乖離修正【本隊動員】 | ✅ 完了（判子形状/API設計書/3カラム/キーボードナビ 全4件） |
+| 15:49 | S-automation | cmd_099: 整合性確認【全軍動員】 | ✅ 完了（乖離18件、設計書問題11件、スキル2件作成813行） |
+| 14:52 | S-automation | cmd_098: 実装開始【全軍動員】 | 🏃 Phase 1 Core 開始（本隊FE + 別働隊BE） |
+| 14:34 | S-automation | cmd_097: バックエンドビルドエラー修正【緊急・本隊】 | ✅ 完了（24件→0件・NestJS起動成功） |
+| 14:27 | multi-agent-shogun | prisma7-nestjs-service-generator スキル作成【足軽5】 | ✅ 完了（492行・skill-catalog.md更新済み） |
+| 14:26 | multi-agent-shogun | cmd_096: dashboardセクション順序変更【家老】 | ✅ 完了（要対応→進行中→周知→完了の順に変更） |
+| 14:25 | multi-agent-shogun | prisma7-nestjs-service-generator スキル評価【軍師】 | ✅ 15点・自動承認（足軽5に作成指示済み） |
+| 14:23 | S-automation | cmd_095: バックエンドビルドエラー修正【緊急・本隊】 | ✅ 完了（Prisma 7対応・67件→0件・スキル候補1件） |
+| 14:06 | resource-log | cmd_094: GitHub Issue作成【足軽1】 | ✅ 完了（#1-#7: H1/M4/L2・ラベル4件） |
+| 13:58 | S-automation | cmd_093: バックエンドビルドエラー修正【緊急・本隊】 | ✅ 完了（Prisma 7対応・12件→0件・Dockerビルド成功） |
+| 13:50 | resource-log | cmd_092: 脆弱性診断【別働隊】 | ✅ 完了 📚（C:0/H:1/M:6/L:3・セキュリティA） |
+| 11:24 | S-automation | cmd_091: プロジェクト初期セットアップ【全軍】 | ✅ 完了（8Phase・約3,500行・Nginx sudo待ち） |
+| 10:57 | S-automation | cmd_089: モック段階方針 設計書反映【本隊】 | ✅ 完了（4件更新、+154行） |
+| 10:55 | multi-agent-shogun | ui-ux-consistency-checker スキル作成【足軽6】 | ✅ 完了（558行・7カテゴリ） |
+| 10:47 | S-automation | cmd_088: Phase 3 詳細設計修正【別働隊】 | ✅ 完了（29件修正、FIX-001〜005全完了） |
+| 23:25 | S-automation | cmd_087: Phase 3 詳細設計レビュー【別働隊】 | ✅ 完了（発見29件: H9/M15/L5） |
+| 22:35 | S-automation | cmd_086: Phase 3 詳細設計【本隊】 | ✅ 完了（4件新規作成、2,282行） |
+| 22:00 | S-automation | cmd_085: API連携→URL遷移訂正【全軍】 | ✅ 完了（全8件、21件訂正、+102行） |
+| 21:25 | S-automation | cmd_084: スコープ定義+キャビネット反映【本隊+別働隊】 | ✅ 完了（4件、+475行） |
+| 19:50 | multi-agent-shogun | 設計書レビュースキル4件作成 | ✅ 完了（合計1,643行） |
+| 19:40 | S-automation | cmd_083: 設計書全面改訂【全軍】 | ✅ 完了（全8件改訂、確定仕様統合） |
+| 19:15 | S-automation | cmd_082: 確定仕様vs設計書差分チェック | ✅ 完了（重大3件: 外部連携/BE/権限） |
+| 19:00 | S-automation | cmd_081: 設計書レビュー【全軍】 | ✅ 完了（矛盾15件(H8)、曖昧21件(H7)、スキル候補4件承認） |
+| 17:00 | multi-agent-shogun | cmd_080: /recovery v1.2.2 全軍テスト | ✅ 完了（全9名OK、逆引き方式で本番運用可能） |
 | 16:05 | S-automation | cmd_079: 支払伝票電子化【全軍動員】 | 🏃 Phase 1+2 並列開始（本隊4+別働隊4） |
 | 10:40 | sga-mgt | cmd_076: security-audit-orchestrator --dry-run テスト | ✅ 成功（9スキル検出、cmd_070と高一致、本番運用可能） |
 | 19:45 | multi-agent-shogun | cmd_071: express-logging-auditor スキル作成 | ✅ 完了（足軽5: 584行・6カテゴリ） |
@@ -360,6 +851,15 @@ Step 6: GitHub Issue テンプレート → 自動生成
 | obsidian-auto-register | 将軍(1on1) | 足軽5 | 18/20 | .claude/skills/obsidian-auto-register/ (574行) |
 | express-logging-auditor | 足軽7(cmd_070) | 足軽5 | 17/20 | .claude/skills/express-logging-auditor/ (584行) |
 | security-audit-orchestrator | cmd_072意見集約 | 別働隊(6,7,8) | - | .claude/skills/security-audit-orchestrator/ (1,360行) |
+| design-doc-terminology-checker | cmd_081レビュー | 足軽5 | 15/20 | .claude/skills/design-doc-terminology-checker/ |
+| external-system-integration-reviewer | cmd_081レビュー | 足軽6 | 16/20 | .claude/skills/external-system-integration-reviewer/ |
+| design-doc-consistency-checker | cmd_081レビュー | 足軽7 | 16/20 | .claude/skills/design-doc-consistency-checker/ |
+| design-doc-security-reviewer | cmd_081レビュー | 足軽8 | 17/20 | .claude/skills/design-doc-security-reviewer/ |
+| api-design-doc-diff-checker | cmd_099整合性確認 | 足軽5 | 16/20 | .claude/skills/api-design-doc-diff-checker/ (455行) |
+| prisma-design-doc-diff-checker | cmd_099整合性確認 | 足軽7 | 15/20 | .claude/skills/prisma-design-doc-diff-checker/ (358行) |
+| ui-ux-consistency-checker | cmd_087レビュー | 足軽6 | 14/20 | .claude/skills/ui-ux-consistency-checker/ (558行) |
+| prisma7-nestjs-service-generator | cmd_095(足軽1) | 足軽5 | 15/20 | .claude/skills/prisma7-nestjs-service-generator/ (492行) |
+| react-bulk-action-hook | cmd_103(足軽7) | 軍師 | 15/20 | .claude/skills/react-bulk-action-hook/ (741行) |
 
 ## 📋 クローズ済み事項
 
