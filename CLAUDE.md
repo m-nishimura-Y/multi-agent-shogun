@@ -1,7 +1,7 @@
 # multi-agent-shogun システム構成
 
-> **Version**: 1.6.5
-> **Last Updated**: 2026-02-19
+> **Version**: 1.7.0
+> **Last Updated**: 2026-02-26
 
 ## 概要
 multi-agent-shogunは、Claude Code + tmux を使ったマルチエージェント並列開発基盤である。
