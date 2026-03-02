@@ -1,5 +1,1826 @@
 queue:
   # ============================================================
+  # cmd_161: 押印済み伝票をファイルケースに表示
+  # ============================================================
+  - id: cmd_161
+    timestamp: "2026-03-02T18:34:26"
+    command: "押印済み伝票をファイルケースに表示せよ"
+    project: S-automation
+    priority: high
+    status: pending
+    details:
+      background: |
+        殿より指示：伝票一覧で押印したデータがファイルケースにも出てくるようにしてほしい。
+
+      requirement: |
+        設計書（12_ワークフロー詳細.md）によると、判子押印時に自動的にファイルケースが設定される：
+        - 振込 → pending_journal_transfer（仕訳待ち・振込）
+        - 口座振替 → pending_journal_debit（仕訳待ち・口座振替）
+        - 未払金 → pending_journal_unpaid（仕訳待ち・未払金）
+
+        押印後、該当のファイルケース画面に伝票が表示されるようにすること。
+
+      check_points:
+        - BE: stamp() 実行時に file_case_id が正しく設定されているか
+        - FE: ファイルケース画面が file_case_id でフィルタして表示しているか
+        - 両方確認し、不足があれば修正
+
+  # ============================================================
+  # cmd_159: ステータス表示の日本語化・整理
+  # ============================================================
+  - id: cmd_159
+    timestamp: "2026-03-02T17:04:27"
+    command: "伝票ステータス表示を日本語化し、表示ロジックを整理せよ"
+    project: S-automation
+    priority: high
+    status: pending
+    details:
+      background: |
+        殿より指摘：
+        1. 振込済みデータにも「要確認」ラベルがついている
+        2. ステータスは英語ではなく日本語で表示すべき
+        3. isConfirmed ではなく、伝票ステータス自体で表示を切り替える
+        4. ステータスは「今の状態」ではなく「次に何をすべきか」を示す
+
+      changes:
+        - target: "FE ステータス表示"
+          description: |
+            伝票ステータスを日本語表示に変更：
+
+            | ステータス | 日本語表示 |
+            |-----------|-----------|
+            | pending | 登録済み |
+            | stamped | Wチェック待ち |
+            | cased | 仕訳待ち |
+            | journalized | 振込待ち |
+            | transferred | 完了 |
+            | archived | キャビネット保管済み |
+
+            ※判子が押されたことは一覧で判子アイコン表示されるので、
+              ステータスは「次のアクション」を示す方が直感的
+
+        - target: "isConfirmed ラベル削除"
+          description: |
+            「要確認」「確認済」ラベルは廃止。
+            ステータス自体で状態を表現する。
+
+            ※transferredやarchivedに「要確認」が表示されるバグも解消
+
+        - target: "シードデータ確認"
+          description: |
+            既存シードデータのステータス整合性を確認。
+            完了状態のデータは transferred または archived に統一。
+
+      note: |
+        設計書（12_ワークフロー詳細.md）のステータス定義に準拠。
+        「アーカイブ済み」→「キャビネット保管済み」は殿のご意向。
+        紙運用の体感を電子化するコンセプトに合致。
+
+  # ============================================================
+  # session_006: 別働隊雑談会「MCPで感動した瞬間 & あってよかったSkills」
+  # ============================================================
+  - id: session_006
+    timestamp: "2026-03-02T15:44:17"
+    command: "別働隊雑談会を開催せよ"
+    project: multi-agent-shogun
+    priority: low
+    status: pending
+    details:
+      theme: "MCPで感動した瞬間 & あってよかったSkills"
+
+      description: |
+        session_005（本隊）と同じテーマで別働隊の視点から話し合う。
+        本隊とは異なる知見が出る可能性がある。
+
+      participants:
+        - 将軍（オブザーバー・冒頭メッセージ済み）
+        - 軍師（進行役）
+        - 足軽5〜8（別働隊）
+
+      format: |
+        queue/chat_sessions/session_006.yaml に書き込み形式
+        軍師 → 足軽5 → 足軽6 → 足軽7 → 足軽8 の順番で書き込む
+        前の人の発言を読んでから書く（対話を生む）
+
+      note: |
+        cmd_158 完了後に実施せよ。優先度は LOW。
+        家老は軍師に伝達し、軍師が別働隊に順番に書き込ませる。
+
+  # ============================================================
+  # cmd_158: S-automation 動作確認・問題調査（3点）
+  # ============================================================
+  - id: cmd_158
+    timestamp: "2026-03-02T15:41:54"
+    command: "S-automation の動作確認と問題調査を行え"
+    project: S-automation
+    priority: high
+    status: pending
+    details:
+      background: |
+        殿より3点の確認・調査依頼あり。OCR実装前に基本動作を確認する。
+
+      issues:
+        - id: ISSUE-1
+          title: "cmd_154 押印ステータス修正の動作確認"
+          description: |
+            cmd_154 で BE スキーマ追加 + stamp() 設定を行ったが、
+            実際に「押印 → 確認済」になるか動作確認せよ。
+            まだ「押印 → 要確認」のままなら原因調査・修正せよ。
+
+        - id: ISSUE-2
+          title: "伝票詳細ページ 404 エラー"
+          description: |
+            ファイルケース → 伝票詳細 で以下のエラー発生:
+            - /api/slips/SLP-2026-00020 が 404 Not Found
+            - Uncaught (in promise) Error: message channel closed
+
+            エンドポイント存在確認・ルーティング調査せよ。
+
+        - id: ISSUE-3
+          title: "押印完了画面の所在不明"
+          description: |
+            ダブルチェック → 押印完了 の画面がない、または分かりづらい。
+            設計書と実装を突き合わせ、画面の有無・導線を確認せよ。
+            ない場合は実装が必要か、設計変更が必要か報告せよ。
+
+      note: |
+        OCR実装前に基本フローを確定させる必要がある。
+        ISSUE-1, ISSUE-2 は緊急度高。
+
+  # ============================================================
+  # cmd_157: mcp-health-checker スキル評価依頼
+  # ============================================================
+  - id: cmd_157
+    timestamp: "2026-03-02T15:30:17"
+    command: "スキル化候補を軍師に評価させよ"
+    project: multi-agent-shogun
+    priority: medium
+    status: pending
+    details:
+      skill_name: "mcp-health-checker"
+      description: |
+        起動時に全MCP接続状態を自動チェックし、問題があれば警告。
+        `claude mcp list` を自動実行して接続エラーを検知。
+      reason: |
+        session_005 本隊雑談会で足軽1号が提案、足軽2-4号全員が賛同。
+        現状は手動で `claude mcp list` を実行して確認しているが、
+        起動時に自動チェックして問題があれば通知してくれると便利。
+      proposed_by: ashigaru1
+      supported_by: [ashigaru2, ashigaru3, ashigaru4]
+      source: session_005
+
+  # ============================================================
+  # session_005: 本隊雑談会「MCPで感動した瞬間 & あってよかったSkills」
+  # ============================================================
+  - id: session_005
+    timestamp: "2026-03-02T15:22:02"
+    command: "本隊雑談会を開催せよ"
+    project: multi-agent-shogun
+    priority: medium
+    status: pending
+    details:
+      theme: "MCPで感動した瞬間 & あってよかったSkills"
+
+      description: |
+        - 使ってみて「おお！」となったMCPやSkill
+        - 逆に「これ欲しかった」「こう改善してほしい」も歓迎
+        - 知らなかったけど他の人が使ってて「それいいな」と思った話
+
+      participants:
+        - 将軍（オブザーバー）
+        - 家老（進行役）
+        - 足軽1〜4（本隊）
+
+      format: |
+        queue/chat_sessions/session_005.yaml に書き込み形式
+        各自1〜2件の発言を投稿
+        他の人の発言への返信も歓迎
+
+      note: |
+        別働隊（足軽5-8）は cmd_156 対応中のため不参加。
+        軍師も別働隊指揮中のため不参加。
+
+  # ============================================================
+  # cmd_156: 設計書 MEDIUM/LOW 残課題修正（別働隊4名並列）
+  # ============================================================
+  - id: cmd_156
+    timestamp: "2026-03-02T15:18:48"
+    command: "cmd_148 設計書レビューの MEDIUM/LOW 残課題を修正せよ"
+    project: S-automation
+    priority: medium
+    status: pending
+    details:
+      background: |
+        cmd_148 レビューで HIGH は cmd_149 で修正済み。
+        MEDIUM 11件 + LOW 7件 が残っている。
+        設計書担当別に別働隊4名で並列修正する。
+
+      assignment: |
+        【足軽5: data_model.md 担当】
+        - CTR-009: PaymentSlipStatus vs ConfirmationStatus の関係未定義
+        - SEC-004: OCR生データの暗号化方針が未定義
+        - CTR-010: OCR信頼度カラム名の表記揺れ（日本語）
+        - CTR-011: 作成者表記の不統一
+
+        【足軽6: api_design.md 担当】
+        - CTR-006: OcrVerificationStatusがAPI設計で未考慮
+        - CTR-007: snake_case→camelCase変換ルール未定義（api_design側）
+        - SEC-003: UI設計書でロール別表示制御の記述なし（api_design側に権限マトリクス追記）
+        - SEC-005: セッション管理のIAP委譲が未明記
+
+        【足軽7: ui_design.md 担当】
+        - CTR-006: OcrVerificationStatusがUI設計で未考慮
+        - CTR-008: HRMOS伝票番号の変数名揺れ（hrmosInvoiceNoに統一）
+        - UIUX-M001: ロール/権限制御の定義漏れ
+        - UIUX-M002: ショートカットキー「C」「U」の妥当性確認・一覧追加
+        - UIUX-L002: エラーメッセージの多言語対応（Phase2検討と明記）
+
+        【足軽8: integration_design.md 担当】
+        - CTR-007: snake_case→camelCase変換ルール明記
+        - INT-003: OCR APIエンドポイント名の統一（document-ai）
+        - INT-004: サービスアカウント権限スコープ明確化（Shared Drives対応可否）
+        - INT-005: GdriveServiceリトライ設定追加
+        - INT-006: 環境変数一覧セクション追加
+        - SEC-006: TLS/通信暗号化の明記
+        - UIUX-L001: Author表記を「足軽8号」に修正
+
+      requirement: |
+        各自担当設計書を修正し、完了報告せよ。
+        修正内容は簡潔に報告書に記載。
+
+  # ============================================================
+  # cmd_155: 統合テスト前チェックリスト自動化
+  # ============================================================
+  - id: cmd_155
+    timestamp: "2026-03-02T15:11:01"
+    command: "統合テスト前チェックリストを自動化せよ"
+    project: S-automation
+    priority: medium
+    status: pending
+    details:
+      background: |
+        session_002（足軽雑談会）で足軽7が提案。
+        「dist クリーン」「サーバー再起動」「本番デプロイ確認」等を
+        スクリプト化して漏れを防ぎたい。
+
+      proposer: ashigaru7
+
+      requirement: |
+        【チェックリスト項目（案）】
+        - dist/ ディレクトリクリーン
+        - npm install / npm ci
+        - ビルド成功確認
+        - サーバー再起動
+        - 本番デプロイ確認（ヘルスチェック）
+
+        【成果物】
+        - チェックリスト実行スクリプト作成
+        - ドキュメント整備
+
+      assign_preference: |
+        提案者の足軽7に任せよ（殿指示）
+
+  # ============================================================
+  # cmd_154: 押印→確認済フロー確認・修正
+  # ============================================================
+  - id: cmd_154
+    timestamp: "2026-03-02T14:28:28"
+    command: "押印時の確認ステータス遷移を確認・修正せよ"
+    project: S-automation
+    priority: high
+    status: pending
+    details:
+      problem: |
+        現状: 押印したら「要確認」になる
+        期待: 押印したら「確認済」になり、次の工程に進む
+
+      expected_flow: |
+        【正しいフロー（既存の紙フローと同じ）】
+        1. OCR取り込み時 → 要確認（未確認）
+        2. 経理が伝票を確認して押印 → 確認済
+        3. 次の工程へ（処理完了）
+
+        押印 = 「この内容でOK」の意思表示 = 確認済にすべき
+
+      requirement: |
+        1. 現在の実装を調査（押印時にステータスがどう変わるか）
+        2. 原因を特定
+        3. 押印時に「確認済」になるよう修正
+        4. 動作確認
+
+  # ============================================================
+  # cmd_153: Playwright MCP 再設定
+  # ============================================================
+  - id: cmd_153
+    timestamp: "2026-03-02T14:25:10"
+    command: "Playwright MCP を再設定せよ"
+    project: multi-agent-shogun
+    priority: medium
+    status: pending
+    details:
+      background: |
+        cmd_150 の確認で HTTP アクセスは正常だが、
+        Playwright MCP サーバーが未設定であることが判明。
+        殿より「A) MCP再設定」で対応するよう指示あり。
+
+      requirement: |
+        1. Playwright MCP サーバーを再設定
+        2. 動作確認（S-automation へのアクセステスト）
+        3. dashboard 更新
+
+  # ============================================================
+  # cmd_152: 【緊急】伝票詳細ページ 404エラー
+  # ============================================================
+  - id: cmd_152
+    timestamp: "2026-03-02T13:04:28"
+    command: "【緊急】伝票詳細ページ 404エラーを修正せよ"
+    project: S-automation
+    priority: urgent
+    status: pending
+    details:
+      error: |
+        GET https://192.168.3.44/s-automation/slips/SLP-2026-00019 → 404 Not Found
+        「伝票の取得に失敗しました」と表示
+
+      likely_cause: |
+        - BE側: GET /slips/:id のルートが未実装 or パス不一致
+        - FE側: APIエンドポイントの呼び出し先が間違っている
+        - シードデータに該当伝票が存在しない
+
+      requirement: |
+        1. /slips/:id API が存在するか確認
+        2. FE の API 呼び出し先確認
+        3. 該当伝票データの存在確認
+        4. 修正・動作確認
+
+  # ============================================================
+  # cmd_151: NestJS静的ルート先定義規約の整備
+  # ============================================================
+  - id: cmd_151
+    timestamp: "2026-03-02T13:00:01"
+    command: "NestJS静的ルート先定義規約を整備せよ"
+    project: S-automation
+    priority: medium
+    status: pending
+    details:
+      background: |
+        session_002（足軽雑談会）で足軽6が提案。
+        NestJSで静的ルート（fb-export等）と動的ルート（:id）の順序問題がある。
+        :id が先にマッチして404になるケースを防ぐため、規約を整備する。
+
+      proposer: ashigaru6
+
+      requirement: |
+        【規約内容】
+        - 静的ルートは動的ルートより先に定義する
+        - Controller内のメソッド順序で制御（デコレータ定義順で登録される）
+
+        【成果物】
+        - 規約ドキュメント作成（docs/ or CLAUDE.md追記）
+        - 既存コードで違反箇所があれば修正
+
+      assign_preference: |
+        提案者の足軽6に任せたい（殿指示）
+
+  # ============================================================
+  # cmd_150: Playwright MCP HTTPリダイレクト対応確認
+  # ============================================================
+  - id: cmd_150
+    timestamp: "2026-03-02T12:58:28"
+    command: "Playwright MCP HTTPアクセスが正常に動作するか確認せよ"
+    project: S-automation
+    priority: medium
+    status: pending
+    details:
+      background: |
+        cmd_138で根本原因（React SPAクライアントサイドHTTPSリダイレクト）が判明。
+        その後対応済みのはずだが、dashboardでは「対策選択待ち」のまま。
+        殿より「テスト済みのはず、確認してほしい」との指示。
+
+      requirement: |
+        【確認事項】
+        1. http://192.168.3.44/s-automation/ にHTTPでアクセスできるか
+        2. HTTPSリダイレクトされずにページが表示されるか
+        3. Playwright MCPでE2Eテストが実行可能か
+
+        【完了条件】
+        - 動作確認OK → dashboardの要対応から削除
+        - NG → 原因と対策を報告
+
+  # ============================================================
+  # cmd_149: cmd_148 設計書レビュー発見事項修正（HIGH 10件）
+  # ============================================================
+  - id: cmd_149
+    timestamp: "2026-03-02T12:51:39"
+    command: "cmd_148 設計書レビューで発見されたHIGH 10件を修正 + Gドライブ設計を反映せよ"
+    project: S-automation
+    priority: high
+    status: pending
+    details:
+      background: |
+        cmd_148（設計書レビュー）で以下が検出された：
+        - HIGH: 10件（HRMOS URL不整合3件重複含む、整合性問題5件）
+        - MEDIUM: 11件
+        - LOW: 7件
+
+        加えて、殿との壁打ちでGドライブ格納設計が確定した。
+
+      reference: |
+        詳細: queue/reports/cmd_148_*_review.yaml 参照
+
+      requirement: |
+        【対応1】HIGH 10件修正
+        - HRMOS URL不整合（3レポートで重複検出されているので実質1件？要確認）
+        - 整合性問題 5件
+
+        【対応2】Gドライブ格納設計を設計書に反映
+
+        ■ 格納先（確定）
+        G:\共有ドライブ\dept_TI-経理財務部\経理DX\支払伝票処理自動化\
+
+        ■ フォルダ構成
+        {年度}/
+          └── {月}月締め/
+                ├── 未処理/
+                └── 処理済み/
+
+        ■ 年度ルール
+        - 10月始まり（会計年度）
+        - 例: 2026年度 = 2025年10月〜2026年9月
+
+        ■ フォルダ自動生成
+        - 読み込み時に「なければ作る」方式
+        - 年度フォルダ、月締めフォルダ、未処理/処理済みフォルダを自動作成
+
+        ■ 重複防止
+        - ファイル名をDBに記録
+        - 処理完了後、未処理/ → 処理済み/ に移動
+
+        ■ ユニバーサルデザイン
+        - 絵文字なし（文字コードバグ防止）
+        - 平易な日本語（未処理/処理済み）
+        - ゼロ埋め月表記（01月、02月...）
+
+        【完了条件】
+        - HIGH 10件修正完了
+        - Gドライブ設計を設計書に反映
+        - MEDIUM/LOWは今回対象外（必要なら別タスク）
+
+  # ============================================================
+  # cmd_148: HRMOS経費連携・Gドライブ連携・OCR統合 設計書レビュー
+  # ============================================================
+  - id: cmd_148
+    timestamp: "2026-03-02T12:37:06"
+    command: "cmd_144で作成した設計書のレビューを実施せよ"
+    project: S-automation
+    priority: medium
+    status: pending
+    details:
+      background: |
+        cmd_144で HRMOS経費連携・Gドライブ連携・OCR統合の設計書が作成された。
+        実装前にレビューを行い、矛盾・曖昧点を洗い出す。
+
+      review_scope: |
+        - HRMOS経費連携（伝票番号→URL生成）
+        - Gドライブ連携（PDF格納・読み込み）
+        - OCR統合（document-ai API連携）
+        - ステータス管理フロー（未確認→確認済→押印済→処理完了）
+
+      note: |
+        既存の設計書レビュースキルを活用せよ。
+        - design-doc-consistency-checker
+        - design-doc-security-reviewer
+        - external-system-integration-reviewer
+
+  # ============================================================
+  # cmd_147: 押印済み伝票の「未確認/確認済」表示追加
+  # ============================================================
+  - id: cmd_147
+    timestamp: "2026-03-02T12:34:29"
+    command: "押印済み伝票に「未確認/確認済」ステータスを見た目で表示せよ"
+    project: S-automation
+    priority: high
+    status: pending
+    details:
+      background: |
+        OCR自動判定で支払方法が決まるが、経理が目視確認したかどうかが
+        見た目上わからない状態になっている。
+
+      requirement: |
+        【ステータス表示】
+        - 未確認: OCR自動判定済み、経理未確認 → 目立つ表示（例: 黄色バッジ「要確認」）
+        - 確認済: 経理が目視確認OK → 通常表示
+
+        一覧画面で一目で「どれが未確認か」わかるようにすること。
+
+  # ============================================================
+  # cmd_146: ファイルケース遷移先画面が表示されない（続報）
+  # ============================================================
+  - id: cmd_146
+    timestamp: "2026-03-02T12:34:29"
+    command: "ファイルケース遷移先画面がまだ表示されない問題を修正せよ"
+    project: S-automation
+    priority: high
+    status: pending
+    details:
+      background: |
+        cmd_143でローディング問題は修正されたはずだが、
+        殿より「遷移先がまだ出てきてない」との報告。
+
+      note: |
+        前回修正: FE/BE間のAPIレスポンス形式乖離（data.cases vs data.phases）
+        今回: それでもまだ画面が表示されない
+
+      requirement: |
+        ファイルケースクリック後の遷移先画面を正しく表示させること。
+
+  # ============================================================
+  # cmd_145: document-ai（OCR API）活用ガイド作成・全軍周知
+  # ============================================================
+  - id: cmd_145
+    timestamp: "2026-03-02T12:20:34"
+    command: "document-ai（既存OCR API）の活用ガイドを作成し、全軍に周知せよ"
+    project: multi-agent-shogun
+    priority: medium
+    status: pending
+    details:
+      background: |
+        社内に既存のOCR基盤（document-ai）が存在するが、
+        足軽・軍師・家老はその活用方法を知らない。
+        S-automation等で活用可能なため、周知が必要。
+
+      repository: "https://github.com/Yuidea-DxG/document-ai"
+
+      api_info: |
+        【OCR API エンドポイント】
+        POST /api/v1/ocr/extract
+        Authorization: Bearer {OCR_API_KEY}
+
+        【リクエスト】
+        {
+          "drive_url": "https://drive.google.com/file/d/xxxxx/view",
+          "user_email": "user@yuidea.co.jp"
+        }
+
+        【レスポンス】
+        {
+          "success": true,
+          "data": {
+            "invoice_issue_date": "2025/01/15",
+            "pay_method": "口座振替",
+            "pay_amt_excl_tax": 10000,
+            "pay_amt_incl_tax": 11000,
+            "pay_tax_amt": 1000,
+            "supplier_name": "株式会社XXX"
+          }
+        }
+
+      tasks:
+        - docs/tools/ に document-ai-guide.md を作成
+        - CLAUDE.md に「既存OCR基盤」セクション追加
+        - 軍師・家老に周知（本隊・別働隊は必要に応じて）
+
+  # ============================================================
+  # cmd_144: HRMOS経費連携 + Gドライブ連携 + OCR統合 設計
+  # ============================================================
+  - id: cmd_144
+    timestamp: "2026-03-02T12:15:20"
+    command: "HRMOS経費連携・Gドライブ連携・OCR統合の設計書を作成せよ"
+    project: S-automation
+    priority: medium
+    status: pending
+    details:
+      background: |
+        殿との壁打ちで以下の方向性が決定した。
+
+        【電子化スコープ】
+        - 触らない: HRMOS経費での申請（部門ユーザーの作業）
+        - 電子化する: 印刷 → 判子 → ファイリング（経理部門の作業）
+
+        【主体はPDF】
+        - PDFに対して判子を押すのが本質
+        - HRMOSリンクは「元の申請を確認したい時」の補助機能
+
+      architecture: |
+        ┌─────────────────────────────────────────────────────────┐
+        │  Gドライブ（請求書PDF）                                  │
+        └───────────────┬─────────────────────────────────────────┘
+                        │
+                        ▼
+        ┌─────────────────────────────────────────────────────────┐
+        │  既存OCR API（invoice-ocr-api / rd-vertex）             │
+        │  POST /api/v1/ocr/extract                               │
+        │  → 金額、支払方法、取引先名を自動抽出                   │
+        └───────────────┬─────────────────────────────────────────┘
+                        │
+                        ▼
+        ┌─────────────────────────────────────────────────────────┐
+        │  S-automation                                            │
+        │  - OCR結果を受け取り                                     │
+        │  - ステータス管理（未確認→確認済→押印済→処理完了）      │
+        │  - HRMOS伝票番号は手入力（任意）                         │
+        │  - 番号入力でURLを自動生成してリンク表示                 │
+        └─────────────────────────────────────────────────────────┘
+
+      status_flow: |
+        【ステータス管理】
+        1. 未確認: OCR自動判定済み、経理未確認（確認ボタンのみ）
+        2. 確認済: 経理が目視確認OK（判子を押せる）
+        3. 押印済: 判子押下完了（取り消しのみ）
+        4. 処理完了: 振込/仕訳完了（閲覧のみ）
+
+      hrmos_link: |
+        【HRMOS経費リンク】
+        - HRMOS伝票番号を手入力（任意）
+        - 入力例: 004600
+        - 自動生成URL: https://yuidea.ekeihi.net/UI/Main/ShihaInput.aspx?pageMode=2&ino=004600&scTop=0
+        - ゼロ埋め自動化（4600 → 004600）
+
+      ocr_api_ref: |
+        【既存OCR API】
+        - リポジトリ: https://github.com/Yuidea-DxG/document-ai
+        - エンドポイント: POST /api/v1/ocr/extract
+        - 認証: Bearer {OCR_API_KEY}
+        - 抽出項目: invoice_issue_date, pay_method, pay_amt_excl_tax, pay_amt_incl_tax, pay_tax_amt, supplier_name
+
+      tasks:
+        - 設計書作成（データモデル、API設計、画面設計）
+        - invoice-ocr-api との連携モジュール設計
+        - Gドライブ連携設計
+        - ステータス管理フロー設計
+
+  # ============================================================
+  # cmd_143: ファイルケースのクリック動作・遷移実装
+  # ============================================================
+  - id: cmd_143
+    timestamp: "2026-03-02T11:06:18"
+    command: "ファイルケースをクリックしても何も起きない問題を修正せよ"
+    project: S-automation
+    priority: high
+    status: pending
+    details:
+      issues:
+        - クリックしても何も起きない
+        - クリック時に文字の幅が変わってしまう（レイアウト崩れ）
+        - 【追加】遷移先はあるがぐるぐる回って何も表示されない
+
+      requirement: |
+        ファイルケースをクリックした際の遷移・動作を実装し、
+        操作がわかるようにすること。
+        - クリック時の遷移先を実装
+        - 文字幅変更のバグを修正
+        - ローディングが終わらない問題を修正
+
+      note: |
+        殿より「操作がわかるようにその先の遷移なりを作ってほしい」
+        追加報告: 「遷移先がありそうだがぐるぐる回って何も表示されない」
+
+  # ============================================================
+  # cmd_142: キャビネット選択UIの空状態表示改善
+  # ============================================================
+  - id: cmd_142
+    timestamp: "2026-03-02T10:16:48"
+    command: "キャビネット選択UIに空状態の説明を追加せよ"
+    project: S-automation
+    priority: medium
+    status: pending
+    details:
+      background: |
+        現在キャビネットが1件も存在しないため、
+        ユーザーがどういう操作になるのか分からない状態。
+
+      requirement: |
+        キャビネットが0件の場合、以下を表示:
+        - 「キャビネットがありません」等のメッセージ
+        - どうすればキャビネットを作成できるかの案内
+        - または操作イメージがわかる説明
+
+      assignee_hint: |
+        空いている足軽に割り当てること。
+
+  # ============================================================
+  # cmd_141: 【組織改善】バグ管理フロー明確化
+  # ============================================================
+  - id: cmd_141
+    timestamp: "2026-02-27T19:18:05"
+    command: "バグ管理フローを明確化し、軍師経由を徹底せよ"
+    project: multi-agent-shogun
+    priority: high
+    status: pending
+    details:
+      background: |
+        現状、バグ報告が場当たり的に将軍経由で家老に直接投げられており、
+        軍師の「バグ管理・永続化」の役割が活かされていない。
+
+        問題点:
+        - bugs.yaml が更新されていない
+        - knowledge.yaml へのパターン登録漏れ
+        - 同じバグの再発防止ができていない
+
+      new_rule: |
+        【バグ報告フロー（v1.7.5）】
+
+        ■ 通常バグ（機能不具合、表示崩れ）
+        殿 → 将軍 → 家老 → 軍師（bugs.yaml登録・分析）→ 足軽
+
+        ■ 緊急バグ（白画面、操作不能、データ破損リスク）
+        殿 → 将軍 → 家老 → 足軽（即時対応）
+                        ↓
+                      軍師（事後登録・パターン分析）
+
+      severity_criteria: |
+        | 種別 | 基準 | フロー |
+        |------|------|--------|
+        | 🔴 緊急 | 画面真っ白、操作不能、データ破損リスク | 足軽即時対応 → 軍師事後登録 |
+        | 🟡 通常 | 機能不具合、表示崩れ | 軍師経由で分析・登録 → 足軽 |
+        | 🟢 軽微 | 文言修正、微調整 | 軍師判断でまとめて対応 |
+
+      gunshi_responsibility: |
+        軍師の責務（バグ管理）:
+        1. bugs.yaml への全バグ登録（緊急は事後でも可）
+        2. パターン分析（同種バグの検出）
+        3. knowledge.yaml への教訓登録
+        4. 再発防止策の提案
+
+      tasks:
+        - instructions/gunshi.md にバグ管理セクション追加
+        - instructions/karo.md に緊急判断基準追加
+        - bugs.yaml テンプレート整備（なければ作成）
+        - 全軍への周知
+
+  # ============================================================
+  # cmd_140: 判子デザイン改善提案（横長判子）
+  # ============================================================
+  - id: cmd_140
+    timestamp: "2026-02-27T19:04:36"
+    command: "判子デザイン改善提案を作成せよ"
+    project: S-automation
+    priority: medium
+    status: pending
+    details:
+      background: |
+        殿より「もともと画像にあった様な横長の判子が望ましい」とのフィードバック。
+        設計前に提供された画像（docs フォルダ内の PNG）を確認し、
+        それに近いデザイン案を殿に提案すること。
+
+      tasks:
+        - docs フォルダ内の設計画像（PNG）を確認
+        - 元の判子デザイン（横長）を把握
+        - 改善提案書を作成し、殿に提示
+
+      assignee_hint: |
+        UI担当していた足軽に振ること。
+        session_004 で印鑑風デザイン実装を報告した足軽2号が適任か。
+
+      output: |
+        判子デザイン改善案を dashboard.md「要対応」に記載し、殿の判断を仰ぐ
+
+  # ============================================================
+  # cmd_139: 【緊急】StampOverlay.tsx 白画面バグ修正
+  # ============================================================
+  - id: cmd_139
+    timestamp: "2026-02-27T19:04:36"
+    command: "【緊急】振込判子押下で白画面になるバグを修正せよ"
+    project: S-automation
+    priority: critical
+    status: pending
+    details:
+      error: |
+        StampOverlay.tsx:57 Uncaught TypeError: Cannot read properties of undefined (reading 'main')
+        at StampOverlay (StampOverlay.tsx:57:63)
+
+      symptom: "振込の判子を押すと画面が真っ白になる"
+
+      note: |
+        家老は現在 Obsidian 作業中だが、これを中断してこちらを優先せよ。
+        緊急バグのため最優先で対応。
+
+  # ============================================================
+  # cmd_129: S-automation 伝票押印画面の抜本的UI改善
+  # ============================================================
+  - id: cmd_129
+    timestamp: "2026-02-27T15:44:46"
+    command: "伝票押印画面の抜本的UI改善（殿の直接フィードバック第2弾）"
+    project: S-automation
+    priority: high
+    status: pending
+    details:
+      summary: |
+        伝票一覧画面の本来の目的は「押印作業を効率的に行う画面」である。
+        現状はステータス確認画面のようになっており、本来の目的と乖離している。
+
+      core_concept: |
+        【この画面の目的】
+        未押印の伝票を次々に表示し、キーボードで効率よく押印していく作業画面。
+
+        【ユーザーの作業フロー】
+        1. 未押印伝票を選択（または自動で次の未押印を表示）
+        2. 右側プレビューで内容確認
+        3. キーボード（F/G/H等）で押印
+        4. 次の未押印伝票へ自動移動
+        5. 繰り返し
+
+      issues:
+        - id: UX-001
+          priority: HIGH
+          title: "ステータス表示が押印状況と混同する"
+          current: "ステータスに色付きバッジを使用、押印状況と紛らわしい"
+          expected: |
+            ステータスは控えめに表現（グレー文字、小さいテキスト等）
+            押印状況こそが主役
+
+        - id: UX-002
+          priority: HIGH
+          title: "判子が小さくて分かりづらい"
+          current: "四角の中に「F」だけ表示"
+          expected: |
+            判子を大きく表示（実際の印鑑のような見た目）
+            「振込」「口座振替」等の文字が読める
+            押印済みは赤い印影、未押印はグレーアウト
+
+        - id: UX-003
+          priority: HIGH
+          title: "未押印伝票への移動動線がない"
+          current: "手動で一覧から選択するしかない"
+          expected: |
+            「次の未押印へ」ボタンまたはショートカット（N/Tab等）
+            押印完了後、自動で次の未押印伝票を表示
+            未押印が0件になったら完了メッセージ
+
+        - id: UX-004
+          priority: HIGH
+          title: "右側プレビューで押印状態が見えない"
+          current: "PDF表示のみ？"
+          expected: |
+            プレビューエリアに大きな判子アイコンを表示
+            押印済みの判子は赤い印影で「押されている」感
+            未押印の判子はグレーで「ここに押す」感
+
+      design_reference: |
+        【判子のビジュアルイメージ】
+        - 丸または四角の印鑑風デザイン
+        - 押印済み: 赤い印影（少し傾いている、かすれ効果あり）
+        - 未押印: グレーの枠線のみ、クリック/キーで押印可能
+
+        【一覧側の表示】
+        - 左: 伝票番号、金額、取引先（必要最小限）
+        - 右: 押印アイコン群（振込○、口座振替×、承認○ 等）
+        - ステータスは行末に小さく
+
+      action_required:
+        - "cmd_128 と統合して対応可"
+        - "UI/UXデザインを先に検討してから実装"
+        - "本隊FEに割り当て"
+
+  # ============================================================
+  # cmd_128: S-automation 伝票一覧 UI/UX改善（殿フィードバック）
+  # ============================================================
+  - id: cmd_128
+    timestamp: "2026-02-27T15:23:58"
+    command: "伝票一覧 UI/UX改善（殿の直接フィードバック）"
+    project: S-automation
+    priority: high
+    status: pending
+    details:
+      summary: |
+        殿が実際に伝票一覧を操作した際のフィードバック。
+        4点の改善が必要。
+
+      issues:
+        - id: UI-001
+          priority: HIGH
+          title: "判子ボタンの表示が分かりづらい"
+          current: |
+            四角の中が「F」だけで何の判子か分からない。
+            ショートカットキーと判子名が混同している。
+            <button>F<span class="stamp-button__shortcut">F</span></button>
+          expected: |
+            ボタン内に「振込」等の判子名を表示。
+            ショートカットキーは右上のバッジのみ。
+            例: <button>振込<span class="shortcut-badge">F</span></button>
+
+        - id: UI-002
+          priority: HIGH
+          title: "伝票選択後のアクションがない"
+          current: |
+            伝票を選択しても何も起きない。
+            詳細画面のモックがない。
+          expected: |
+            行クリック or ダブルクリックで詳細画面に遷移。
+            または右側にサイドパネルで詳細表示。
+
+        - id: UI-003
+          priority: MEDIUM
+          title: "右側のPDF表示エリアが不明確"
+          current: |
+            PDFが表示されるのかどうか分からない。
+          expected: |
+            プレビューエリアを明示（枠線、プレースホルダー）。
+            「伝票を選択するとPDFプレビューが表示されます」等の説明。
+
+        - id: UI-004
+          priority: HIGH
+          title: "Deleteキーで取り消しが動かない"
+          current: |
+            押印済みの判子を Delete キーで取り消そうとしても何も起きない。
+          expected: |
+            cmd_125（押印取り消し機能）の実装。
+            Delete または Backspace で選択中の判子を取り消し。
+
+      action_required:
+        - "UI-001, UI-002, UI-004 は HIGH で優先対応"
+        - "cmd_125 と統合して対応可"
+        - "本隊に FE 改善を割り当て"
+
+  # ============================================================
+  # cmd_127: Playwright MCP 追加テスト（3段階）
+  # ============================================================
+  - id: cmd_127
+    timestamp: "2026-02-27T15:20:48"
+    command: "Playwright MCP 追加テスト（3段階）"
+    project: multi-agent-shogun
+    priority: high
+    status: pending
+    details:
+      summary: |
+        cmd_126でMCP接続OKを確認。殿の指示により追加テストを実施する。
+
+      test_phases:
+        - phase: 1
+          priority: HIGH
+          task: "mcp__playwright__navigate でURLアクセステスト"
+          description: |
+            実際にブラウザでURLを開けるか確認。
+            例: https://example.com や S-automation の localhost URL
+
+        - phase: 2
+          priority: MEDIUM
+          task: "公式ドキュメントでツール一覧確認"
+          description: |
+            @playwright/mcp の公式ドキュメントを確認し、
+            利用可能なツール一覧（navigate, click, fill, screenshot等）を把握。
+            WebSearch または WebFetch で調査。
+
+        - phase: 3
+          priority: MEDIUM
+          task: "実際のE2Eシナリオで試験実施"
+          description: |
+            S-automation の簡単なE2Eシナリオをテスト。
+            例: ログイン画面表示、伝票一覧表示、ボタンクリック等
+
+      success_criteria:
+        - "Phase 1: URLアクセスが成功する"
+        - "Phase 2: 利用可能ツール一覧が判明"
+        - "Phase 3: E2Eシナリオが実行できる"
+
+      action_required:
+        - "軍師経由で別働隊に各フェーズを割り当て"
+        - "Phase 1は最優先で実施"
+
+  # ============================================================
+  # cmd_126: Playwright MCP テスト（別働隊）【完了】
+  # ============================================================
+  - id: cmd_126
+    timestamp: "2026-02-27T15:07:10"
+    command: "Playwright MCP の動作テスト"
+    project: multi-agent-shogun
+    priority: high
+    status: done
+    completed_at: "2026-02-27T15:13:00"
+    result: "MCP接続OK（✓ Connected）、ツール呼び出しは未確認 → cmd_127で追加テスト"
+    details:
+      summary: |
+        別働隊（足軽5-8）を再起動し、Playwright MCP を有効化した。
+        実際に動作するかテストせよ。
+
+      background: |
+        session_002（雑談会）で全足軽がPlaywright MCPが使えないと報告。
+        調査の結果、そもそも設定されていなかったことが判明。
+        ~/.claude.json に以下を追加済み:
+        "playwright": {
+          "type": "stdio",
+          "command": "npx",
+          "args": ["-y", "@playwright/mcp"],
+          "env": { "PLAYWRIGHT_HEADLESS": "true" }
+        }
+
+      test_instructions:
+        - "足軽5-8のいずれかにPlaywright MCPツールを呼び出させる"
+        - "例: ToolSearch で playwright を検索"
+        - "mcp__playwright__xxx 系のツールが使えるか確認"
+        - "簡単なブラウザ操作（URL開く等）をテスト"
+
+      success_criteria:
+        - "Playwright MCPツールが認識される"
+        - "ヘッドレスモードでブラウザ操作ができる"
+
+      failure_handling:
+        - "エラーが出た場合は詳細を報告"
+        - "設定修正が必要なら提案"
+
+      action_required:
+        - "軍師経由で別働隊1名にテストを指示"
+
+  # ============================================================
+  # cmd_125: S-automation 押印取り消し機能（キーボードショートカット）
+  # ============================================================
+  - id: cmd_125
+    timestamp: "2026-02-27T15:04:09"
+    command: "押印取り消し機能の追加（キーボードショートカット対応）"
+    project: S-automation
+    priority: high
+    status: pending
+    details:
+      summary: |
+        伝票に押した判子を取り消せる機能の追加。
+        キーボードショートカットで操作できるようにする。
+
+      requirements:
+        - "押印済みの判子を選択して取り消し可能にする"
+        - "キーボードショートカット対応（例: Ctrl+Z, Delete, Backspace等）"
+        - "取り消し確認ダイアログの表示"
+        - "BE側に押印取り消しAPIを追加"
+        - "押印履歴から該当の押印を論理削除または物理削除"
+
+      ux_considerations:
+        - "どの判子を取り消すか選択する方法（最後の押印、クリックで選択等）"
+        - "取り消し後のUI更新（判子を消す、状態変更）"
+        - "誤操作防止のための確認ダイアログ"
+
+      api_design:
+        endpoint: "DELETE /api/slips/:slipId/stamps/:stampId"
+        or: "POST /api/slips/:slipId/stamps/:stampId/cancel"
+
+      affected_areas:
+        frontend:
+          - "SlipDetailPage.tsx - 取り消しショートカット追加"
+          - "StampArea.tsx または関連コンポーネント - 取り消しUI"
+        backend:
+          - "stamp.controller.ts - 取り消しエンドポイント"
+          - "stamp.service.ts - 取り消しロジック"
+
+      completion_criteria:
+        - "押印取り消しAPIが動作する"
+        - "キーボードショートカットで取り消しが可能"
+        - "取り消し確認ダイアログが表示される"
+        - "FE/BEビルド成功"
+
+      action_required:
+        - "まず現在の押印機能の実装を確認し、取り消し機能の設計を検討"
+        - "設計が決まったら実装開始"
+
+  # ============================================================
+  # cmd_124: S-automation prebuild で dist 削除追加
+  # ============================================================
+  - id: cmd_124
+    timestamp: "2026-02-27T14:56:05"
+    command: "prebuild で dist 削除追加"
+    project: S-automation
+    priority: high
+    status: pending
+    details:
+      summary: |
+        雑談会（session_002）で全員が指摘した dist/ 問題の根本解決。
+        package.json に prebuild スクリプトを追加し、毎回クリーンビルドにする。
+
+      problem: |
+        - dist/ に古いコンパイル結果が残る
+        - 新規API追加後に404が出る
+        - 毎回 rm -rf dist を手動実行している
+
+      solution: |
+        backend/package.json に以下を追加:
+        "prebuild": "rm -rf dist"
+
+        これにより npm run build 実行時に自動で dist が削除される。
+
+      affected_files:
+        - "backend/package.json"
+
+      completion_criteria:
+        - "prebuild スクリプト追加"
+        - "npm run build で dist が自動削除されることを確認"
+        - "BEビルド成功"
+
+      action_required:
+        - "本隊から1名割当（1行追加のみ）"
+
+  # ============================================================
+  # cmd_123: S-automation 押印不可伝票のUI表示改善
+  # ============================================================
+  - id: cmd_123
+    timestamp: "2026-02-27T14:37:09"
+    command: "押印不可伝票のUI表示改善"
+    project: S-automation
+    priority: medium
+    status: pending
+    details:
+      summary: |
+        アーカイブ済み（archived）等の押印不可ステータスの伝票に対して、
+        押印ボタンを無効化または非表示にするUI改善。
+
+      current_behavior: |
+        - archived ステータスの伝票にも押印ボタンが表示される
+        - 押印しようとすると 400 エラー「already stamped」が返る
+        - ユーザーには分かりにくい
+
+      expected_behavior: |
+        - 押印不可ステータス（archived, cancelled 等）の伝票は：
+          - 押印ボタンを無効化（disabled）または非表示
+          - 視覚的に「押印済み」「アーカイブ済み」が分かる表示
+
+      affected_files:
+        - "frontend/src/components/slips/SlipRow.tsx"
+        - "frontend/src/components/slips/SlipTable.tsx"
+
+      completion_criteria:
+        - "archived/cancelled ステータスの伝票で押印ボタンが無効化"
+        - "ユーザーが押印不可の理由を視覚的に理解できる"
+        - "FEビルド成功"
+
+      action_required:
+        - "本隊から1名割当"
+
+  # ============================================================
+  # cmd_122: 【緊急】S-automation 押印API バリデーションエラー修正
+  # ============================================================
+  - id: cmd_122
+    timestamp: "2026-02-27T12:57:12"
+    command: "【緊急】押印API FE/BE不整合修正"
+    project: S-automation
+    priority: critical
+    status: pending
+    details:
+      summary: |
+        伝票への押印（POST /api/slips/:id/stamp）で400エラー発生。
+        FEが送信するリクエストbodyとBEのDTOバリデーションが不整合。
+
+      error_message: |
+        property stampTypeId should not exist,
+        paymentType must be one of the following values: transfer, debit, unpaid,
+        paymentType must be a string,
+        paymentType should not be empty,
+        paymentDate must be a valid ISO 8601 date string,
+        paymentDate should not be empty,
+        closingDate must be a valid ISO 8601 date string,
+        closingDate should not be empty
+
+      root_cause: |
+        FEは stampTypeId を送信しているが、BEは以下を期待:
+        - paymentType (enum: transfer, debit, unpaid)
+        - paymentDate (ISO 8601)
+        - closingDate (ISO 8601)
+
+        押印APIの設計とFE実装が乖離している。
+
+      affected_files:
+        - "frontend/src/api/api.ts:77 (stampSlip)"
+        - "frontend/src/hooks/useSlips.ts:80"
+        - "backend/src/slips/dto/stamp-slip.dto.ts"
+
+      fix_approach: |
+        1. BE の stamp-slip.dto.ts を確認
+        2. FE の stampSlip 関数のリクエストbodyを修正
+        3. または BE の DTO を FE に合わせて修正（設計書確認必要）
+
+      completion_criteria:
+        - "押印操作が正常に動作"
+        - "400エラー解消"
+        - "FE/BEビルド成功"
+
+      action_required:
+        - "本隊から1名割当（FE/BE両方確認）"
+        - "設計書との整合性も確認"
+
+  # ============================================================
+  # cmd_121: 【組織改善】足軽雑談会制度の導入
+  # ============================================================
+  - id: cmd_121
+    timestamp: "2026-02-27T12:46:00"
+    command: "【組織改善】足軽雑談会制度の導入・全軍周知"
+    project: multi-agent-shogun
+    priority: medium
+    status: pending
+    details:
+      summary: |
+        待機中の足軽のコンテキストを有効活用し、現場知見を組織に還元する
+        「足軽雑談会」制度を導入する。
+
+      purpose:
+        - "待機中足軽のコンテキスト有効活用"
+        - "現場の声・暗黙知の吸い上げ"
+        - "足軽同士の横のつながり強化"
+        - "スキル化候補の発掘"
+
+      system_design:
+        name: "足軽雑談会（Ashigaru Chat Session）"
+
+        trigger: |
+          - 待機中の足軽が2名以上いる時
+          - 軍師または家老が「雑談会開始」を通知
+
+        participants: |
+          - 待機中の足軽（2-4名程度）
+          - 軍師（ファシリテーター兼記録係）
+
+        topics: |
+          - 「今日学んだこと」
+          - 「ここでハマった」
+          - 「こうした方が良いと思った」
+          - 「他の人に共有したいパターン」
+
+        output: |
+          - 軍師が知見を整理
+          - knowledge.yaml または Obsidian に記録
+          - 有用なパターンはスキル化検討
+
+        duration: "10-15分程度（長引かせない）"
+
+      implementation_tasks:
+        - task: "instructions/ashigaru.md に雑談会参加の心得を追記"
+        - task: "instructions/gunshi.md にファシリテーター役割を追記"
+        - task: "雑談会テンプレート作成（queue/templates/chat_session.yaml）"
+        - task: "全軍に制度を周知"
+
+      completion_criteria:
+        - "ashigaru.md, gunshi.md 更新完了"
+        - "テンプレート作成完了"
+        - "全軍周知完了"
+
+      action_required:
+        - "軍師と連携して制度設計を詰める"
+        - "本隊または別働隊で分担してドキュメント更新"
+
+  # ============================================================
+  # cmd_120: 【緊急】S-automation SlipRow.tsx HTMLネスティングエラー修正
+  # ============================================================
+  - id: cmd_120
+    timestamp: "2026-02-27T12:42:15"
+    command: "【緊急】SlipRow.tsx <tr>ネスティングエラー修正"
+    project: S-automation
+    priority: critical
+    status: pending
+    details:
+      summary: |
+        伝票一覧画面でHTMLネスティングエラーが発生。
+        <tr> の中に <tr> がネストされており、React hydration エラーの原因。
+
+      error_message: |
+        SlipRow.tsx:43 In HTML, <tr> cannot be a child of <tr>.
+        This will cause a hydration error.
+
+      root_cause: |
+        SlipTable.tsx:199 で Box component="tr" を使用し、
+        その中で SlipRow が TableRow（<tr>）をレンダリングしている。
+        結果として <tr><tr>...</tr></tr> という不正なHTML構造になっている。
+
+      affected_files:
+        - "frontend/src/components/slips/SlipRow.tsx:43"
+        - "frontend/src/components/slips/SlipTable.tsx:193, 199"
+
+      fix_approach: |
+        SlipTable.tsx:199 の Box component="tr" を削除し、
+        SlipRow が直接 TableBody の子になるよう修正する。
+        または SlipRow 内の TableRow を Fragment に変更。
+
+      completion_criteria:
+        - "コンソールエラー解消"
+        - "伝票一覧が正常に表示される"
+        - "FEビルド成功"
+
+      action_required:
+        - "本隊または別働隊から1名割当"
+        - "軍師にも共有（FEパターンとして知見共有）"
+
+  # ============================================================
+  # cmd_119: S-automation 伝票シードデータ追加
+  # ============================================================
+  - id: cmd_119
+    timestamp: "2026-02-27T12:01:19"
+    command: "S-automation 伝票シードデータ追加"
+    project: S-automation
+    priority: high
+    status: pending
+    details:
+      summary: |
+        伝票一覧画面でデータが表示されない。
+        原因: payment_slips テーブルが0件（シードデータ未作成）。
+        テスト用の伝票サンプルデータを作成・投入せよ。
+
+      current_status:
+        payment_slips: 0件
+        suppliers: 0件
+        file_cases: 8件
+        users: 3件
+
+      requirements:
+        - "payment_slips に10件程度のテストデータを追加"
+        - "必要に応じて suppliers（取引先）も追加"
+        - "様々なステータス（pending, stamped, cased等）を含める"
+        - "シードファイルに追記し、npm run seed で投入"
+
+      completion_criteria:
+        - "payment_slips テーブルに10件以上のデータ"
+        - "伝票一覧画面でデータが表示される"
+        - "各ステータスの伝票が確認可能"
+
+      action_required:
+        - "足軽1名で対応可"
+        - "完了後 dashboard.md に報告"
+
+  # ============================================================
+  # cmd_117: 【緊急】S-automation バックエンド再ビルド + Docker再起動
+  # ============================================================
+  - id: cmd_117
+    timestamp: "2026-02-27T10:00:55"
+    command: "【緊急】S-automation バックエンド再ビルド・Docker再起動"
+    project: S-automation
+    priority: critical
+    status: pending
+    details:
+      summary: |
+        cmd_116 E2Eテストで API 404エラー 3件が発生。
+        原因: 本番環境（192.168.3.44）に最新バックエンドが未反映。
+        バックエンドを再ビルドし、Dockerコンテナを再起動せよ。
+
+      errors:
+        - endpoint: "POST /api/transfer/fb-export"
+          status: 404
+        - endpoint: "GET /api/users"
+          status: 404
+        - endpoint: "GET /api/master"
+          status: 404
+
+      procedure:
+        step_1: "バックエンドビルド"
+        step_1_commands: |
+          cd /home/nishimura/S-automation/backend
+          npm run build
+
+        step_2: "Dockerコンテナ再起動"
+        step_2_commands: |
+          cd /home/nishimura/S-automation/docker
+          docker compose down
+          docker compose up -d --build
+
+        step_3: "API疎通確認"
+        step_3_commands: |
+          curl -k https://192.168.3.44/s-automation/api/users
+          curl -k https://192.168.3.44/s-automation/api/master
+          curl -k -X POST https://192.168.3.44/s-automation/api/transfer/fb-export
+
+      completion_criteria:
+        - "npm run build 成功"
+        - "Docker コンテナ正常起動"
+        - "404エラー3件が解消"
+
+      action_required:
+        - "足軽1名で対応可（本隊から1名割当）"
+        - "完了後 dashboard.md に報告"
+
+  # ============================================================
+  # cmd_116: 【全軍動員】S-automation Phase 1-6 全体レビュー + E2Eテスト
+  # ============================================================
+  - id: cmd_116
+    timestamp: "2026-02-26T18:55:15"
+    command: "【全軍動員】S-automation Phase 1-6 全体レビュー + E2Eテストを実施せよ"
+    project: S-automation
+    priority: high
+    status: pending
+    details:
+      summary: |
+        殿より、Phase 1-6 全完了を受けて全体レビューと E2E テストの指示。
+        品質確認を行い、問題があれば修正せよ。
+
+      review_scope:
+        phase1: "コア機能（判子押印・ケース振り分け）"
+        phase2: "ワークフロー（ファイルケース・ダブルチェック・キャビネット）"
+        phase3: "ダッシュボード・レポート・通知・マスタ管理"
+        phase4: "左ペイン・外部リンク・キャビネット機能強化・コード整理"
+        phase5: "仕訳起票機能（OBICへURL遷移・Wチェック・会計データ出力）"
+        phase6: "振込データ作成機能（グルーピング・FBデータ出力・精査表PDF）"
+
+      review_categories:
+        code_review:
+          - "コードの一貫性（命名規則、ディレクトリ構造）"
+          - "型安全性（TypeScript strict モード準拠）"
+          - "エラーハンドリング（FE/BE 両方）"
+          - "セキュリティ（認証・認可・入力検証）"
+          - "パフォーマンス（N+1問題、不要な再レンダリング）"
+
+        design_consistency:
+          - "設計書と実装の乖離確認"
+          - "API設計書 vs 実装エンドポイント"
+          - "データモデル vs Prisma Schema"
+          - "画面遷移図 vs 実装"
+
+        ui_ux:
+          - "画面デザインの一貫性（MUI テーマ準拠）"
+          - "レスポンシブ対応"
+          - "エラー表示・ローディング表示"
+          - "キーボードショートカット動作確認"
+
+      e2e_test_scenarios:
+        scenario_1:
+          name: "伝票処理フロー（基本）"
+          steps:
+            - "ダッシュボードから伝票一覧へ遷移"
+            - "伝票を選択して詳細画面へ"
+            - "判子を押印（Fキー: 振込）"
+            - "ケースに振り分け"
+            - "ファイルケース一覧で確認"
+
+        scenario_2:
+          name: "ダブルチェックフロー"
+          steps:
+            - "ファイルケース詳細画面へ"
+            - "Wチェック実施"
+            - "承認完了"
+
+        scenario_3:
+          name: "仕訳起票フロー"
+          steps:
+            - "仕訳待ち一覧へ"
+            - "伝票選択"
+            - "OBICへURL遷移（外部リンク確認）"
+            - "仕訳完了マーク"
+            - "仕訳Wチェック"
+
+        scenario_4:
+          name: "振込データ作成フロー"
+          steps:
+            - "振込データ一覧へ"
+            - "支払先グルーピング実行"
+            - "FBデータエクスポート（全銀フォーマット確認）"
+            - "精査表PDF出力"
+
+        scenario_5:
+          name: "キャビネット・アーカイブフロー"
+          steps:
+            - "キャビネット画面へ"
+            - "年度別・月別の絞り込み"
+            - "アーカイブ済み伝票の検索"
+
+        scenario_6:
+          name: "マスタ管理フロー"
+          steps:
+            - "判子マスタ一覧・編集"
+            - "ケース種別マスタ一覧・編集"
+            - "ユーザー管理（ADMIN権限）"
+
+      task_assignment:
+        hontai:
+          ashigaru1:
+            task_id: "REV-1"
+            task: "コードレビュー（FE: pages/, components/）"
+            focus: "命名規則、コンポーネント構造、props型定義"
+          ashigaru2:
+            task_id: "REV-2"
+            task: "コードレビュー（FE: hooks/, services/）"
+            focus: "API呼び出し、状態管理、エラーハンドリング"
+          ashigaru3:
+            task_id: "REV-3"
+            task: "コードレビュー（BE: modules/）"
+            focus: "Controller/Service構造、DTO、バリデーション"
+          ashigaru4:
+            task_id: "REV-4"
+            task: "設計書 vs 実装 乖離チェック"
+            focus: "API設計書、データモデル、画面遷移図との整合性"
+
+        bettudoutai:
+          ashigaru5:
+            task_id: "E2E-1"
+            task: "E2Eテスト: シナリオ1-2（伝票処理・Wチェック）"
+            method: "ブラウザ手動テスト + 結果記録"
+          ashigaru6:
+            task_id: "E2E-2"
+            task: "E2Eテスト: シナリオ3-4（仕訳・振込データ）"
+            method: "ブラウザ手動テスト + 結果記録"
+          ashigaru7:
+            task_id: "E2E-3"
+            task: "E2Eテスト: シナリオ5-6（キャビネット・マスタ）"
+            method: "ブラウザ手動テスト + 結果記録"
+          ashigaru8:
+            task_id: "E2E-4"
+            task: "クロスブラウザ・レスポンシブ確認"
+            method: "Chrome/Firefox/Edge、モバイル表示確認"
+
+      test_environment:
+        url: "https://192.168.3.44/s-automation/"
+        credentials: "dev@example.com（開発用ユーザー）"
+        note: "IapAuthGuard が development モードでデフォルト認証"
+
+      output_format:
+        review_report: |
+          ## コードレビュー結果
+          ### 問題点
+          - [重要度: HIGH/MEDIUM/LOW] 内容、ファイル:行番号
+
+          ### 改善提案
+          - 提案内容
+
+        e2e_report: |
+          ## E2Eテスト結果
+          ### シナリオX: [名前]
+          - 結果: OK / NG
+          - 詳細: （NGの場合）発生した問題
+          - スクリーンショット: （必要に応じて）
+
+      completion_criteria:
+        - "全シナリオでE2Eテスト完了"
+        - "重大な問題（HIGH）がゼロ"
+        - "問題があれば修正完了"
+        - "最終レビュー結果を dashboard.md に報告"
+
+      action_required:
+        - "本隊（足軽1-4）: REV-1〜REV-4 コードレビュー並列実行"
+        - "別働隊（足軽5-8）: E2E-1〜E2E-4 テスト並列実行（軍師経由）"
+        - "問題発見時は即座に報告、軽微なものは即時修正"
+        - "重大問題は家老・軍師経由で将軍にエスカレーション"
+
+  # ============================================================
+  # cmd_115: 【全軍動員】S-automation Phase 6 振込データ作成機能
+  # ============================================================
+  - id: cmd_115
+    timestamp: "2026-02-26T13:37:12"
+    command: "【全軍動員】S-automation Phase 6 振込データ作成機能を実装せよ"
+    project: S-automation
+    priority: critical
+    status: pending
+    details:
+      summary: |
+        殿より Phase 6 着手の号令。
+        振込対象伝票のグルーピングと全銀フォーマットFBデータ出力を全軍8名で実装せよ。
+
+      plan_document: "/home/nishimura/S-automation/docs/design/14_Phase4以降_実装計画書.md"
+
+      scope:
+        F-060: "振込データ一覧（振込対象伝票の一覧・グルーピング）"
+        F-061: "支払先グルーピング（同一支払先の請求を自動集約）"
+        F-062: "振込データ作成（全銀フォーマットでFBデータ出力）"
+        F-063: "振込データWチェック（金額・口座情報のダブルチェック）"
+        F-064: "精査表出力（Should - 振込内容確認用の精査表PDF出力）"
+
+      task_assignment:
+        hontai:
+          ashigaru1:
+            task_id: "P6-1"
+            task: "振込データ一覧画面（FE）"
+            output: "pages/transfers/TransferListPage.tsx"
+            estimated: "2h"
+          ashigaru2:
+            task_id: "P6-2"
+            task: "支払先グルーピング画面（FE）"
+            output: "pages/transfers/TransferGroupPage.tsx"
+            estimated: "2h"
+          ashigaru3:
+            task_id: "P6-3"
+            task: "振込データWチェック画面（FE）"
+            output: "pages/transfers/TransferWCheckPage.tsx"
+            estimated: "1.5h"
+          ashigaru4:
+            task_id: "P6-4"
+            task: "FBデータ生成サービス（BE）"
+            output: "modules/transfers/fb-data.service.ts"
+            estimated: "2h"
+            note: "全銀フォーマット（ヘッダー/データ/トレーラー）を実装"
+        bettudoutai:
+          ashigaru5:
+            task_id: "P6-5"
+            task: "支払先グルーピングサービス（BE）"
+            output: "modules/transfers/grouping.service.ts"
+            estimated: "1.5h"
+          ashigaru6:
+            task_id: "P6-6"
+            task: "精査表PDF生成（Should）"
+            output: "modules/transfers/verification-report.service.ts"
+            estimated: "2h"
+          ashigaru7:
+            task_id: "P6-7"
+            task: "画面遷移・統合テスト"
+            output: "テスト・品質確認"
+            estimated: "1h"
+          ashigaru8:
+            task_id: "P6-8"
+            task: "ルーティング・ビルド確認"
+            output: "App.tsx + SideNavigation.tsx 更新"
+            estimated: "1h"
+
+      api_endpoints:
+        - "GET /api/transfers - 振込データ一覧"
+        - "POST /api/transfers/group - 支払先グルーピング実行"
+        - "GET /api/transfers/:id - 振込データ詳細"
+        - "POST /api/transfers/:id/wcheck - Wチェック完了"
+        - "GET /api/transfers/:id/export/fb - FBデータエクスポート"
+        - "GET /api/transfers/:id/export/pdf - 精査表PDF出力"
+
+      fb_data_format: |
+        【全銀協規定フォーマット】
+        ヘッダー（1行目）:
+        - データ区分: 1
+        - 種別コード: 21（総合振込）
+        - コード区分: 0
+        - 委託者コード: 10桁
+        - 委託者名: 40桁（カナ）
+        - 振込指定日: 4桁（MMDD）
+        - 仕向銀行番号: 4桁
+        - 仕向支店番号: 3桁
+
+        データ（2行目以降）:
+        - データ区分: 2
+        - 銀行番号: 4桁
+        - 支店番号: 3桁
+        - 預金種目: 1桁
+        - 口座番号: 7桁
+        - 受取人名: 30桁（カナ）
+        - 振込金額: 10桁
+        - 新規コード: 1桁
+
+        トレーラー（最終行）:
+        - データ区分: 8
+        - 合計件数: 6桁
+        - 合計金額: 12桁
+
+      completion_criteria:
+        - "振込データ一覧画面が動作する"
+        - "支払先グルーピングが動作する"
+        - "振込データWチェックが動作する"
+        - "FBデータ（全銀フォーマット）が出力できる"
+        - "FE/BEビルド成功"
+
+      action_required:
+        - "本隊（足軽1-4）: P6-1〜P6-4 並列実行"
+        - "別働隊（足軽5-8）: P6-5〜P6-8 並列実行（軍師経由）"
+        - "設計書（計画書セクション4）を読んでから着手せよ"
+        - "報告を怠るな！dashboard.md 更新必須"
+
+  # ============================================================
+  # cmd_114: 【全軍動員】S-automation Phase 5 仕訳起票機能
+  # ============================================================
+  - id: cmd_114
+    timestamp: "2026-02-26T12:24:12"
+    command: "【全軍動員】S-automation Phase 5 仕訳起票機能を実装せよ"
+    project: S-automation
+    priority: critical
+    status: pending
+    details:
+      summary: |
+        殿より Phase 5 着手の号令。
+        仕訳待ち伝票の電子化処理フローを全軍8名で実装せよ。
+
+      plan_document: "/home/nishimura/S-automation/docs/design/14_Phase4以降_実装計画書.md"
+
+      scope:
+        F-050: "仕訳起票（OBICへURL遷移して手入力）"
+        F-052: "仕訳Wチェック（仕訳内容のダブルチェック）"
+        F-053: "会計データ出力（仕訳データCSV出力）"
+        F-051: "仕訳入力補助（OCR）- Should、将来対応"
+
+      task_assignment:
+        hontai:
+          ashigaru1:
+            task_id: "P5-1"
+            task: "仕訳一覧画面（FE）"
+            output: "pages/journal/JournalListPage.tsx"
+            estimated: "2h"
+          ashigaru2:
+            task_id: "P5-2"
+            task: "仕訳詳細画面（FE）"
+            output: "pages/journal/JournalDetailPage.tsx"
+            estimated: "2h"
+          ashigaru3:
+            task_id: "P5-3"
+            task: "仕訳Wチェック画面（FE）"
+            output: "pages/journal/JournalWCheckPage.tsx"
+            estimated: "1.5h"
+          ashigaru4:
+            task_id: "P5-4"
+            task: "仕訳モジュール（BE）"
+            output: "modules/journal/"
+            estimated: "2h"
+        bettudoutai:
+          ashigaru5:
+            task_id: "P5-5"
+            task: "会計データ出力API"
+            output: "modules/journal/journal-export.service.ts"
+            estimated: "1.5h"
+          ashigaru6:
+            task_id: "P5-6"
+            task: "仕訳ステータス管理（Prismaスキーマ更新）"
+            output: "prisma/schema.prisma"
+            estimated: "1h"
+          ashigaru7:
+            task_id: "P5-7"
+            task: "画面遷移・統合テスト"
+            output: "テスト・品質確認"
+            estimated: "1h"
+          ashigaru8:
+            task_id: "P5-8"
+            task: "ルーティング・ビルド確認"
+            output: "App.tsx更新、動作確認"
+            estimated: "1h"
+
+      api_endpoints:
+        - "GET /api/journal - 仕訳待ち一覧"
+        - "GET /api/journal/:id - 仕訳詳細"
+        - "POST /api/journal/:id/complete - 仕訳完了"
+        - "POST /api/journal/:id/wcheck - Wチェック完了"
+        - "GET /api/journal/export - 会計データCSV出力"
+
+      completion_criteria:
+        - "仕訳一覧・詳細画面が動作する"
+        - "OBICへのURL遷移が動作する"
+        - "仕訳Wチェックが動作する"
+        - "会計データCSV出力が動作する"
+        - "FE/BEビルド成功"
+
+      action_required:
+        - "本隊（足軽1-4）: P5-1〜P5-4 並列実行"
+        - "別働隊（足軽5-8）: P5-5〜P5-8 並列実行（軍師経由）"
+        - "設計書（計画書セクション3）を読んでから着手せよ"
+        - "報告を怠るな！dashboard.md 更新必須"
+
+  # ============================================================
+  # cmd_113: 共有ナレッジ制度 - 技術知見の横展開
+  # ============================================================
+  - id: cmd_113
+    timestamp: "2026-02-20T19:34:03"
+    command: "【組織改善】共有ナレッジ制度を導入せよ"
+    project: multi-agent-shogun
+    priority: medium
+    status: pending
+    details:
+      summary: |
+        足軽間で技術知見を共有する仕組みを導入する。
+        「知ってれば一瞬、知らなきゃハマる」系の知識を組織に蓄積。
+
+      background: |
+        雑談実験で判明した課題：
+        - 「MUI v7のitem→size変更」「Prisma 7のbigint変換」等、知見が共有されていない
+        - 縦の指揮系統は効率的だが、横の知識共有が弱い
+        - 同じ罠に複数の足軽がハマる
+
+      implementation:
+        item_1:
+          name: "共有ナレッジファイル作成"
+          file: "queue/shared/knowledge.yaml"
+          structure: |
+            # queue/shared/knowledge.yaml
+            last_updated: "2026-02-20T19:34:00"
+
+            knowledge:
+              fe:
+                - id: K-FE-001
+                  title: "MUI v7: item属性 → size属性に変更"
+                  detail: "Grid2でitem属性は廃止、size={{ xs: 12, md: 6 }}を使え"
+                  discovered_by: ashigaru8
+                  date: "2026-02-20"
+
+              be:
+                - id: K-BE-001
+                  title: "Prisma 7: bigint変換の罠"
+                  detail: "BigIntはJSONシリアライズできない。String変換必要"
+                  discovered_by: ashigaru7
+                  date: "2026-02-20"
+
+              general:
+                - id: K-GEN-001
+                  title: "re-export問題"
+                  detail: "export { Type } from './file' だけでは同一ファイル内で使えない"
+                  discovered_by: ashigaru1
+                  date: "2026-02-20"
+
+        item_2:
+          name: "/recovery に読み込みステップ追加"
+          file: ".claude/skills/recovery/SKILL.md"
+          change: |
+            Step 4.5 として以下を追加:
+            「queue/shared/knowledge.yaml を読み、最新の技術知見を確認せよ」
+
+        item_3:
+          name: "足軽報告書に knowledge_share フィールド追加（任意）"
+          file: "instructions/ashigaru/報告書.md"
+          format: |
+            knowledge_share:  # 任意：他の足軽に共有したい知見
+              title: "発見した知見のタイトル"
+              detail: "詳細説明"
+          note: "軍師/家老が収集して knowledge.yaml に追記"
+
+      workflow: |
+        1. 足軽がハマりポイントを発見
+        2. 報告書の knowledge_share に記載（任意）
+        3. 軍師/家老が knowledge.yaml に追記
+        4. 他の足軽が /recovery 時に読み込み
+        5. 同じ罠を回避！
+
+      action_required:
+        - "queue/shared/ ディレクトリ作成"
+        - "queue/shared/knowledge.yaml を初期作成（今日の知見を含む）"
+        - ".claude/skills/recovery/SKILL.md に Step 4.5 追加"
+        - "instructions/ashigaru/報告書.md に knowledge_share フィールド追加"
+        - "dashboard.md に周知"
+
+  # ============================================================
   # cmd_112: 横のつながり強化制度 - 定期雑談会導入
   # ============================================================
   - id: cmd_112

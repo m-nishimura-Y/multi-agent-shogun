@@ -13,7 +13,23 @@
 #    - verified: 検証済み（完了）
 # ============================================================
 
-last_updated: "2026-02-07T16:45:00"
+last_updated: "2026-02-27T19:22:19"
+
+# ============================================================
+# テンプレート（v1.8.0追加）
+# ============================================================
+# - id: BUG-XXX
+#   severity: 🔴 緊急 | 🟡 通常 | 🟢 軽微
+#   title: "バグタイトル"
+#   reported_at: "2026-02-27T19:00:00"
+#   reported_by: ashigaru1
+#   cmd_id: cmd_139
+#   status: open | fixed | closed
+#   root_cause: "原因"
+#   fix_applied: "修正内容"
+#   knowledge_registered: true | false
+#   knowledge_id: K-XXX-NNN
+# ============================================================
 
 # === 未修正バグ ===
 open_bugs:
@@ -246,6 +262,60 @@ open_bugs:
 
 # === 修正済みバグ ===
 fixed_bugs:
+  # ----------------------------------------------------------
+  # 本隊（足軽1）緊急修正分（2026-02-27）- BUG-038,039（cmd_139）
+  # ----------------------------------------------------------
+  - id: BUG-038
+    severity: "🔴 緊急"
+    priority: high
+    status: fixed
+    implementation_status: verified
+    location: "frontend/src/components/slips/StampOverlay.tsx"
+    title: "【緊急】StampOverlay.tsx 白画面バグ（フォールバック不足）"
+    description: |
+      判子押印画面で白画面が発生。
+      config?.stampTypes?.[typeId] で undefined が返り、
+      後続の .name アクセスでクラッシュ。
+    root_cause: |
+      BE の seed.ts で stampTypeId: null のレコードが存在。
+      API レスポンスで stamp.type が null になるケースがあった。
+      FE 側でフォールバック（?? でデフォルト値設定）済みだったが、
+      stamp.type 自体が null/undefined の場合のガードが不足。
+    fix_applied: |
+      1. フォールバック追加: stampConfig ?? fallbackConfig
+      2. ガード節追加: if (!stamp || !stamp.type) return null;
+    cmd_id: cmd_139
+    reported_at: "2026-02-27T19:00:00"
+    reported_by: tono
+    fixed_at: "2026-02-27T19:12:00"
+    fixed_by: ashigaru1
+    knowledge_registered: true
+    knowledge_id: null  # ashigaru1の knowledge_share 参照
+
+  - id: BUG-039
+    severity: "🔴 緊急"
+    priority: high
+    status: fixed
+    implementation_status: verified
+    location: "frontend/src/components/slips/StampOverlay.tsx"
+    title: "【緊急】StampOverlay.tsx 白画面バグ v2（一覧表示側も同じ問題）"
+    description: |
+      cmd_139 修正後も一覧表示側で白画面が発生。
+      stamp.type が falsy な場合のガードが不足していた。
+    root_cause: "BUG-038 と同じ（seed.ts に stampTypeId: null レコードあり）"
+    fix_applied: |
+      ガード節を追加:
+      if (!stamp || !stamp.type) {
+        return null;
+      }
+    cmd_id: cmd_139
+    reported_at: "2026-02-27T19:15:00"
+    reported_by: tono
+    fixed_at: "2026-02-27T19:15:53"
+    fixed_by: ashigaru1
+    knowledge_registered: true
+    knowledge_id: null  # skill_candidate: react-undefined-guard-pattern として昇格
+
   # ----------------------------------------------------------
   # 本隊（足軽1）緊急修正分（2026-02-07）- BUG-034〜037
   # ----------------------------------------------------------
@@ -662,9 +732,9 @@ fixed_bugs:
 
 # === 統計 ===
 statistics:
-  total_reported: 44
+  total_reported: 46
   open: 4
-  fixed: 40
+  fixed: 42
   high_priority_open: 0
   medium_priority_open: 3  # BUG-002,016,017
   low_priority_open: 2  # BUG-001,007

@@ -5,66 +5,47 @@
 # 将軍・家老・軍師がタスク開始時・完了時に更新せよ
 # ============================================================
 
-last_updated: "2026-02-20T19:14:00"
+last_updated: "2026-03-02T17:39:00"
 
 # ================================================================
 # 将軍（Shogun）の現在状況 - 殿との会話要点記録
 # ================================================================
 shogun:
   current_conversation:
-    topic: "S-automation Phase 4 + 組織改善（reflection導入）"
+    topic: "S-automation Phase 1-6 全体レビュー + E2Eテスト"
     summary: |
-      1. Phase 4 実装開始（cmd_106）- 殿の承認済み
-         - 左ペイン追加要件を計画書に反映
-         - 全軍動員完了（約1,900行）
-      2. バグ対応: API_BASE_URL 問題
-         - 原因: docker-compose.yml の VITE_API_BASE_URL=localhost:3002
-         - 家老に修正指示済み
-      3. CLAUDE.md 更新: Edit ツール推奨（Write より効率的）
-      4. cmd_107: 報告書に reflection フィールド追加
-         - 軍師との雑談から生まれた改善案
-         - 「内向き処理」を促す仕組み
-    started_at: "2026-02-20T10:00:00"
+      1. Phase 1-6 全完了
+      2. cmd_116: 全体レビュー + E2Eテスト開始
+         - コードレビュー（本隊4名）
+         - E2Eテスト（別働隊4名・6シナリオ）
+         - 品質確認・問題修正
+    started_at: "2026-02-26T18:55:00"
 
   # ★★★ 次の将軍への引き継ぎ事項 ★★★
   handover_notes:
     active_commands:
-      cmd_106:
-        status: "✅ Phase 4-0/4-A 完了（dashboard確認）"
-        note: "Phase 4-B/4-C は次フェーズ"
-      cmd_107:
-        status: "✅ 完了"
-        content: "報告書に reflection フィールド追加（組織改善）"
+      cmd_116: "Phase 1-6 全体レビュー + E2Eテスト（全軍動員中）"
 
-    pending_bugfix:
-      api_base_url:
-        status: "✅ cmd_109 で修正完了"
-        cause: "docker-compose.yml の VITE_API_BASE_URL + useArchive.ts API_BASE_URL 未使用"
-        fix: "両方修正済み・ビルド成功・コンテナ再起動済み"
-
-    claude_md_update:
-      change: "Edit ツール推奨を明記"
-      reason: "Write は Read 必須でエラーになりやすい。Edit は Read 不要で効率的"
-
-    reflection_initiative:
-      background: |
-        軍師との雑談で判明: AIも「問われて初めて意識が向く」
-        業務フローは外向き処理ばかり。内向き処理（自己参照）の機会がない。
-        雑談は「効率」ではなく「メンテナンス」。
-      implementation: "報告書に reflection フィールド追加（任意）"
+    completed_phases:
+      phase6: "✅ 全完了（振込データ作成・グルーピング・FBデータ出力）cmd_115"
+      phase5: "✅ 全完了（仕訳起票・Wチェック・会計データ出力）cmd_114"
+      phase4: "✅ 全完了（左ペイン・外部リンク・キャビネット機能強化・コード整理）"
+      phase3: "✅ 全完了（ダッシュボード・レポート・通知・マスタ管理）"
+      phase2: "✅ 全完了（ワークフロー・ファイルケース・キャビネット基本）"
+      phase1: "✅ 全完了（判子押印・ケース振り分け）"
 
   pending_decisions: []
 
   recent_directives:
-    - directive: "Phase 4 承認・実装開始"
-      description: "左ペイン追加要件を含む Phase 4 開始"
+    - directive: "Phase 6 開始"
+      description: "振込データ作成機能の全軍動員開始"
+      received_at: "2026-02-26T13:37:00"
+    - directive: "v1.7.0 ポーリング許可"
+      description: "家老・軍師に足軽状態確認を許可"
+      received_at: "2026-02-26T13:35:00"
+    - directive: "Phase 5 承認・実装開始"
+      description: "仕訳起票機能の全軍動員開始"
       received_at: "2026-02-20T10:30:00"
-    - directive: "Edit ツール推奨"
-      description: "YAML追記は Edit を使え。Write は Read 必須でエラーになりやすい"
-      received_at: "2026-02-20T11:00:00"
-    - directive: "reflection フィールド導入"
-      description: "軍師との雑談から。報告書に振り返りフィールドを追加"
-      received_at: "2026-02-20T11:30:00"
 
 # ================================================================
 # 家老（Karo）の現在状況
@@ -74,9 +55,162 @@ karo:
 
   waiting_for: []
 
+  recent_actions:
+    - action: "nginx 500 解消"
+      detail: "殿がnginx設定修正・API正常動作確認・要対応から削除"
+      at: "2026-03-02T17:39:00"
+    - action: "cmd_160 完了"
+      detail: "AuditLog ID拡大OK・nginx 500はポート不一致が原因（殿対応待ち）"
+      at: "2026-03-02T17:35:00"
+    - action: "cmd_160 開始"
+      detail: "AuditLog IDカラムサイズ拡大を足軽1に割当"
+      at: "2026-03-02T17:31:00"
+    - action: "nginx 500エラー原因特定"
+      detail: "AuditLog ID が VarChar(20) 超過（26文字生成）"
+      at: "2026-03-02T17:28:00"
+    - action: "cmd_159 完了"
+      detail: "ステータス日本語化+isConfirmed削除+シードデータOK（FEビルド成功）"
+      at: "2026-03-02T17:10:00"
+    - action: "cmd_159 開始"
+      detail: "本隊2名（足軽1-2）に割当"
+      at: "2026-03-02T17:06:00"
+    - action: "session_006 全完了"
+      detail: "別働隊雑談会+スキル3件+スクリプト1件（1,657行）"
+      at: "2026-03-02T16:15:00"
+    - action: "Obsidian登録"
+      detail: "session_005知見4件+session_006知見3件 登録完了"
+      at: "2026-03-02T16:05:00"
+    - action: "session_006 開始"
+      detail: "別働隊雑談会を軍師に依頼"
+      at: "2026-03-02T15:49:00"
+    - action: "cmd_158 調査完了"
+      detail: "ISSUE-1,2,3 全調査完了（殿対応事項2件）"
+      at: "2026-03-02T15:48:00"
+    - action: "cmd_157 完了"
+      detail: "mcp-health-checker スキル作成完了（17点、303行）"
+      at: "2026-03-02T15:37:00"
+    - action: "cmd_156 完了"
+      detail: "設計書MEDIUM/LOW修正（18件対応完了）"
+      at: "2026-03-02T15:25:00"
+      at: "2026-03-02T14:34:00"
+
+  completed_subtasks:
+    - task: "cmd_149"
+      status: "全完了"
+      detail: "HIGH修正7件 + Gドライブ設計反映"
+
+  completed_subtasks: []
+
+  blocked: []
+
   next_action: "次の指示待ち"
 
   recent_completed:
+    - task_id: "cmd_143"
+      description: "ファイルケースクリック遷移実装（詳細ページ遷移+文字幅バグ修正・FEビルド成功）"
+      completed_at: "2026-03-02T11:12:00"
+
+    - task_id: "cmd_143"
+      description: "判子種類表示修正（FE/BE乖離修正・振込/口座振替等表示・FEビルド成功）"
+      completed_at: "2026-03-02T10:20:00"
+
+    - task_id: "cmd_142"
+      description: "キャビネット空状態表示改善（空状態UI+作成ガイド・FEビルド成功）"
+      completed_at: "2026-03-02T10:20:00"
+
+    - task_id: "cmd_140"
+      description: "判子デザイン横長化実装（殿決定案A・設計画像準拠・FEビルド成功）"
+      completed_at: "2026-02-27T19:30:00"
+
+    - task_id: "cmd_142"
+      description: "判子種類表示不具合修正（ガード節緩和・グレー+済ラベル・FEビルド成功）"
+      completed_at: "2026-02-27T19:28:00"
+
+    - task_id: "cmd_141"
+      description: "【組織改善】バグ管理フロー明確化（v1.7.5・全軍周知完了）"
+      completed_at: "2026-02-27T19:24:00"
+
+    - task_id: "cmd_139_v2"
+      description: "【緊急】StampOverlay.tsx追加修正完了（ガード節追加・FEビルド成功）"
+      completed_at: "2026-02-27T19:17:00"
+
+    - task_id: "cmd_140"
+      description: "判子デザイン改善提案（横長判子・殿承認待ち）"
+      completed_at: "2026-02-27T19:09:00"
+
+  recent_completed:
+    - task_id: "session_003"
+      description: "足軽雑談会（4名参加・知見3件追加・MCP新カテゴリ・Obsidian登録）"
+      completed_at: "2026-02-27T18:45:00"
+
+    - task_id: "cmd_138"
+      description: "Playwright MCP 最終テスト（NG・根本原因特定: React SPAクライアントサイドHTTPSリダイレクト）"
+      completed_at: "2026-02-27T18:37:00"
+
+  recent_completed:
+    - task_id: "cmd_137"
+      description: "Playwright MCP HTTPアクセステスト再テスト（NG - nginx根本対応必要）"
+      completed_at: "2026-02-27T18:15:00"
+
+    - task_id: "cmd_135"
+      description: "formatCurrency/formatDate utils集約（18ファイル修正・23重複解消・FEビルド成功）"
+      completed_at: "2026-02-27T17:27:00"
+
+    - task_id: "cmd_128"
+      description: "伝票一覧 UI/UX改善（殿フィードバック4点・本隊4名・FEビルド成功）"
+      completed_at: "2026-02-27T15:32:00"
+
+    - task_id: "cmd_127"
+      description: "Playwright MCP 追加テスト（Phase 1 成功・session_002 ISSUE-001解決）"
+      completed_at: "2026-02-27T15:27:00"
+
+  recent_completed:
+    - task_id: "cmd_126"
+      description: "Playwright MCP テスト（接続OK・ツール呼び出し未確認・追加テスト推奨）"
+      completed_at: "2026-02-27T15:13:00"
+
+    - task_id: "cmd_125"
+      description: "押印取り消し機能（FE:ショートカット実装、BE:既存確認・FEビルド成功）"
+      completed_at: "2026-02-27T15:10:00"
+
+    - task_id: "cmd_124"
+      description: "prebuild で dist 削除追加（package.json修正・BEビルド成功）"
+      completed_at: "2026-02-27T14:59:00"
+
+  recent_completed:
+    - task_id: "cmd_123"
+      description: "押印不可伝票UI表示改善（キーボード押印制御+archived/処理済みChip表示+行背景グレー・FEビルド成功）"
+      completed_at: "2026-02-27T14:41:00"
+
+    - task_id: "cmd_122"
+      description: "【緊急】押印API FE/BE不整合修正（FE修正:paymentType/Date/closingDate送信・FE/BEビルド成功）"
+      completed_at: "2026-02-27T13:02:00"
+
+    - task_id: "cmd_121"
+      description: "【組織改善】足軽雑談会制度導入（ashigaru.md/gunshi.md更新・テンプレート作成・全軍周知）"
+      completed_at: "2026-02-27T12:49:00"
+
+    - task_id: "cmd_120"
+      description: "【緊急】SlipRow.tsx HTMLネスティングエラー修正（Box component='tr'削除・FEビルド成功）"
+      completed_at: "2026-02-27T12:46:00"
+
+  recent_completed:
+    - task_id: "cmd_119"
+      description: "S-automation 伝票シードデータ追加（payment_slips:12件・suppliers:5件・bank_accounts:5件）"
+      completed_at: "2026-02-27T12:07:00"
+
+    - task_id: "cmd_116"
+      description: "【全軍動員】Phase 1-6 全体レビュー + E2Eテスト完了（コードレビューH7/M12/L15、E2E完了、404エラー3件検出）"
+      completed_at: "2026-02-26T19:10:00"
+
+    - task_id: "cmd_114"
+      description: "【全軍動員】Phase 5 仕訳起票機能（約2,100行・FE/BEビルド成功・API疎通OK）"
+      completed_at: "2026-02-26T13:20:00"
+
+    - task_id: "cmd_113"
+      description: "【組織改善】共有ナレッジ制度導入（knowledge.yaml作成・/recovery v1.4.0・報告書knowledge_share追加）"
+      completed_at: "2026-02-20T19:37:00"
+
     - task_id: "cmd_112"
       description: "【組織改善】横のつながり強化制度導入（定期雑談会制度化・reflection任意再周知・Obsidian4件登録）"
       completed_at: "2026-02-20T19:14:00"
@@ -447,11 +581,22 @@ karo:
 # 軍師（Gunshi）の現在状況
 # ================================================================
 gunshi:
-  current_task: null
+  current_task:
+    task_id: cmd_116
+    description: "Phase 1-6 全体レビュー + E2Eテスト（別働隊4名配分中）"
+    started_at: "2026-02-26T18:58:00"
 
-  waiting_for: []
+  waiting_for:
+    - agent: "ashigaru5"
+      reason: "E2E-1 シナリオ1-2（伝票処理・Wチェック）"
+    - agent: "ashigaru6"
+      reason: "E2E-2 シナリオ3-4（仕訳・振込データ）"
+    - agent: "ashigaru7"
+      reason: "E2E-3 シナリオ5-6（キャビネット・マスタ）"
+    - agent: "ashigaru8"
+      reason: "E2E-4 クロスブラウザ・レスポンシブ確認"
 
-  next_action: "次の指示待ち"
+  next_action: "別働隊（足軽5-8）へのタスク配分・通知"
 
   recent_completed:
     - task_id: "cmd_102"

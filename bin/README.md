@@ -4,10 +4,24 @@ multi-agent-shogun で使用するシェルスクリプト集。
 
 ---
 
+## ⚠️ 使用者早見表（重要）
+
+| スクリプト | 使用者 | 用途 |
+|-----------|--------|------|
+| **restart-agents.sh** | 🚫 殿専用 | 他のエージェントを再起動（MCP設定変更後など） |
+| **self-compact.sh** | ✅ エージェント自身 | 自分をコンパクション（残量15%以下で使用） |
+| **notify.sh** | ✅ 全員 | 他のエージェントに通知を送る |
+| **recovery.sh** | 🔧 システム | SessionStart hook から自動呼び出し |
+| **search-skills.sh** | ✅ 全員 | スキル検索 |
+
+**注意**: `restart-agents.sh` を足軽が実行すると、他の足軽全員が再起動されてしまう！
+
+---
+
 ## エージェント管理
 
 ### restart-agents.sh
-**全軍一括再起動**
+**🚫 殿専用 - 他のエージェントを再起動**
 
 エージェントを `/exit` → `claude --dangerously-skip-permissions` → `/recovery` の順で再起動する。
 
@@ -59,9 +73,11 @@ tmux send-keys + Enter を確実に実行する。エイリアス対応。
 | ashigaru8 (a8) | multiagent:0.8 |
 
 ### self-compact.sh
-**自己コンパクション実行**
+**✅ エージェント自身が使用 - 自己コンパクション実行**
 
 コンテキスト残量が15%以下のとき、自分のペインに `/compact` を送信する。
+
+**足軽がコンパクションしたい時はこれを使え！**（restart-agents.sh ではない）
 
 ```bash
 ~/multi-agent-shogun/bin/self-compact.sh

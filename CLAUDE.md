@@ -234,6 +234,19 @@ MCPツールは遅延ロード方式。使用前に必ず `ToolSearch` で検索
 
 **導入済みMCP**: Notion, Playwright, GitHub, Sequential Thinking, Memory, Document-Loader, Codex, Draw.io, Obsidian
 
+## 外部API（社内サービス）
+
+### document-ai（請求書OCR API）
+
+Google Cloud Document AIを活用した請求書自動抽出API。
+PDFから金額・支払方法・取引先名等を自動抽出する。
+
+- **エンドポイント**: `POST /api/v1/ocr/extract`
+- **認証**: Bearer Token（OCR_API_KEY）
+- **抽出項目**: invoice_issue_date, pay_method, pay_amt_excl_tax, pay_amt_incl_tax, pay_tax_amt, supplier_name
+
+詳細: [document-ai活用ガイド](docs/tools/document-ai-guide.md)
+
 ## スキル活用
 
 .claude/skills/ ディレクトリには **70以上のスキル** がある。積極的に活用せよ。

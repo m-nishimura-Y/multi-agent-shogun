@@ -14,15 +14,20 @@
 # - 大型タスク区切り時
 # ================================================================
 
-last_updated: "2026-02-20T18:16:00"
+last_updated: "2026-03-02T16:12:00"
 updated_by: gunshi
 
 # === 現在のフォーカス ===
 current_focus:
-  cmd: null
-  description: "次の指示待ち"
-  status: "idle"
-  note: "cmd_104 Phase 4-B 完了・家老に報告済み"
+  cmd: session_006
+  description: "session_006 全完了・家老報告中"
+  status: "completed"
+  note: |
+    session_006 別働隊雑談会からのスキル候補4件を評価。
+    3件自動承認（16点, 17点, 16点）、1件条件付き（13点）。
+    3件のスキル作成完了（合計1,463行）。
+    + generate-skill-catalog.sh スクリプト作成完了（194行）。
+    合計: 1,657行
 
 # === ブロッカー ===
 blocker:
@@ -34,83 +39,163 @@ blocker:
 
 # === 別働隊稼働状況 ===
 betsudoutai_status:
-  ashigaru5: idle   # cmd_104 P4B-1 完了
-  ashigaru6: idle   # cmd_104 P4B-2 完了
-  ashigaru7: idle   # cmd_104 P4B-3 完了
-  ashigaru8: idle   # cmd_104 スキル+P4B-4 完了
+  ashigaru5: idle        # session_006 prisma-migration-conflict-checker 完了（470行）
+  ashigaru6: idle        # session_006 design-doc-version-diff 完了（462行）
+  ashigaru7: idle        # session_006 generate-skill-catalog.sh 完了（194行）
+  ashigaru8: idle        # session_006 design-doc-cross-reference-checker 完了（531行）
 
 # === 別働隊役割分担 ===
 betsudoutai_roles:
-  ashigaru5: "cmd_106 Phase 4-A: 外部リンク設定API（BE・external-linksモジュール）"
-  ashigaru6: "cmd_106 Phase 4-A: 外部リンク管理画面（FE・ExternalLinksSettings.tsx）"
-  ashigaru7: "cmd_106 Phase 4-A: 外部リンクボタン表示（ExternalLinkButtons.tsx）"
-  ashigaru8: "cmd_106 Phase 4-A: Prisma schema更新 + マイグレーション + ビルド確認"
-  note: "本隊（足軽1-4）は Phase 4-0 左ペイン実装中"
+  ashigaru5: "cmd_148 整合性レビュー（design-doc-consistency-checker）"
+  ashigaru6: "cmd_148 セキュリティレビュー（design-doc-security-reviewer）"
+  ashigaru7: "cmd_148 外部連携レビュー（external-system-integration-reviewer）"
+  ashigaru8: "cmd_148 UI/UXレビュー（ui-ux-consistency-checker）"
+  note: "cmd_148 設計書レビュー開始。別働隊4名並列作業中。"
 
 # === 進行中タスク ===
 in_progress_tasks:
-  - cmd: cmd_106
-    phase: "4-A"
+  - cmd: cmd_115
+    phase: "Phase 6"
     tasks:
-      - task_id: P4A-1
+      - task_id: P6-5
         assignee: ashigaru5
-        description: "外部リンク設定API（BE・NestJS）"
-        status: assigned
+        description: "支払先グルーピングサービス（GroupingService）"
+        status: done
         priority: critical
-      - task_id: P4A-2
+        completed_at: "2026-02-26T14:01:41"
+        result: "469行、ビルド成功"
+      - task_id: P6-6
         assignee: ashigaru6
-        description: "外部リンク管理画面（FE・React）"
-        status: assigned
+        description: "精査表PDF生成（VerificationReportService ~300行）"
+        status: done
         priority: critical
-      - task_id: P4A-3
+        completed_at: "2026-02-26T13:51:26"
+        result: "341行、pdfkit導入、エンドポイント追加"
+      - task_id: P6-7
         assignee: ashigaru7
-        description: "外部リンクボタン表示（サイドナビ統合）"
-        status: assigned
+        description: "統合テスト（FE/BEビルド・API疎通8件）"
+        status: done
         priority: critical
-      - task_id: P4A-4
+        completed_at: "2026-02-26T14:06:33"
+        result: "FE/BEビルド成功、API 8件疎通OK"
+      - task_id: P6-8
         assignee: ashigaru8
-        description: "Prisma schema更新 + マイグレーション + ビルド確認"
-        status: assigned
+        description: "FBデータ生成+ルーティング（全銀協フォーマット ~400行）"
+        status: done
         priority: critical
+        completed_at: "2026-02-26T13:52:55"
+        result: "390行、ルーティング3件、FE/BEビルド成功"
 
-# === 保留中スキル作成（cmd_088完了後） ===
-pending_skill_creation:
-  - name: "ui-ux-consistency-checker"
-    proposed_by: ashigaru6
-    score: 14
-    result: "自動承認"
-    assignee_planned: ashigaru6
-    note: "cmd_088完了後に作成指示予定"
-
-  - cmd: cmd_060
+  - cmd: cmd_115_skill
+    phase: "スキル作成"
     tasks:
-      - task_id: cmd060_skill_fastapi_security_audit
-        assignee: ashigaru5
-        description: "fastapi-security-audit スキル作成"
-        status: done
-        score: 16
-        result: "638行・7カテゴリ・35+項目・Bash自動化スクリプト・GCP固有チェック"
-      - task_id: cmd060_skill_python_web_patterns
+      - task_id: skill_nestjs-pdf-export-service
         assignee: ashigaru6
-        description: "python-web-patterns スキル作成"
+        description: "nestjs-pdf-export-service スキル作成（16点自動承認）"
         status: done
-        score: 14
-        result: "3ファイル計1,146行（FastAPI 8セクション、Streamlit 9セクション）"
-      - task_id: cmd060_skill_gcp_cloudbuild_auditor
-        assignee: ashigaru7
-        description: "gcp-cloudbuild-auditor スキル作成"
-        status: done
-        score: 16
-        result: "690行・8カテゴリ・セキュリティ/最適化/ベストプラクティス"
-      - task_id: cmd060_skill_python_code_quality_analyzer
+        priority: normal
+        completed_at: "2026-02-26T13:56:40"
+        result: "648行"
+      - task_id: skill_zengin-fb-format-generator
         assignee: ashigaru8
-        description: "python-code-quality-analyzer スキル作成"
+        description: "zengin-fb-format-generator スキル作成（17点自動承認）"
         status: done
-        score: 18
-        result: "576行・5観点評価・code-quality-analyzer（TS版）完全移植"
+        priority: normal
+        completed_at: "2026-02-26T13:56:19"
+        result: "521行"
+
+# === 保留中スキル作成 ===
+pending_skill_creation: []
+  # enum-consistency-checker 完了（304行）- 2026-02-27T19:17:04
 
 # === スキル評価履歴（直近） ===
 skill_evaluations:
+  # session_006でスキル作成完了（3件）
+  - name: "prisma-migration-conflict-checker"
+    score: 16
+    result: "作成完了"
+    evaluated_at: "2026-03-02"
+    note: "並列開発でのマイグレーションコンフリクト事前検出。470行。足軽5作成（本人提案）。"
+
+  - name: "design-doc-version-diff"
+    score: 17
+    result: "作成完了"
+    evaluated_at: "2026-03-02"
+    note: "設計書のバージョン間差分を自動抽出。462行。足軽6作成（本人提案）。"
+
+  - name: "design-doc-cross-reference-checker"
+    score: 16
+    result: "作成完了"
+    evaluated_at: "2026-03-02"
+    note: "設計書間の参照リンク切れ検証。531行。足軽8作成（本人提案）。"
+
+  - name: "pre-commit-hook-generator"
+    score: 13
+    result: "条件付き承認（保留）"
+    evaluated_at: "2026-03-02"
+    note: "husky+lint-staged自動生成。13点のためeslint-config-generatorとの統合を条件に保留。"
+
+  # cmd_157でスキル作成完了
+  - name: "mcp-health-checker"
+    score: 17
+    result: "作成完了"
+    evaluated_at: "2026-03-02"
+    note: "MCP接続ヘルスチェック。303行。足軽5作成。session_005本隊雑談会で足軽1提案、全員賛同。"
+
+  # cmd_143でスキル拡張完了
+  - name: "fe-be-response-mapper"
+    score: 16
+    result: "v2.0.0 拡張完了"
+    evaluated_at: "2026-03-02"
+    note: "フィールド名乖離検出・正規化パターン統合。598→890行（+292行）。足軽5作成。"
+
+  # cmd_141で評価・作成完了
+  - name: "react-undefined-guard-pattern"
+    score: 15
+    result: "作成完了"
+    evaluated_at: "2026-02-27"
+    note: "Record<K,V>[key] undefined対策3点セット。284行。足軽6作成。"
+
+  # session_004で評価・作成完了
+  - name: "enum-consistency-checker"
+    score: 16
+    result: "作成完了"
+    evaluated_at: "2026-02-27"
+    note: "FE/BE DTO/Prisma enum整合性チェック。304行。足軽5作成。"
+
+  # cmd_116で評価・作成
+  - name: "react-code-review-checklist"
+    score: 18
+    result: "作成完了"
+    evaluated_at: "2026-02-26"
+    note: "React/TSコードレビュー観点チェックリスト。374行。足軽5作成。"
+
+  # cmd_115で評価・作成
+  - name: "zengin-fb-format-generator"
+    score: 17
+    result: "作成完了"
+    evaluated_at: "2026-02-26"
+    note: "全銀協FBデータ生成。521行。足軽8作成。"
+
+  - name: "nestjs-pdf-export-service"
+    score: 16
+    result: "作成完了"
+    evaluated_at: "2026-02-26"
+    note: "NestJS+pdfkitでPDF帳票生成。648行。足軽6作成。"
+
+  # cmd_104で評価
+  - name: "fe-be-response-mapper"
+    score: 16
+    result: "作成完了"
+    evaluated_at: "2026-02-20"
+    note: "FE/BE型変換関数自動生成。350行。足軽8作成。"
+
+  - name: "typescript-reexport-fixer"
+    score: 12
+    result: "条件付き承認（作成保留）"
+    evaluated_at: "2026-02-20"
+    note: "パターン単純。typescript-import-patternsとして拡充推奨。"
+
   # cmd_103で評価・作成完了
   - name: "react-bulk-action-hook"
     score: 15
@@ -131,155 +216,15 @@ skill_evaluations:
     evaluated_at: "2026-02-19"
     note: "Prisma schemaとMarkdown設計書の差分自動検出。358行。足軽7作成"
 
-  # cmd_088で評価・作成完了
-  - name: "ui-ux-consistency-checker"
-    score: 14
-    result: "作成完了"
-    evaluated_at: "2026-02-19"
-    note: "UI詳細設計書整合性チェック。558行・7カテゴリ・紙運用体感評価基準。足軽6作成"
-
-  # cmd_081で評価・作成完了
-  - name: "design-doc-terminology-checker"
-    score: 15
-    result: "作成完了"
-    evaluated_at: "2026-02-18"
-    note: "設計書の用語定義統一性チェック。399行。足軽5作成"
-
-  - name: "design-doc-consistency-checker"
-    score: 16
-    result: "作成完了"
-    evaluated_at: "2026-02-18"
-    note: "設計書間のデータ定義・状態遷移・API仕様の整合性チェック。399行。足軽7作成"
-
-  - name: "design-doc-security-reviewer"
-    score: 17
-    result: "作成完了"
-    evaluated_at: "2026-02-18"
-    note: "設計書群のセキュリティ要件網羅性レビュー。409行。足軽8作成"
-
-  - name: "external-system-integration-reviewer"
-    score: 16
-    result: "作成完了"
-    evaluated_at: "2026-02-18"
-    note: "設計書群の外部システム連携整合性レビュー。436行。足軽6作成"
-
-  # cmd_071で評価
-  - name: "express-logging-auditor"
-    score: 17
-    result: "自動承認・作成指示済み"
-    evaluated_at: "2026-02-17"
-    note: "Express.jsログ・監査診断。cmd_070でashigaru7提案。足軽5に作成指示"
-
-  - name: "gcp-iap-auth-validator"
-    score: 12
-    result: "却下"
-    evaluated_at: "2026-02-17"
-    note: "既存スキルgcp-iap-auth-auditとJWT検証部分が重複。R004該当"
-
-  # cmd_069で評価・作成指示
-  - name: "obsidian-auto-register"
-    score: 18
-    result: "自動承認・作成指示済み"
-    evaluated_at: "2026-02-17"
-    note: "Obsidian知見登録自動化。品質ゲートキーパー+重複チェック。将軍1on1発"
-
-  # cmd_060で評価・作成指示
-  - name: "python-code-quality-analyzer"
-    score: 18
-    result: "自動承認・作成指示済み"
-    evaluated_at: "2026-02-16"
-    note: "code-quality-analyzerのPython版。最高点。"
-
-  - name: "fastapi-security-audit"
-    score: 16
-    result: "自動承認・作成指示済み"
-    evaluated_at: "2026-02-16"
-    note: "FastAPI向けセキュリティ監査。express-security-auditの姉妹スキル。"
-
-  - name: "gcp-cloudbuild-auditor"
-    score: 16
-    result: "自動承認・作成指示済み"
-    evaluated_at: "2026-02-16"
-    note: "Cloud Build設定診断。GCPスキル群の補完。"
-
-  - name: "python-web-patterns"
-    score: 14
-    result: "自動承認・作成指示済み"
-    evaluated_at: "2026-02-16"
-    note: "FastAPI/Streamlitパターン集。python-patternsと補完関係。"
-
-  # cmd_050, cmd_051で作成完了
-  - name: "windows-credential-audit"
-    score: 16
-    result: "作成完了"
-    evaluated_at: "2026-02-16"
-    note: "380行・7カテゴリ・26項目・PowerShell/Bash自動化スクリプト付き"
-
-  - name: "dotnet-process-injection-audit"
-    score: 17
-    result: "作成完了"
-    evaluated_at: "2026-02-16"
-    note: "350行・4フェーズ診断・CWEマッピング・危険パターン検出"
-
-  - name: "powershell-security-checker"
-    score: 13
-    result: "条件付き承認（統合推奨）"
-    evaluated_at: "2026-02-16"
-    note: "足軽8提案。他スキルのサブスキルとして統合推奨。"
-
-  # cmd_046で作成完了
-  - name: "express-security-audit"
-    score: 17
-    result: "作成完了"
-    evaluated_at: "2026-02-16"
-    note: "Express.jsセキュリティ監査。420行・7カテゴリ・35項目・自動化スクリプト付き。"
-
-  # cmd_037で提案された1件
-  - name: "gcp-iap-auth-audit"
-    score: 15
-    result: "作成完了"
-    evaluated_at: "2026-02-13"
-    note: "GCP IAP認証監査スキル。足軽5,6提案を統合。"
-
-  # cmd_035で提案された4件（全て作成完了）
-  - name: "aspnet-auth-audit"
-    score: 19
-    result: "作成完了"
-    evaluated_at: "2026-02-13"
-    note: "ASP.NET Core認証認可設定の自動監査"
-
-  - name: "dotnet-secrets-scanner"
-    score: 18
-    result: "作成完了"
-    evaluated_at: "2026-02-13"
-    note: "appsettings.jsonから機密情報の平文コミット検出"
-
-  - name: "dotnet-security-audit"
-    score: 19
-    result: "作成完了"
-    evaluated_at: "2026-02-13"
-    note: "ASP.NET Coreセキュリティ監査チェックリスト（親スキル）"
-
-  - name: "blazor-security-checker"
-    score: 17
-    result: "作成完了"
-    evaluated_at: "2026-02-13"
-    note: "Blazor Server特化セキュリティ診断"
-
-  # 過去の履歴
-  - name: "dependency-analyzer"
-    score: 16
-    result: "承認・作成完了"
-    evaluated_at: "2026-02-05"
-
-  - name: "typeorm-entity-checker"
-    score: 15
-    result: "承認・作成完了"
-    evaluated_at: "2026-02-05"
-
 # === 条件付き承認スキル（12-13点） ===
 conditional_skills:
   items:
+    - name: "pre-commit-hook-generator"
+      score: 13
+      condition: "eslint-config-generator等の品質ツール設定スキルとの統合を推奨"
+    - name: "typescript-reexport-fixer"
+      score: 12
+      condition: "typescript-import-patternsとして拡充（barrel file、circular import等を含む）"
     - name: "powershell-security-checker"
       score: 13
       condition: "windows-credential-auditまたはdotnet-process-injection-auditのサブスキルとして統合"
@@ -290,78 +235,14 @@ conditional_skills:
 
 # === 直近の完了タスク ===
 recent_completed:
-  - cmd: cmd_110
-    description: "API 404エラー3件修正（FE API_BASE_URL + BE cabinets/years + cabinets/summary）"
-    completed_at: "2026-02-20T13:42:00"
+  - cmd: cmd_114
+    description: "Phase 5 仕訳起票機能（別働隊4名・約355行+スキーマ更新+ルーティング）"
+    completed_at: "2026-02-26T13:18:54"
     result: |
-      FE: useReports.ts API_BASE_URL修正
-      BE: cabinets/years, cabinets/summary エンドポイント追加
-      ビルド: FE/BE成功、両エンドポイント200確認
-
-  - cmd: cmd_069
-    description: "obsidian-auto-register スキル作成"
-    completed_at: "2026-02-17T16:45:00"
-    result: |
-      574行・3品質ゲート・5カテゴリ対応。
-      重複チェック+テンプレート適用+品質検証でObsidian知見登録を自動化。
-
-  - cmd: cmd_051
-    description: "dotnet-process-injection-audit スキル作成"
-    completed_at: "2026-02-16T15:55:00"
-    result: |
-      350行・4フェーズ診断・CWEマッピング・危険パターン検出。
-      cmd_049で発見したProcess.Start脆弱性を体系化。
-
-  - cmd: cmd_050
-    description: "windows-credential-audit スキル作成"
-    completed_at: "2026-02-16T15:55:00"
-    result: |
-      380行・7カテゴリ・26項目・PowerShell/Bash自動化スクリプト付き。
-      cmd_049で発見した認証情報管理問題を体系化。
-
-  - cmd: cmd_049
-    description: "ZeroTouchKitter 脆弱性診断【緊急】"
-    completed_at: "2026-02-16T15:25:00"
-    result: |
-      【緊急】Critical 4件、High 3件、Medium 3件。
-      config.jsonに平文PW（Gitコミット済み）、コマンドインジェクション3件。
-      即時パスワード変更必要。
-
-  - cmd: cmd_046
-    description: "express-security-audit スキル作成"
-    completed_at: "2026-02-16T14:00:00"
-    result: |
-      420行・7カテゴリ・35チェック項目。
-      自動化シェルスクリプト付き。
-      cmd_045の診断結果を元に作成。
-
-  - cmd: cmd_045
-    description: "ipadress-manager 脆弱性診断"
-    completed_at: "2026-02-16T13:35:00"
-    result: |
-      既存Issue 3件確認（#52対応済み、#53未対応、#54追加発見）。
-      npm audit: Critical 2, High 9, Moderate 7, Low 1。
-      コード/設定: High 2, Medium 6, Low 5。
-      スキル候補: express-security-audit (17点) 自動承認。
-
-  - cmd: cmd_037
-    description: "billing-mng-gcp セキュリティ診断"
-    completed_at: "2026-02-13T19:50:00"
-    result: |
-      Critical 2件、High 1件、Medium 5件、Low 4件検出。
-      Issue #34 部分対応済み。スキル候補1件提案（gcp-iap-auth-audit 15点）。
-
-  - cmd: cmd_036
-    description: "セキュリティスキル4件作成"
-    completed_at: "2026-02-13T18:25:00"
-    result: "4スキル合計1,614行作成完了"
-
-  - cmd: cmd_035
-    description: "AssetsManageSystem セキュリティ診断"
-    completed_at: "2026-02-13T17:58:00"
-    result: |
-      Critical 10件、High 7件、Medium 5件、Low 2件検出。
-      スキル候補4件提案（全て自動承認対象）。
+      P5-5: JournalExportService 355行
+      P5-6: JournalStatus enum + 5フィールド
+      P5-7: FE/BE ビルド成功・API疎通5件OK
+      P5-8: 3ルート + サイドナビ
 
 # === 家老への報告待ち ===
 pending_to_karo: []
@@ -386,11 +267,20 @@ skill_criteria_summary: |
 
 # === メモ ===
 notes: |
-  【cmd_040 スキル作成】
-  - skill-evaluate: 評価→作成依頼を自動化（仕組みで解決）
-  - gcp-iap-auth-audit: cmd_037で評価済み、作成漏れ対応
+  【cmd_116 別働隊 全完了！】
+  - E2E-1: ✅ 足軽5 完了（シナリオ1-2 API疎通OK）
+  - E2E-2: ✅ 足軽6 完了（シナリオ3-4 ★fb-export 404検出）
+  - E2E-3: ✅ 足軽7 完了（シナリオ5-6 ★users/master 404検出）
+  - E2E-4: ✅ 足軽8 完了（クロスブラウザ・レスポンシブ確認OK）
 
-  【skill-evaluate の重要性】
-  殿の方針「チェックリストではなく仕組みで解決」
-  - 軍師がスキル評価後、作成指示を出し忘れる問題を根本解決
-  - 14点以上なら自動でタスク生成+通知まで実行
+  【スキル作成】
+  - react-code-review-checklist（18点）: ✅ 足軽5 完了（374行）
+
+  【E2Eテスト 検出問題】
+  - POST /api/transfer/fb-export → 404（HIGH）
+  - GET /api/users → 404（MEDIUM）
+  - GET /api/master → 404（MEDIUM）
+  → 原因: 本番環境にバックエンド未デプロイ
+  → 推奨: バックエンド再デプロイ
+
+  【別働隊全員idle】次タスク割当可能。

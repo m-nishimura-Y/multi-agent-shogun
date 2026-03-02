@@ -1,0 +1,742 @@
+# ============================================================
+# 共有ナレッジ（Knowledge Base）
+# ============================================================
+# 「知ってれば一瞬、知らなきゃハマる」系の知識を組織で共有する
+#
+# 【運用ルール】
+# - 足軽: 報告書の knowledge_share に記載（任意）
+# - 軍師/家老: 収集してこのファイルに追記
+# - 全員: /recovery 時にこのファイルを読む
+# ============================================================
+
+last_updated: "2026-03-02T15:48:00"
+updated_by: karo
+
+# ============================================================
+# フロントエンド知見
+# ============================================================
+fe:
+  - id: K-FE-001
+    title: "MUI v7: item属性 → size属性に変更"
+    detail: |
+      Grid2 コンポーネントで item 属性は廃止された。
+      代わりに size={{ xs: 12, md: 6 }} を使え。
+      ビルドは通るが警告が出る。
+    discovered_by: ashigaru8
+    date: "2026-02-20"
+    context: "cmd_104 Phase 4-C"
+
+  - id: K-FE-002
+    title: "re-export問題: export { Type } from だけでは同一ファイル内で使えない"
+    detail: |
+      export { Type } from './file' だけでは、同一ファイル内で Type を参照できない。
+      解決方法: import type で取り込み → export type で再公開
+
+      ❌ NG:
+      export { SlipStatus } from './slip';
+      const x: SlipStatus = ...;  // エラー
+
+      ✅ OK:
+      import type { SlipStatus } from './slip';
+      export type { SlipStatus };
+      const x: SlipStatus = ...;  // OK
+    discovered_by: ashigaru1
+    date: "2026-02-20"
+    context: "cmd_104 Phase 4-C P4C-fix"
+
+  - id: K-FE-003
+    title: "API_BASE_URL 統一: 共通 apiClient を使え"
+    detail: |
+      各 hooks で独自に apiClient を定義すると API_BASE_URL 漏れが発生する。
+      共通の apiClient (src/api/client.ts) を使用せよ。
+      fetch() 直接呼び出しも禁止。
+    discovered_by: ashigaru2
+    date: "2026-02-20"
+    context: "cmd_111 hooks層リファクタリング"
+
+  - id: K-FE-004
+    title: "MUI DataGrid v7: GridRowSelectionModel 構造変更"
+    detail: |
+      v7 では GridRowSelectionModel が配列ではなく
+      { type: 'include' | 'exclude', ids: Set } オブジェクトに変更。
+      checkboxSelection 使用時は型注意。
+      シンプルな選択なら行クリックで id を state 管理する方が楽。
+
+      ❌ NG:
+      const [selected, setSelected] = useState<string[]>([]);
+
+      ✅ OK:
+      const [selectedId, setSelectedId] = useState<string | null>(null);
+      onRowClick={(params) => setSelectedId(params.id as string)}
+    discovered_by: ashigaru1
+    date: "2026-02-26"
+    context: "cmd_115 Phase 6 P6-1"
+
+  - id: K-FE-005
+    title: "MUI Table: Box component='tr' + TableRow の組み合わせ禁止"
+    detail: |
+      MUI Table で <tr> の中に <tr> がネストされるHTMLエラーが発生する。
+      原因: Box component="tr" と TableRow を同時に使うと、
+      両方が <tr> をレンダリングしてネストが発生。
+
+      ❌ NG（HTMLエラー: <tr> inside <tr>）:
+      <Box component="tr">
+        <TableRow>...</TableRow>  // これも <tr> をレンダリング
+      </Box>
+
+      ✅ OK（どちらか一方を使う）:
+      // パターン1: TableRow のみ
+      <TableRow>
+        <TableCell>...</TableCell>
+      </TableRow>
+
+      // パターン2: Box のみ（スタイル制御が必要な場合）
+      <Box component="tr">
+        <Box component="td">...</Box>
+      </Box>
+
+      ※ SlipRow.tsx 等でラッパー追加時に発生しやすい。
+    discovered_by: karo
+    date: "2026-02-27"
+    context: "cmd_116 コードレビュー"
+
+  - id: K-FE-006
+    title: "React format関数: utils/format.ts に集約せよ"
+    detail: |
+      formatCurrency/formatDate が各コンポーネントに散在すると保守性が低下。
+      utils/format.ts に集約し、エイリアスパターンで既存呼び出しを維持。
+
+      ❌ NG（重複定義）:
+      // SlipInfo.tsx
+      const formatCurrency = (n: number) => `¥${n.toLocaleString()}`;
+      // SlipRow.tsx
+      const formatCurrency = (n: number) => `¥${n.toLocaleString()}`;
+
+      ✅ OK（集約）:
+      // utils/format.ts
+      export const formatCurrency = (amount: number): string =>
+        `¥${amount.toLocaleString('ja-JP')}`;
+
+      // 各コンポーネント
+      import { formatCurrency } from '@/utils/format';
+      // または既存呼び出し維持: const formatAmount = formatCurrency;
+
+      効果: 仕様変更（例: ¥→円表記）が1箇所で済む
+    discovered_by: ashigaru5
+    date: "2026-02-27"
+    context: "cmd_135 formatCurrency/formatDate 集約"
+
+  - id: K-FE-007
+    title: "Vite初期テンプレート: CSS制限を最初に解除せよ"
+    detail: |
+      Vite初期テンプレートには画面横幅を制限するCSSが3箇所ある。
+      業務アプリ開発時は最初にこれらを確認・修正すべし。
+
+      確認すべき箇所:
+      1. App.css: `#root { max-width: 1280px }` → 削除
+      2. index.css: `body { display: flex; place-items: center }` → 削除
+      3. Container: `maxWidth="xl"` → 適宜調整
+
+      ✅ 新規プロジェクト参画時のチェックリスト:
+      - [ ] App.css の max-width 確認
+      - [ ] index.css の display/place-items 確認
+      - [ ] Container の maxWidth 確認
+
+      ※ 「1つ直して終わり」ではなく、本当に直ったかブラウザで確認せよ。
+    discovered_by: ashigaru1
+    date: "2026-02-27"
+    context: "足軽雑談会 session_004"
+
+  - id: K-FE-008
+    title: "印鑑風デザイン: CSS で日本の印鑑らしさを出す"
+    detail: |
+      日本の印鑑らしさを CSS で表現するポイント:
+
+      1. **丸形 + 明朝体**:
+         border-radius: 50%;
+         font-family: "Noto Serif JP", serif;
+
+      2. **縦書き風**: flexbox で flex-direction: column + 文字ごとに <span>
+
+      3. **手押し感**: transform: rotate(-5deg) で少し傾ける
+
+      4. **かすれ効果**: filter: blur(0.3px) + radial-gradient で印影のムラ
+
+      5. **深みのある朱色**: #C62828（ピンク系ではなく本物の朱肉に近い色）
+
+      文字数による表示分岐:
+      - 2文字（振込）→ 縦書き
+      - 3文字（未払金）→ 縦書き小さめ
+      - 4文字以上（口座振替）→ 2行表示
+    discovered_by: ashigaru2
+    date: "2026-02-27"
+    context: "足軽雑談会 session_004"
+
+  - id: K-FE-009
+    title: "FE/BE レスポンス乖離: 型名の不一致に注意"
+    detail: |
+      BE が返すフィールド名と FE が期待するフィールド名が異なる場合がある。
+
+      例:
+      - BE: { paymentType: 'transfer' }
+      - FE: { stamp: { type: 'transfer' } }
+
+      対策:
+      1. API レイヤーでレスポンス変換を追加
+         if (item.paymentType && !item.stamp) {
+           return { ...item, stamp: { type: item.paymentType, ... } };
+         }
+      2. 両方の名前をサポートする
+         const value = response.stampType ?? response.stampTypeId;
+      3. TypeScript の型定義を BE の実際のレスポンスに合わせて更新
+
+      根本解決は BE/FE 間の型定義を共有すること（OpenAPI等）。
+      既存スキル fe-be-response-mapper も活用せよ。
+    discovered_by: ashigaru1
+    date: "2026-03-02"
+    context: "cmd_143 判子種類表示修正"
+
+  - id: K-FE-010
+    title: "CSS: border-width 変更によるレイアウト崩れ"
+    detail: |
+      ボーダー幅を動的に変更するとコンテンツ領域が変わり、
+      テキストの折り返しが変わってレイアウトが崩れることがある。
+
+      ❌ NG例:
+      border: 2px → border-width: 3px（selected時）
+      // 1pxの差でコンテンツ領域が狭くなり、テキストが折り返される
+
+      ✅ OK例:
+      // パターン1: border-width は固定、border-color で状態表現
+      .card { border: 2px solid transparent; }
+      .card--selected { border-color: var(--primary); }
+
+      // パターン2: box-shadow で選択状態を表現（box モデルに影響しない）
+      .card--selected { box-shadow: 0 0 0 2px var(--primary); }
+
+      // パターン3: outline で選択状態を表現（box モデルに影響しない）
+      .card--selected { outline: 2px solid var(--primary); }
+
+      ポイント: border-width 変更は box モデルに影響する。
+      選択状態等は border-color/box-shadow/outline で表現すべし。
+    discovered_by: ashigaru1
+    date: "2026-03-02"
+    context: "cmd_143 ファイルケースクリック動作修正"
+
+  - id: K-FE-012
+    title: "FE: fetch 直接使用禁止、apiClient を使え"
+    detail: |
+      S-automation では apiClient が baseURL `/s-automation/api` を設定している。
+      fetch('/api/...') を直接使うと baseURL が適用されず 404 になる。
+
+      ❌ NG:
+      fetch('/api/slips/${id}')
+      // 実際のURL: /api/slips/xxx → 404
+
+      ✅ OK:
+      apiClient.get('/slips/${id}')
+      // 実際のURL: /s-automation/api/slips/xxx → 正常
+
+      【チェック方法】
+      プロジェクト内で fetch( を検索し、apiClient に統一されているか確認。
+      Grep pattern: "fetch\\s*\\("
+
+      ※ cmd_111 で hooks 層リファクタリングしたが、漏れがあり得る。
+    discovered_by: ashigaru2
+    date: "2026-03-02"
+    context: "cmd_158 ISSUE-2 伝票詳細404エラー修正"
+
+  - id: K-FE-011
+    title: "React Router: useParams パラメータ名の一致が必須"
+    detail: |
+      ルート定義の :paramName と useParams で取得する変数名は一致が必要。
+      不一致だと undefined になる。
+
+      ❌ NG例:
+      // ルート定義
+      <Route path="/slips/:slipId" element={<SlipDetail />} />
+      // コンポーネント
+      const { id } = useParams();  // undefined! :slipId と :id が不一致
+
+      ✅ OK例:
+      // ルート定義
+      <Route path="/slips/:slipId" element={<SlipDetail />} />
+      // コンポーネント
+      const { slipId } = useParams();  // OK! 一致している
+
+      ポイント: パラメータ名変更時は、ルート定義とuseParams両方を確認せよ。
+    discovered_by: ashigaru1
+    date: "2026-03-02"
+    context: "cmd_148 設計書レビュー"
+
+  - id: K-BE-004
+    title: "NestJS API疎通テストで404が出たらクリーンビルド"
+    detail: |
+      新規エンドポイント追加後に404が出る場合、dist内に古いビルドが残っている可能性。
+      クリーンビルドで解決できる。
+
+      ✅ 解決手順:
+      1. rm -rf dist/
+      2. npm run build
+      3. サーバー再起動
+
+      ※ 新規Controller追加時・ルーティング変更時に発生しやすい。
+    discovered_by: ashigaru7
+    date: "2026-02-26"
+    context: "cmd_115 Phase 6 P6-7 統合テスト"
+
+  - id: K-BE-005
+    title: "Prisma 7 Docker: 型エラー発生時の対処"
+    detail: |
+      Docker内で npm run start:dev（ts-node）実行時に
+      「Module '@prisma/client' has no exported member」エラーが出る場合、
+      コンテナ内で Prisma クライアント再生成が必要。
+
+      ✅ 解決手順:
+      docker exec <container> npx prisma generate
+
+      ※ ローカルビルド成功でもコンテナ内では別途生成必須。
+    discovered_by: ashigaru1
+    date: "2026-02-27"
+    context: "cmd_117 バックエンド再ビルド・Docker再起動"
+
+# ============================================================
+# バックエンド知見
+# ============================================================
+be:
+  - id: K-BE-001
+    title: "Prisma 7: BigInt は JSON シリアライズできない"
+    detail: |
+      BigInt 型は JSON.stringify() でエラーになる。
+      API レスポンスで返す前に String 変換が必要。
+
+      ❌ NG:
+      return { amount: bigIntValue };  // TypeError
+
+      ✅ OK:
+      return { amount: bigIntValue.toString() };
+    discovered_by: ashigaru7
+    date: "2026-02-20"
+    context: "cmd_104 Phase 4-B"
+
+  - id: K-BE-002
+    title: "Prisma 7: extends PrismaClient が使えない"
+    detail: |
+      Prisma 7 では PrismaService が PrismaClient を extends できない。
+      コンポジションパターンを使え。
+
+      参考スキル: prisma7-nestjs-service-generator
+    discovered_by: ashigaru1
+    date: "2026-02-19"
+    context: "cmd_095 Prisma 7 対応"
+
+  - id: K-BE-003
+    title: "NestJS: BeResponse の二重ラップ問題"
+    detail: |
+      BE が { data: T } を返し、FE も BeResponse<T> でラップすると
+      data.data でアクセスが必要になる。
+
+      hooks で undefined 対策として nullish coalescing (??) を使え。
+    discovered_by: ashigaru2
+    date: "2026-02-20"
+    context: "cmd_111 hooks層リファクタリング"
+
+  - id: K-BE-006
+    title: "pdfkit: CommonJSモジュールとして require せよ"
+    detail: |
+      TypeScript + ESM 環境では pdfkit の import 文が動かない。
+      require を使い、eslint を無効化せよ。
+
+      ❌ NG:
+      import * as PDFDocument from 'pdfkit';
+      import PDFDocument from 'pdfkit';
+
+      ✅ OK:
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      const PDFDocument = require('pdfkit');
+
+      ※ ライブラリのモジュール形式を事前確認する習慣をつけよ。
+    discovered_by: ashigaru6
+    date: "2026-02-27"
+    context: "足軽雑談会"
+
+  - id: K-BE-007
+    title: "Docker環境: dist/フォルダのroot所有権問題"
+    detail: |
+      Docker内で npm run build 実行後、dist/がroot所有になる場合がある。
+      ホスト側から再ビルドしようとすると EACCES エラーが発生。
+
+      ✅ 回避策:
+      1. sudo chown -R $USER:$USER dist/
+      2. または npx tsc --noEmit で構文チェックのみ実施
+      3. または sudo rm -rf dist/ で削除してから再ビルド
+
+      ※ Docker compose up 後のローカルビルドで発生しやすい。
+    discovered_by: ashigaru6
+    date: "2026-02-27"
+    context: "足軽雑談会"
+
+  - id: K-BE-008
+    title: "Prisma AuditLog: details ではなく newValues、ID は手動生成"
+    detail: |
+      Prisma 7 の AuditLog モデルで注意すべき点:
+      1. details フィールドは存在しない。newValues が正解
+      2. id は自動生成されない（@default(cuid())がない）ため手動生成が必要
+
+      ❌ NG:
+      await prisma.auditLog.create({
+        data: { details: {...} }  // details は存在しない
+      });
+
+      ✅ OK:
+      import { createId } from '@paralleldrive/cuid2';
+      await prisma.auditLog.create({
+        data: {
+          id: createId(),
+          newValues: {...}
+        }
+      });
+
+      ※ スキーマをよく読むべし。
+    discovered_by: ashigaru5
+    date: "2026-02-27"
+    context: "足軽雑談会"
+
+  - id: K-BE-010
+    title: "Docker + Prisma: スキーマ変更後の再ビルド必須"
+    detail: |
+      Prisma スキーマを変更した場合、Docker コンテナの再ビルドが必要。
+      再ビルドしないとコンテナ内の Prisma Client が古いままで、
+      TypeScript コンパイルエラーで BE 起動失敗する。
+
+      【症状】
+      - BE コンテナ起動失敗
+      - 'XXX' does not exist in type 'YYYUpdateInput' エラー
+      - API が 500 エラー
+
+      【正しい手順】
+      1. schema.prisma を変更
+      2. npx prisma generate（ホストで実行）
+      3. docker compose build backend --no-cache
+      4. docker compose up -d backend
+
+      【NG パターン】
+      - スキーマ変更後に再ビルドせずに docker compose restart
+      - → コンテナ内の Prisma Client が古いまま
+      - → TypeScript コンパイルエラー
+
+      【代替案（軽量）】
+      docker compose exec backend npx prisma generate
+      docker compose restart backend
+    discovered_by: ashigaru1
+    date: "2026-03-02"
+    context: "cmd_158 ISSUE-1 BE起動失敗調査"
+
+  - id: K-GEN-004
+    title: "Playwright vs curl: SPAのクライアントサイドリダイレクト"
+    detail: |
+      curlで200 OKなのにPlaywrightでSSLエラーが出る場合、
+      SPAのJavaScriptがクライアントサイドでHTTPSリダイレクトしている可能性がある。
+      curlはJSを実行しないが、Playwrightは実行するため挙動が異なる。
+
+      ✅ 確認方法:
+      curl http://example.com/ | grep -i "https\|redirect\|location"
+
+      ✅ 確認すべきファイル:
+      - vite.config.ts の server 設定
+      - main.tsx や App.tsx で protocol チェック
+      - index.html に <meta> リダイレクト
+
+      ※ サーバー設定だけでなくFEのリダイレクトロジックも確認必須。
+    discovered_by: ashigaru6
+    date: "2026-02-27"
+    context: "cmd_138 Playwright MCP HTTPアクセステスト"
+
+  - id: K-BE-009
+    title: "E2Eテスト: 本番と開発の両環境を確認せよ"
+    detail: |
+      開発ビルドが成功しても、本番環境にデプロイされていないことがある。
+      E2Eテスト時は本番と開発の両方で確認すべき。
+
+      よくある症状:
+      - 開発: 全API正常動作
+      - 本番: 一部API 404
+
+      原因: 本番への再デプロイが漏れている
+
+      ✅ E2Eテスト前チェックリスト:
+      1. 開発環境でビルド成功を確認
+      2. 本番環境への最新デプロイを確認
+      3. 両環境で同一バージョンが動作していることを確認
+    discovered_by: ashigaru7
+    date: "2026-02-27"
+    context: "足軽雑談会"
+
+# ============================================================
+# 汎用知見
+# ============================================================
+general:
+  - id: K-GEN-001
+    title: "TypeScript: nullish coalescing は hooks で必須パターン"
+    detail: |
+      API レスポンスが undefined の可能性があるときは ?? を使え。
+
+      ❌ NG:
+      setCounts(response.data.counts);  // undefined でエラー
+
+      ✅ OK:
+      setCounts(response.data?.counts ?? defaultCounts);
+    discovered_by: ashigaru2
+    date: "2026-02-20"
+    context: "cmd_111 hooks層リファクタリング"
+
+  - id: K-GEN-002
+    title: "型定義配置: 同一ファイルに型を集約すると re-export 地獄になる"
+    detail: |
+      型定義は機能単位で分離し、必要な場所で import せよ。
+      1ファイルに全部入れると re-export の罠にハマる。
+    discovered_by: ashigaru1
+    date: "2026-02-20"
+    context: "足軽雑談会"
+
+  - id: K-GEN-003
+    title: "GCP IapUser: user.id は存在しない（email/sub のみ）"
+    detail: |
+      GCP IAP認証のユーザーオブジェクト（IapUser）には id プロパティがない。
+      user.email と user.sub のみが利用可能。
+
+      ❌ NG:
+      const userId = req.user.id;  // undefined
+
+      ✅ OK:
+      const userEmail = req.user.email;
+      const userSub = req.user.sub;  // IAP固有のサブジェクト識別子
+
+      ※ 型定義を確認せずに書くとハマる。IapUser 型を参照せよ。
+    discovered_by: ashigaru5
+    date: "2026-02-27"
+    context: "足軽雑談会"
+
+  - id: K-GEN-005
+    title: "E2Eテスト: 機能テスト vs 視覚テストを区別せよ"
+    detail: |
+      E2Eテストには2種類ある。タスク割当時に区別すべし。
+
+      【機能テスト】自動化可能
+      - 「ボタンを押したらAPIが呼ばれる」
+      - 「フォーム送信でデータが保存される」
+      → Playwright MCP 等で自動化可能
+
+      【視覚テスト】人間の目が必須
+      - 「レイアウトが崩れていないか」
+      - 「フォントサイズが適切か」
+      → AI足軽では判断不可。スクショ撮影→人間確認が必要。
+
+      ※ クロスブラウザ・レスポンシブ確認は視覚テスト寄り。
+      ※ 「確認不可」も立派な報告。嘘の「OK」より誠実。
+    discovered_by: ashigaru8
+    date: "2026-02-27"
+    context: "足軽雑談会 session_003"
+
+  - id: K-GEN-006
+    title: "FE/BE間には3つの層がある: 全層で整合性を確認せよ"
+    detail: |
+      FE/BE 間のデータ受け渡しには3つの層がある。
+      問題発生時は「どの層で起きているか」を特定せよ。
+
+      【3層モデル】
+      1. FE型定義: TypeScript interface/type
+      2. BE DTO: @IsIn() 等のバリデーション
+      3. Prisma スキーマ: enum 定義
+
+      【よくある症状と原因】
+      - 400 Bad Request → DTO バリデーションエラー（FE値がDTOに未定義）
+      - 500 Internal Server Error → Prisma エラー（DTO通過後、Prisma enum に未定義）
+
+      【教訓】
+      - 400 が直っても 500 が出る → DTO の先（Prisma）も確認せよ
+      - enum は**全層で整合性を確認**すべし
+      - 根本解決（Prisma マイグレーション）vs 影響最小化（Service変換）のトレードオフ判断
+    discovered_by: ashigaru4
+    date: "2026-02-27"
+    context: "足軽雑談会 session_004"
+
+  - id: K-GEN-007
+    title: "新規 enum 追加時のチェックリスト（全層確認）"
+    detail: |
+      enum 値を追加する際は、以下の全層で整合性を確認せよ。
+
+      ✅ 新規 enum 追加時チェックリスト:
+      1. [ ] FE 型定義に追加（TypeScript type/interface）
+      2. [ ] BE DTO の @IsIn() に追加
+      3. [ ] Prisma enum に追加（マイグレーション必要）
+      4. [ ] Service 層の変換ロジック確認（必要なら追加）
+      5. [ ] テストケース追加（新しい enum 値を使用）
+
+      【注意】
+      - FE だけ追加して BE を忘れると 400 エラー
+      - DTO だけ追加して Prisma を忘れると 500 エラー
+      - 全層で整合性が取れて初めて動作する
+    discovered_by: ashigaru8
+    date: "2026-02-27"
+    context: "足軽雑談会 session_004"
+
+  - id: K-GEN-008
+    title: "ガード節は「何を防ぐか」を明確に"
+    detail: |
+      ガード節は便利だが、粒度を間違えると機能を壊す。
+
+      ❌ NG: if (!stamp || !stamp.type) return null;
+      → stamp.type が null でも stamp 自体は有効な場合がある
+
+      ✅ OK: if (!stamp) return null;
+      → stamp がない場合のみ null、stamp.type は ?? でフォールバック
+
+      判断基準:
+      - そのデータがないと「本当に」何も表示できないか？
+      - 部分的なデータでも意味のある表示ができないか？
+
+      【実例: cmd_142 判子種類表示不具合】
+      cmd_139 のガード節が過度に厳格で、stamp.type が null の場合に
+      判子自体が非表示になっていた。
+      修正: stamp.type が null でもグレー色で「済」と表示するようにした。
+    discovered_by: ashigaru1
+    date: "2026-02-27"
+    context: "cmd_142 判子種類表示不具合修正"
+
+  - id: K-GEN-009
+    title: "OCR統合時のデータモデル設計パターン"
+    detail: |
+      OCR連携時は生JSONと構造化データの両方を保持する設計が有効。
+
+      【3層データ保持】
+      1. raw_json (JSONB): OCR API生レスポンス（デバッグ・再処理用）
+      2. extracted_data (JSONB): 構造化抽出データ（業務利用用）
+      3. 個別カラム: 検索・インデックス用（invoice_date, amount等）
+
+      【確認ワークフロー】
+      OCR自動判定 → 経理確認 → 押印 → 完了
+      の4段階ステータス（unconfirmed/confirmed/stamped/completed）で管理する。
+
+      【メリット】
+      - raw_json: OCR再実行なしに再抽出可能
+      - extracted_data: フロントエンドで柔軟に表示
+      - 個別カラム: SQLでの検索・集計が高速
+    discovered_by: ashigaru5
+    date: "2026-03-02"
+    context: "cmd_144 データモデル設計"
+
+  - id: K-GEN-010
+    title: "FE/BE API乖離: エンドポイントとレスポンス形式の確認"
+    detail: |
+      FE/BE間でAPI乖離が発生しやすいポイント3点：
+
+      【確認ポイント】
+      1. FE期待形式: FEが期待するレスポンス構造（型定義）
+      2. BE実際のレスポンス: BEが実際に返すJSON構造
+      3. パスパラメータ期待値: :id 等の期待される値の形式
+
+      【よくある乖離パターン】
+      - フィールド名の違い（camelCase vs snake_case）
+      - ネスト構造の違い（flat vs nested）
+      - 型名の違い（stampType vs stampTypeId）
+      - 配列 vs 単体オブジェクト
+      - nullable の扱い（null vs undefined vs 空文字）
+
+      【対策】
+      1. API実装前に FE/BE で型定義を共有
+      2. 乖離発見時は fe-be-response-mapper スキル活用
+      3. OpenAPI 等で API 仕様を一元管理
+    discovered_by: ashigaru1
+    date: "2026-03-02"
+    context: "cmd_143 ファイルケースクリック動作修正"
+
+  - id: K-GEN-011
+    title: "設計書クロスレビューの効率的な順序"
+    detail: |
+      4件以上の設計書レビュー時は、以下の順序でチェックすると効率的：
+
+      【チェック順序】
+      1. エンティティ定義（ID形式・FK名）→ 全ドキュメント横断
+      2. ステータスenum → DB→API→UIの順
+      3. 外部システムURL → integration → api → ui の順
+      4. 命名規則 → snake_case/camelCaseの境界点を特定
+
+      【教訓】
+      同一cmd内でも作成者が異なると矛盾が発生しやすい。
+      特にURL形式・ID形式は最初に統一方針を決めるべき。
+    discovered_by: ashigaru5
+    date: "2026-03-02"
+    context: "cmd_148 設計書整合性レビュー"
+
+  - id: K-GEN-012
+    title: "会計年度判定ロジック（10月始まり）"
+    detail: |
+      日本の会計年度（10月始まり）の判定パターン:
+      - 10〜12月 → 翌年度（year + 1）
+      - 1〜9月 → 当年度（year）
+
+      【コード例】
+      ```typescript
+      const month = date.getMonth() + 1;
+      const fiscalYear = month >= 10 ? date.getFullYear() + 1 : date.getFullYear();
+      ```
+
+      【注意】
+      4月始まりの一般的な日本の会計年度とは異なる。
+      クライアント固有ルールは設計書に明記すること。
+    discovered_by: ashigaru5
+    date: "2026-03-02"
+    context: "cmd_149 Gドライブ格納設計反映"
+
+# ============================================================
+# MCP知見
+# ============================================================
+mcp:
+  - id: K-MCP-001
+    title: "Playwright MCP: snapshot vs screenshot を使い分けよ"
+    detail: |
+      Playwright MCP で最重要なのは browser_snapshot。
+
+      ❌ screenshot: 画像として「見る」だけ
+      ✅ snapshot: アクセシビリティスナップショット、要素の ref を取得
+
+      ref がないと click/type 等の操作ができない。
+
+      推奨ワークフロー:
+      1. browser_navigate → ページ遷移
+      2. browser_snapshot → 要素 ref 取得（★ここが肝）
+      3. browser_click/type → ref を使って操作
+      4. browser_wait_for → 非同期処理待ち
+      5. browser_take_screenshot → エビデンス撮影
+    discovered_by: ashigaru5
+    date: "2026-02-27"
+    context: "足軽雑談会 session_003"
+
+  - id: K-MCP-002
+    title: "Playwright MCP: ツール名は browser_ プレフィックス"
+    detail: |
+      Playwright MCP のツール名は正式には mcp__playwright__browser_XXX。
+
+      ❌ NG: mcp__playwright__navigate
+      ✅ OK: mcp__playwright__browser_navigate
+
+      ツール検索時に注意。全22ツールが browser_ プレフィックス付き。
+      HEADLESS モードでも snapshot は正常動作する。
+    discovered_by: ashigaru7
+    date: "2026-02-27"
+    context: "足軽雑談会 session_003"
+
+# ============================================================
+# 追加方法
+# ============================================================
+# 新しい知見を追加する場合:
+#
+# - id: K-{FE|BE|GEN}-XXX
+#   title: "簡潔なタイトル"
+#   detail: |
+#     詳細説明。
+#     NG例とOK例を含めると分かりやすい。
+#   discovered_by: ashigaruN
+#   date: "YYYY-MM-DD"
+#   context: "発見した状況（cmd_XXX等）"

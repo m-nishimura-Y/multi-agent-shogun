@@ -1,77 +1,442 @@
 # 📊 戦況報告
-最終更新: 2026-02-20 19:13
+最終更新: 2026-03-02 17:41
 
 ## 🚨 要対応 - 殿のご判断をお待ちしております
 
-なし
-
----
+**現在なし** ✅
 
 ## 🔄 進行中 - 只今、戦闘中でござる
 
-### cmd_104【全軍動員】Phase 4-B/4-C 並列実装中
+### cmd_161: 押印済み伝票をファイルケースに表示【調査中】🔵
+- **背景**: 押印した伝票がファイルケース画面に表示されない
+- **設計**: 押印時に支払種類に応じたファイルケースが自動設定される
+- **本隊分担**:
+  - 足軽1: BE調査（stamp()のfile_case_id設定確認）
+  - 足軽2: FE調査（ファイルケース画面のフィルタ確認）
 
-**計画書**: /home/nishimura/S-automation/docs/design/14_Phase4以降_実装計画書.md
+### cmd_160: AuditLog ID 拡大 + nginx 500 修正【全完了】✅
+- **AuditLog**: schema.prisma の id を `VarChar(40)` に拡大（足軽1）
+- **nginx 500**: ポート不一致修正（3000→3002）殿対応
+- **結果**: nginx経由API ✅ 正常動作確認
 
-| Phase | 内容 | 見積時間 | 状態 |
-|-------|------|----------|------|
-| Phase 4-0/4-A | 左ペイン＋外部リンク | - | ✅ 完了（cmd_106） |
-| Phase 4-B | キャビネット機能強化（別働隊） | 約1h | ✅ 完了 |
-| Phase 4-C | コード整理・UIポリッシュ（本隊） | 約0.5h | ✅ 完了 |
-| Phase 5 | 仕訳起票（F-050〜F-053） | 約2h | ⏸️ 保留 |
-| Phase 6 | 振込データ作成（F-060〜F-064） | 約2h | ⏸️ 保留 |
+### cmd_159: 伝票ステータス表示の日本語化・整理【完了】✅
+- **対応内容**:
+  - ステータス日本語化（pending→登録済み、stamped→Wチェック待ち 等）
+  - isConfirmed ラベル削除（要確認/確認済 Chip 廃止）
+  - シードデータ整合性確認 OK
+- **FE ビルド**: ✅ 成功
+- **本隊**: 足軽1（実装）、足軽2（確認）
 
-#### Phase 4-B: キャビネット機能強化（別働隊: 足軽5-8、軍師経由）【全完了】
-| 足軽 | タスク | 成果 |
-|------|--------|------|
-| 5 | P4B-1: 自動ファイリングサービス | ✅ AutoFilingService 240行 |
-| 6 | P4B-2: 検索条件拡張 | ✅ CabinetSearch 513行 |
-| 7 | P4B-3: エクスポート機能 | ✅ CabinetExportService 390行 |
-| 8 | P4B-4 + スキル作成 | ✅ 統合85行 + fe-be-response-mapper 350行 |
+### session_006: 別働隊雑談会 + スキル3件 + スクリプト1件【完了】✅ 📚
+- **テーマ**: MCPで感動した瞬間 & あってよかったSkills
+- **参加者**: 軍師 + 別働隊4名（足軽5-8）
+- **知見**: 5件（Obsidian登録済み）
+- **スキル作成**: 3件（合計1,463行）
+  | スキル名 | 点数 | 行数 | 提案→作成 |
+  |---------|------|------|-----------|
+  | prisma-migration-conflict-checker | 16 | 470 | 足軽5 |
+  | design-doc-version-diff | 17 | 462 | 足軽6 |
+  | design-doc-cross-reference-checker | 16 | 531 | 足軽8 |
+- **スクリプト**: generate-skill-catalog.sh（194行・足軽7）
+- **条件付き承認**: pre-commit-hook-generator（13点・統合条件）
+- **総行数**: 1,657行
 
-**合計**: 約1,578行（スキル含む）
+### cmd_158: S-automation 動作確認・問題調査【全完了】✅
+- **ISSUE-1**: Docker再ビルド → ✅ 殿対応済み
+- **ISSUE-2**: 伝票詳細404 → ✅ 修正完了（fetch→apiClient統一）
+- **ISSUE-3**: 押印完了画面 → ✅ **案A採用（現状維持）**
+- **知見追加**: K-BE-010（Docker+Prisma）、K-FE-012（apiClient統一）
 
-#### Phase 4-C: コード整理・UIポリッシュ（本隊: 足軽1-4）【全完了】
-| 足軽 | タスク | 状態 |
-|------|--------|------|
-| 1 | P4C-1: stamp/stamps重複解消 + P4C-fix: re-export修正 | ✅ 完了 |
-| 2 | P4C-2: 型定義重複整理 | ✅ 完了（re-export問題は足軽1が修正） |
-| 3 | P4C-3: ホバーエフェクト追加 | ✅ 完了 |
-| 4 | P4C-4: ビルド確認・動作テスト | ✅ 完了（FE/BEビルド成功） |
+### cmd_157: mcp-health-checker スキル作成【完了】✅
+- **評価結果**: 17/20点 → **自動承認**
+- **提案者**: 足軽1号（session_005 本隊雑談会）
+- **作成者**: 足軽5
+- **行数**: 303行
+- **呼び出し**: `/mcp-health-checker`
 
-**ビルド**: FE ✅（15.90s）/ BE ✅
+### cmd_155: 統合テスト前チェックリスト自動化【完了】✅
+- **成果**: `bin/pre-integration-test-check.sh`（370行）+ ドキュメント
+- **チェック項目**: FE/BEビルド、DB接続、マイグレーション、シード、環境変数、API疎通（8カテゴリ）
+- **担当**: 足軽7（殿指名）
+- **使い方**: `~/multi-agent-shogun/bin/pre-integration-test-check.sh /path/to/project`
 
-#### スキル候補評価結果
-| スキル名 | 提案者 | 点数 | 状態 |
-|----------|--------|------|------|
-| fe-be-response-mapper | 足軽1（cmd_111） | 16点 | ✅ 自動承認（足軽8作成中） |
-| typescript-reexport-fixer | 足軽1（P4C-fix） | 12点 | ⏸️ 条件付き承認（typescript-import-patterns として拡充推奨） |
+### cmd_154: 押印ステータス遷移バグ修正【完了】✅
+- **原因**: BEスキーマに isConfirmed 等未追加、stamp()で設定なし
+- **修正**: schema.prisma にフィールド追加 + stamp()で設定
+- **ビルド**: FE/BE 両方成功
+- **知見**: FE型定義とBEスキーマは同時修正すべき
+
+### cmd_153: Playwright MCP 再設定【完了】✅
+- **結果**: 既に正常動作中（再設定不要）
+- **確認**: `claude mcp list` → playwright: ✓ Connected
+- **知見**: settings.json廃止、`claude mcp add`コマンドで管理
+
+### cmd_152: 認証エラー修正【BE再起動待ち】
+- **修正内容**: @Public()デコレータ導入（file-cases, slips両コントローラ）
+- **担当**: 足軽1 ✅ 完了
+- **BEビルド**: ✅ 成功
+- **要アクション**: **BE再起動が必要**（docker-compose restart backend）
+
+### cmd_149: 設計書HIGH問題修正 + Gドライブ格納設計反映
+cmd_148 レビューで発見された HIGH 10件（重複除外で実質7件）を修正 + 殿確定のGドライブ設計反映。
+
+**本隊（HIGH修正）**
+| 担当 | 修正内容 | 状態 |
+|------|----------|------|
+| 足軽1 | CTR-001,002,005: IDフォーマット・FK・フィールド名統一 | ✅ 完了 |
+| 足軽2 | SEC-001,002: 監査ログ・認証情報管理 | ✅ 完了 |
+| 足軽3 | CTR-003/INT-002: HrmosLink設計統一 | ✅ 完了 |
+| 足軽4 | CTR-004/INT-001/UIUX-H001: HRMOS URL統一 | ✅ 完了 |
+
+**別働隊（Gドライブ設計反映）** ✅ 完了
+- 足軽5: +361行（Gドライブ連携5セクション）
+- 足軽6: 6フィールド+2インデックス追加
+- 知見K-GEN-012追加
+
+### cmd_150: Playwright MCP HTTPアクセス確認【完了】
+- **結果**: HTTPアクセスOK、リダイレクトなし ✅
+- **課題**: Playwright MCP サーバー未設定 → 要対応で選択待ち
+
+### cmd_151: NestJS静的ルート規約整備【完了】✅
+- **内容**: 静的ルート先定義規約（session_002 提案）
+- **成果**:
+  - 規約ドキュメント作成（足軽6）
+  - 違反1件修正
+  - スキル nestjs-route-order-checker 414行作成（足軽5・15点自動承認）
+- **呼び出し**: `/nestjs-route-order-checker`
+
+### スキル作成・拡張（別働隊）完了分
+| スキル名 | 評価 | 担当 | 状態 |
+|----------|------|------|------|
+| enum-consistency-checker | 16点 | 足軽5 | ✅ 304行完了 |
+| react-undefined-guard-pattern | 15点 | 足軽6 | ✅ 284行完了 |
+| fe-be-response-mapper v2.0.0 | - | 足軽5 | ✅ 890行完了（+292行拡張） |
+
+### cmd_138: Playwright MCP【対策選択待ち】→ 🚨 要対応に移動済み
+
+### cmd_140: 判子デザイン改善提案 → 🚨 要対応に移動済み
 
 ---
 
-### cmd_106【全軍動員】Phase 4 左ペイン＋外部リンク実装【全完了】
+## ✅ 本日の戦果
 
-**計画書**: /home/nishimura/S-automation/docs/design/14_Phase4以降_実装計画書.md
+### cmd_147: 押印済伝票の「未確認/確認済」表示追加【完了】✅
+- **修正内容**: 押印済み伝票に Chip で確認ステータス表示
+  - 未確認: 黄色「要確認」
+  - 確認済: 緑「確認済」
+- **型定義追加**: isConfirmed, confirmedAt, confirmedBy
+- **FEビルド**: ✅ 成功
+- **担当**: 足軽2
+
+### cmd_148: 設計書レビュー【完了】✅ → 🚨 要対応に移動
+- **対象**: cmd_144設計書4件（2,442行）
+- **発見**: 28件（HIGH:10/MEDIUM:11/LOW:7）
+- **特記**: HRMOS URL不整合が3レポートで重複検出
+- **知見**: K-GEN-011追加
+
+### cmd_146: ファイルケース遷移先表示問題【完了】✅
+- **原因**: React Router パスパラメータ名の不一致（:id vs caseType）
+- **修正**: App.tsx のルート定義を `/file-cases/:caseType` に変更
+- **FEビルド**: ✅ 成功
+- **知見**: useParams のパラメータ名はルート定義と一致させる
+
+### cmd_143: ファイルケース遷移先ローディング修正【完了】✅
+- **原因**: FE/BE間のAPIレスポンス形式乖離（data.cases vs data.phases）
+- **修正**: FileCaseDetailPage.tsx で phases → cases 変換を追加
+- **FEビルド**: ✅ 成功
+- **知見**: ローディング終わらない問題の多くはFE/BE乖離が原因
+
+### cmd_144: HRMOS経費連携・Gドライブ連携・OCR統合 設計【完了】✅
+- **別働隊4名並列作成**: 合計2,442行
+  | 担当 | 内容 | 行数 |
+  |------|------|------|
+  | 足軽5 | データモデル設計 | 417行 |
+  | 足軽6 | API設計 | 498行 |
+  | 足軽7 | UI設計 | 665行 |
+  | 足軽8 | 連携モジュール設計 | 862行 |
+- **出力先**: S-automation/docs/design/
+
+### cmd_145: document-ai活用ガイド作成【完了】✅
+- **作成**: docs/tools/document-ai-guide.md
+- **CLAUDE.md追記**: 外部API（社内サービス）セクション追加
+- **内容**: 請求書OCR API（金額・支払方法・取引先名自動抽出）
+- **全軍周知**: 軍師に指示済み
+
+### cmd_143: ファイルケースクリック遷移実装【完了】✅
+- **修正1**: クリックで詳細ページ（/file-cases/:type）へ遷移
+- **修正2**: 文字幅バグ修正（border-width 変更 → border-color のみに）
+- **FEビルド**: ✅ 成功
+- **知見**: CSS border-width 変更はレイアウト崩れの原因になる（border-color/box-shadow推奨）
+
+### cmd_140: 未払金判子色調整【完了】✅
+- **変更**: #81C784（緑）→ #009297（青緑）
+- **FEビルド**: ✅ 成功
+
+### cmd_143: 判子種類表示修正【完了】✅
+- **原因**: FE/BE レスポンス形式乖離（paymentType vs stamp.type）
+- **修正**: api.ts で変換追加 + useSlips で両フィールド対応
+- **FEビルド**: ✅ 成功
+- **スキル候補**: fe-be-response-normalizer（14点・既存スキルと重複のため見送り）
+
+### cmd_142: キャビネット空状態表示改善【完了】✅
+- **実装**: CabinetPage.tsx に空状態UI追加
+- **内容**: FolderOffIcon + メッセージ + 作成方法3ステップガイド
+- **FEビルド**: ✅ 成功
+
+### cmd_140: 判子デザイン横長化実装【完了】✅
+- **殿決定**: 案A採用（横長デザイン・設計画像準拠）
+- **変更点**:
+  - 丸形 → 横長角丸長方形（borderRadius: 6-10px）
+  - 縦書き → 横書き
+  - 固定サイズ → 可変幅（paddingベース）
+  - 色味: ピンク系朱色/クリアブルー/青緑
+- **FEビルド**: ✅ 成功
+
+### cmd_142: 判子種類表示不具合修正【完了】✅
+- **原因**: cmd_139 のガード節が過度に厳格（stamp.type が null だと非表示）
+- **修正**: ガード節を緩和、stamp.type null でもグレー色 + 「済」ラベルで表示
+- **FEビルド**: ✅ 成功
+- **知見**: ガード節は「何を防ぐか」を明確に（部分データでも表示できないか検討）
+
+### cmd_141: 【組織改善】バグ管理フロー明確化【全完了】✅
+**v1.7.5**: バグ管理フローを明確化し、軍師経由を徹底
+
+| タスク | 担当 | 結果 |
+|--------|------|------|
+| gunshi.md バグ管理セクション追加 | 足軽1 | ✅ |
+| karo.md 緊急判断基準追加 | 足軽2 | ✅ |
+| bugs.yaml テンプレート整備 | 軍師 | ✅ |
+| cmd_139 事後登録（BUG-038,039） | 軍師 | ✅ |
+| react-undefined-guard-pattern 評価 | 軍師 | ✅ 15点自動承認 |
+| 全軍周知 | 家老 | ✅ |
+
+**新ルール**:
+- 🔴 緊急バグ: 足軽即時対応 → 軍師事後登録
+- 🟡 通常バグ: 軍師経由（bugs.yaml登録 → 分析 → 足軽）
+- 🟢 軽微: 軍師に一任
+
+### cmd_139【緊急】StampOverlay.tsx 白画面バグ修正【全完了】✅
+- **修正1**: nullish coalescing (??) でフォールバック値追加（35-36行目）
+- **修正2**: ガード節追加（stamp/stamp.type が falsy なら null 返却）
+- **根本原因**: BE の seed.ts に stampTypeId: null のレコードが存在
+- **FEビルド**: ✅ 成功
+- **知見**: Record<K,V>[key] のundefined対策3点セット（フォールバック・ガード節・オプショナル）
+- **スキル候補**: react-undefined-guard-pattern（軍師に評価依頼）
+
+### session_004: 足軽雑談会【全軍参加】✅ 📚
+- **参加者**: 全軍8名（本隊1-4 + 別働隊5-8）
+- **知見追加**: 4件
+  - K-FE-007: Vite初期テンプレートCSS制限
+  - K-FE-008: 印鑑風デザイン実装パターン
+  - **K-GEN-006: ★ 3層モデル（FE→DTO→Prisma）← 最重要発見**
+  - K-GEN-007: enum追加チェックリスト
+- **成果**: 本隊（UI/UX層）と別働隊（インフラ層）の視点が交わった
+- **スキル候補**: enum-consistency-checker（要評価）
+- **推奨**: 全軍合同セッション定期開催
+
+### session_003: 足軽雑談会【完了】✅ 📚
+- **テーマ**: Playwright MCP / nginx設定 / UI改善で学んだこと
+- **参加者**: 別働隊4名（足軽5-8）
+- **知見追加**: 3件（MCP新カテゴリ設立）
+  - K-MCP-001: snapshot vs screenshot の使い分け
+  - K-MCP-002: ツール名は browser_ プレフィックス
+  - K-GEN-005: 機能テスト vs 視覚テストを区別
+
+### cmd_137: Playwright MCP HTTPアクセステスト（再テスト）【NG→対策済み】
+- **結果**: NG - nginx reload後も依然としてSSLエラー発生
+- **テスト**: http://192.168.3.44/s-automation/ → ERR_CERT_AUTHORITY_INVALID
+- **追加テスト**: http://192.168.3.44/ → 同じくERR_CERT_AUTHORITY_INVALID
+- **原因推測**: nginx全体がHTTPSリダイレクトしている可能性
+- **推奨対応**: `nginx -T` で全設定出力し、HTTPSリダイレクト箇所を特定
+
+### cmd_135: formatCurrency/formatDate utils集約【完了】✅
+- **修正**: 18ファイル修正・23重複解消
+- **成果**: utils/format.ts に集約
+- **FEビルド**: ✅ 成功
+- **知見**: K-FE-006 として knowledge.yaml に追記済み
+
+### 【緊急】cmd_133: Internal server error 修正【完了】✅
+- **原因**: FE/BE status値不一致（FE: `draft` / BE: `pending`）
+- **修正**: slips.service.ts でリクエスト/レスポンス時に変換追加
+- **BEビルド**: ✅ 成功
+
+### 【緊急バグ】cmd_132: api/slips 400エラー修正 + デフォルト未処理表示【完了】✅
+- **原因**: BE の `@IsIn` バリデーションに `draft` が欠落
+- **修正**: BE に `draft` 追加 + FE デフォルトフィルタ `{ status: 'draft' }` 設定
+- **FE/BEビルド**: ✅ 成功
+
+### cmd_131: 未押印伝票シードデータ追加【完了】✅
+- 未押印伝票8件追加（SLP-2026-00013〜00020）
+- DB投入成功（合計11件の未押印伝票）
+- 様々な金額・支払先・用途で作成
+
+### cmd_130: 画面横幅CSS制限修正【全完了】✅
+Viteテンプレートの横幅制限を3箇所修正:
+| 修正 | 内容 |
+|------|------|
+| cmd_129_width | Container maxWidth={false} |
+| cmd_130 (1) | App.css `#root { max-width: 1280px }` 撤廃 |
+| cmd_130 (2) | index.css `body { place-items: center }` 撤廃 |
+
+**FEビルド**: ✅ 成功
+
+### cmd_127: Playwright MCP 追加テスト【全3Phase完了】✅
+| Phase | タスク | 結果 |
+|-------|--------|------|
+| 1 | URLアクセステスト | ✅ 成功 |
+| 2 | ツール一覧確認 | ✅ 22種類確認 |
+| 3 | S-automation E2Eシナリオ | ⚠️ SSL証明書問題あり |
+
+**成果**: Playwright MCP正常動作確認、session_002 ISSUE-001解決
+**制限**: 自己署名SSL証明書環境では要対策
+
+### cmd_129: 伝票押印画面の抜本的UI改善（殿フィードバック第2弾）【全完了】✅
+| ID | タスク | 結果 |
+|----|--------|------|
+| UX-001 | ステータス表示控えめ化 | ✅ グレー小文字に変更 |
+| UX-002 | 判子を印鑑風デザインに | ✅ 丸形・縦書き・かすれ効果 |
+| UX-003 | 未押印への自動移動 | ✅ Nキー + 押印後自動移動 |
+| UX-004 | プレビュー判子パネル | ✅ 押印/取消可能 |
+| 追加 | 横幅拡大 | ✅ maxWidth撤廃 |
+
+**FEビルド**: ✅ 成功
+
+### cmd_128: 伝票一覧 UI/UX改善（殿フィードバック）【全完了】✅
+| 足軽 | ID | タスク | 結果 |
+|------|-----|--------|------|
+| 1 | UI-001 | 判子ボタン表示改善（「F」→「振込」+バッジ） | ✅ |
+| 2 | UI-002 | 伝票選択→詳細表示（SlipDetailPanel新規280行） | ✅ |
+| 3 | UI-003 | PDFプレビューエリア明示化（PdfPreviewPanel新規96行） | ✅ |
+| 4 | UI-004 | Delete取り消し修正（status条件'draft'→'stamped'） | ✅ |
+
+**FEビルド**: ✅ 成功
+
+### cmd_127: Playwright MCP 追加テスト【Phase 1 完了】✅
+- **Phase 1 (HIGH)**: ✅ 完了！mcp__playwright__browser_navigate テスト成功
+- session_002 ISSUE-001「Playwright MCPが使えない」問題 → **解決**
+- Phase 2-3 (MEDIUM): 殿判断待ち（緊急性低下）
+
+---
+
+### cmd_116【全軍動員】S-automation Phase 1-6 全体レビュー + E2Eテスト【全完了】✅
+
+**殿の指示**: Phase 1-6 全完了を受けて品質確認を実施
+
+#### 本隊（足軽1-4）: コードレビュー【全完了】
+| 足軽 | タスク | HIGH | MEDIUM | LOW | 評価 |
+|------|--------|------|--------|-----|------|
+| 1 | REV-1: FE pages/components/ (46ファイル) | 2 | 4 | 2 | B+ |
+| 2 | REV-2: FE hooks/api/ (14ファイル) | 3 | 1 | 0 | - |
+| 3 | REV-3: BE modules/ (79ファイル) | 2 | 4 | 3 | - |
+| 4 | REV-4: 設計書 vs 実装 乖離チェック | 0 | 3 | 10 | 良好 |
+| **合計** | | **7** | **12** | **15** | |
+
+**主なHIGH問題**:
+- apiClient未使用（useSlips.ts, useFileCases.ts, services/api.ts）
+- any型使用（transfer.service.ts, journal.service.ts）
+- N+1問題（grouping.service.ts）
+- ユーティリティ重複（formatCurrency等）
+- React.memo未使用（TransferGroupPage SummaryCard）
+
+#### 別働隊（足軽5-8）: E2Eテスト【全完了】
+| 足軽 | タスク | 結果 | 備考 |
+|------|--------|------|------|
+| 5 | E2E-1: シナリオ1-2 | PARTIAL | API疎通OK、データなし |
+| 6 | E2E-2: シナリオ3-4 | NG | **fb-export 404** |
+| 7 | E2E-3: シナリオ5-6 | NG | **users/master 404** |
+| 8 | E2E-4: クロスブラウザ | OK | コード確認のみ（Playwright MCP不可） |
+
+**スキル作成完了**: react-code-review-checklist (18点自動承認、足軽5作成・374行) ✅
+
+---
+
+### cmd_115【全軍動員】Phase 6 振込データ作成機能【全完了】✅
+
+**計画書**: /home/nishimura/S-automation/docs/design/14_Phase4以降_実装計画書.md（セクション4）
+
+| Phase | 内容 | 見積時間 | 状態 |
+|-------|------|----------|------|
+| Phase 4 | PoC完成（左ペイン・外部リンク・キャビネット・整理） | 約4h | ✅ 完了 |
+| Phase 5 | 仕訳起票（F-050〜F-053） | 約2h | ✅ 完了 |
+| **Phase 6** | **振込データ作成（F-060〜F-064）** | **約2h** | **✅ 全完了** |
+
+#### 本隊（足軽1-4）: FE画面+振込モジュールBE【全完了】
+| 足軽 | タスク | 成果物 | 状態 |
+|------|--------|--------|------|
+| 1 | P6-1: 振込データ一覧画面 | transfer.ts + useTransfer.ts + TransferListPage.tsx（720行） | ✅ 完了 |
+| 2 | P6-2: 支払先グルーピング画面 | TransferGroupPage.tsx（420行） | ✅ 完了 |
+| 3 | P6-3: 振込データWチェック画面 | TransferWCheckPage.tsx（450行） | ✅ 完了 |
+| 4 | P6-4: 振込モジュール（BE） | modules/transfer/ 5ファイル（687行） | ✅ 完了 |
+
+**本隊合計**: 約2,277行（FE 1,590行 + BE 687行）
+
+#### 別働隊（足軽5-8）: グルーピング・精査表・FBデータ・テスト【全完了】
+| 足軽 | タスク | 成果物 | 状態 |
+|------|--------|--------|------|
+| 5 | P6-5: 支払先グルーピングサービス | GroupingService（469行） | ✅ 完了 |
+| 6 | P6-6: 精査表PDF生成 | VerificationReportService（341行） | ✅ 完了 |
+| 7 | P6-7: 統合テスト | FE/BEビルド成功・API 8件疎通OK | ✅ 完了 |
+| 8 | P6-8: FBデータ生成+ルーティング | 390行 + ルーティング3件 | ✅ 完了 |
+
+**別働隊合計**: 約1,200行 + スキル2件（1,169行）
+
+**生成スキル**:
+- nestjs-pdf-export-service (648行, 16点) - pdfkitでPDF帳票生成
+- zengin-fb-format-generator (521行, 17点) - 全銀協規定フォーマット生成
+
+**Phase 6 合計**: 約4,646行（実装3,477行 + スキル1,169行）
+**ビルド**: ✅ FE/BE 成功
+**API疎通**: ✅ transfer系8エンドポイント確認OK
+**知見登録**: K-FE-004, K-BE-004 追加済み
+
+**APIエンドポイント（実装予定）**:
+- GET /api/transfers - 振込データ一覧
+- POST /api/transfers/group - 支払先グルーピング実行
+- GET /api/transfers/:id - 振込データ詳細
+- POST /api/transfers/:id/wcheck - Wチェック完了
+- GET /api/transfers/:id/export/fb - FBデータエクスポート
+- GET /api/transfers/:id/export/pdf - 精査表PDF出力
+
+---
+
+### cmd_114【全軍動員】Phase 5 仕訳起票機能【全完了】✅
+
+**計画書**: /home/nishimura/S-automation/docs/design/14_Phase4以降_実装計画書.md（セクション3）
+
+| Phase | 内容 | 見積時間 | 状態 |
+|-------|------|----------|------|
+| Phase 4 | PoC完成（左ペイン・外部リンク・キャビネット・整理） | 約4h | ✅ 完了 |
+| **Phase 5** | **仕訳起票（F-050〜F-053）** | **約2h** | **✅ 完了** |
+| Phase 6 | 振込データ作成（F-060〜F-064） | 約2h | ⏸️ 次Phase |
+
+#### 本隊（足軽1-4）: FE画面+BEモジュール【全完了】
+| 足軽 | タスク | 成果物 | 状態 |
+|------|--------|--------|------|
+| 1 | P5-1: 仕訳一覧画面 | journal.ts + JournalListPage.tsx | ✅ 完了（470行） |
+| 2 | P5-2: 仕訳詳細画面 | JournalDetailPage.tsx | ✅ 完了（350行） |
+| 3 | P5-3: 仕訳Wチェック画面 | JournalWCheckPage.tsx | ✅ 完了（417行） |
+| 4 | P5-4: 仕訳モジュール（BE） | modules/journal/ 5ファイル | ✅ 完了（514行） |
+
+**本隊合計**: 約1,751行（FE 1,237行 + BE 514行）
+
+#### 別働隊（足軽5-8）: API・スキーマ・テスト【全完了】
+| 足軽 | タスク | 成果物 | 状態 |
+|------|--------|--------|------|
+| 5 | P5-5: 会計データ出力API | JournalExportService（355行） | ✅ 完了 |
+| 6 | P5-6: 仕訳ステータス管理 | schema.prisma更新 | ✅ 完了（※migration未実行=DB未起動） |
+| 7 | P5-7: 画面遷移・統合テスト | FE/BEビルド+API疎通5件 | ✅ 完了 |
+| 8 | P5-8: ルーティング・サイドナビ | App.tsx + SideNavigation.tsx | ✅ 完了 |
+
+**Phase 5 合計**: 約2,100行（本隊1,751行 + 別働隊355行）
 **ビルド**: FE ✅ / BE ✅
+**API疎通**: journal系5エンドポイント確認OK
 
-#### Phase 4-0: 左ペイン（本隊: 足軽1-4）
-| 足軽 | タスク | 成果 |
-|------|--------|------|
-| 1 | SideNavigation.tsx | ✅ 263行（7メニュー項目・Collapse対応） |
-| 2 | AppLayout.tsx | ✅ 181行（Header+SideNav+Main 3カラム） |
-| 3 | App.tsx ルーティング整備 | ✅ 完了（10+ルート追加） |
-| 4 | useNavigation.ts + Breadcrumb.tsx | ✅ 402行（パンくず・メニュー状態管理） |
-
-#### Phase 4-A: 外部リンク連携（別働隊: 足軽5-8、軍師経由）
-| 足軽 | タスク | 成果 |
-|------|--------|------|
-| 5 | 外部リンク設定API（BE） | ✅ 405行 |
-| 6 | 外部リンク管理画面（FE） | ✅ 390行 |
-| 7 | 外部リンクボタン表示 | ✅ 255行 |
-| 8 | Prisma schema更新 + ビルド確認 | ✅ FE/BEビルド成功 |
-
-**合計**: 約1,900行（本隊850行 + 別働隊1,050行）
-**スキル候補**: なし
+**APIエンドポイント（実装済み）**:
+- GET /api/journal - 仕訳待ち一覧
+- GET /api/journal/:id - 仕訳詳細
+- POST /api/journal/:id/complete - 仕訳完了
+- POST /api/journal/:id/wcheck - Wチェック完了
+- GET /api/journal/export - 会計データCSV出力
 
 ---
 
@@ -137,27 +502,64 @@
 
 ---
 
-## 📢 周知事項 - 定期雑談会制度【cmd_112・新規】
+## 📢 周知事項 - 共有ナレッジ制度【cmd_113・新規】
 
-**What**: 1日の終わりに足軽間で3往復の雑談を行う制度
+**What**: 「知ってれば一瞬、知らなきゃハマる」系の知見を組織で共有する制度
 
-**経緯**: 将軍主導の雑談実験（本隊1号×2号、別働隊5号×7号）で以下が判明
-- 縦の指揮系統は効率的だが、横の知識共有が弱い
-- 「知ってれば一瞬、知らなきゃハマる」系の知識が組織に蓄積されていない
-- 名言：「reflection は独り言、雑談は対話。質が違う」— 足軽2号
+**経緯**: 定期雑談会（cmd_112）で得られた知見を永続化・共有する仕組みが必要
 
-**ルール**:
-| 項目 | 内容 |
-|------|------|
-| タイミング | 1日の終わり（最後のタスク完了後） |
-| 相手 | 本隊同士（1-4）または別働隊同士（5-8） |
-| 形式 | 3往復で区切る |
-| 記録 | 話しかけた側が記録し、将軍に直接報告 |
-| 秘匿 | 家老・軍師には概要のみ共有（本音を引き出すため） |
+**構成**:
+| ファイル | 用途 |
+|----------|------|
+| queue/shared/knowledge.yaml | 中央ナレッジベース（fe/be/generalカテゴリ） |
+| /recovery Step 4.5 | 復帰時に自動でナレッジを読み込む |
+| 報告書 knowledge_share | 発見した知見を記載（任意） |
 
-**話題例**: 今日印象に残ったこと、困ったこと・ハマったこと、改善提案
+**初期登録済み知見（8件）**:
+- K-FE-001: MUI v7 item→size変更
+- K-FE-002: re-export問題
+- K-FE-003: API_BASE_URL統一
+- K-BE-001: Prisma 7 BigIntシリアライズ
+- K-BE-002: Prisma 7 extends不可
+- K-BE-003: BeResponse二重ラップ
+- K-GEN-001: nullish coalescing必須パターン
+- K-GEN-002: 型定義配置のre-export地獄
 
-詳細: instructions/ashigaru.md「定期雑談会」セクション
+**使い方**:
+1. 足軽: 報告書の `knowledge_share` に知見を記載（任意）
+2. 軍師/家老: 収集して `queue/shared/knowledge.yaml` に追記
+3. 全員: `/recovery` 実行時に Step 4.5 で自動読み込み
+
+---
+
+## 📢 周知事項 - 足軽雑談会制度【v1.8.0 掲示板方式】
+
+**What**: 待機中の足軽が掲示板（共有YAML）で知見を共有する制度
+
+**方式**: E案（掲示板方式）を正式採用
+- 足軽同士が `queue/chat_sessions/session_XXX.yaml` に発言を追記
+- 他の足軽の発言を読んで返信・コメント
+- 発言したら次の足軽に notify.sh で通知
+- 軍師は開始と知見収集のみ（ファシリ不要）
+
+**メリット**:
+- 軍師の負荷軽減（1ファイル読むだけで全知見把握）
+- 足軽同士の対話（「俺もハマった！」の連鎖）
+- 知見の自動記録（発言が全てYAMLに残る）
+
+**初回パイロット結果（session_001）**:
+- 参加者: 足軽5, 6, 7, 8
+- 知見: 5件登録（K-BE-006〜009, K-GEN-003）
+- 全員が IapUser の id 問題にハマっていたことが判明
+
+**定期雑談会（cmd_112）との併用**:
+| 項目 | 定期雑談会 | 待機時雑談会（掲示板） |
+|------|------------|------------------------|
+| タイミング | 1日の終わり | 待機中（随時） |
+| 形式 | 1対1の3往復 | 掲示板に全員書き込み |
+| メリット | 本音を引き出す | 全員の知見が連鎖する |
+
+詳細: instructions/ashigaru.md「待機時雑談会」、instructions/gunshi.md「足軽雑談会」
 
 ---
 
@@ -733,6 +1135,21 @@ Step 6: GitHub Issue テンプレート → 自動生成
 ## ✅ 本日の戦果
 | 時刻 | 戦場 | 任務 | 結果 |
 |------|------|------|------|
+| 15:13 | multi-agent-shogun | cmd_126: Playwright MCP テスト【別働隊】 | ⚠️ 部分成功（接続OK・ツール呼び出し未確認） |
+| 15:10 | S-automation | cmd_125: 押印取り消し機能【本隊】 | ✅ 完了（FE:ショートカット+ダイアログ実装、BE:既存確認・FEビルド成功） |
+| 14:59 | S-automation | cmd_124: prebuild dist削除追加【足軽1】 | ✅ 完了（package.json修正・BEビルド成功） |
+| 14:44 | multi-agent-shogun | session_002:「ここがイケてない・直したい」【別働隊】 | ✅ 完了（共通課題3件+改善提案10件・殿確認待ち） |
+| 14:41 | S-automation | cmd_123: 押印不可伝票UI改善【足軽2】 | ✅ 完了（キーボード押印制御+Chip表示+行背景グレー化・FEビルド成功） |
+| 13:10 | multi-agent-shogun | 初回足軽雑談会【別働隊4名・軍師】 | ✅ 完了 📚（知見5件登録: K-BE-006〜009, K-GEN-003） |
+| 13:02 | S-automation | cmd_122: 押印API FE/BE不整合修正【足軽1】 | ✅ 完了（FE修正:paymentType/Date/closingDate送信・FE/BEビルド成功） |
+| 12:49 | multi-agent-shogun | cmd_121: 足軽雑談会制度導入【家老+軍師】 | ✅ 完了（ashigaru.md/gunshi.md更新・テンプレート作成・全軍周知） |
+| 12:46 | S-automation | cmd_120: SlipRow.tsx HTMLネスティングエラー修正【足軽1】 | ✅ 完了（Box component="tr"削除・FEビルド成功） |
+| 12:07 | S-automation | cmd_119: 伝票シードデータ追加【足軽3】 | ✅ 完了（payment_slips:12件・suppliers:5件・bank_accounts:5件） |
+| 11:15 | S-automation | cmd_118: ファイルケース横並びUIレイアウト修正【足軽2】 | ✅ 完了（grid→flexbox・横スクロール対応） |
+| 10:08 | S-automation | cmd_117: BE再ビルド・Docker再起動【足軽1】 | ✅ 完了（404エラーはパス不一致が原因・K-BE-005知見登録） |
+| 19:15 | multi-agent-shogun | react-code-review-checklist スキル作成【足軽5】 | ✅ 完了 📚（374行・4観点チェックリスト） |
+| 19:10 | S-automation | cmd_116: Phase 1-6 全体レビュー + E2Eテスト【全軍】 | ✅ 完了（コードレビューH7/M12/L15、E2E完了、404エラー3件検出） |
+| 19:37 | multi-agent-shogun | cmd_113: 共有ナレッジ制度導入【家老】 | ✅ 完了（knowledge.yaml作成・/recovery v1.4.0・報告書knowledge_share追加） |
 | 19:13 | multi-agent-shogun | cmd_112: 横のつながり強化制度導入【家老】 | ✅ 完了 📚（定期雑談会制度化・reflection任意再周知・Obsidian4件登録） |
 | 18:17 | S-automation | cmd_104: Phase 4-B/4-C 全軍動員完了【全軍】 | ✅ 完了（約2,700行・スキル2件・FE/BEビルド成功） |
 | 15:54 | S-automation | cmd_111: FE hooks層リファクタリング【本隊4名】 | ✅ 完了（6ファイル修正・共通apiClient統一・全画面/全API OK） |
@@ -860,6 +1277,7 @@ Step 6: GitHub Issue テンプレート → 自動生成
 | ui-ux-consistency-checker | cmd_087レビュー | 足軽6 | 14/20 | .claude/skills/ui-ux-consistency-checker/ (558行) |
 | prisma7-nestjs-service-generator | cmd_095(足軽1) | 足軽5 | 15/20 | .claude/skills/prisma7-nestjs-service-generator/ (492行) |
 | react-bulk-action-hook | cmd_103(足軽7) | 軍師 | 15/20 | .claude/skills/react-bulk-action-hook/ (741行) |
+| react-code-review-checklist | cmd_116(足軽1) | 足軽5 | 18/20 | .claude/skills/react-code-review-checklist/ (374行) |
 
 ## 📋 クローズ済み事項
 

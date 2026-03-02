@@ -1,13 +1,13 @@
-last_updated: '2026-02-20T18:15:35'
+last_updated: '2026-03-02T15:24:55'
 honntai:
 - id: 1
   name: ashigaru1
   current_task: null
   task_id: null
   progress: 0
-  updated_at: '2026-02-20T11:23:12'
+  updated_at: '2026-03-02T14:32:32'
   blocked_by: null
-  note: 'completed: bugfix_docker_env完了'
+  note: 'completed: cmd_153 完了'
 - id: 2
   name: ashigaru2
   current_task: null
@@ -29,26 +29,26 @@ honntai:
   current_task: null
   task_id: null
   progress: 0
-  updated_at: '2026-02-09T11:10:00'
+  updated_at: '2026-03-02T12:57:29'
   blocked_by: null
-  note: 'completed: cmd_045_feedback_4完了'
+  note: 'completed: cmd_149_hrmos_url完了'
 betsudoutai:
 - id: 5
   name: ashigaru5
   current_task: null
   task_id: null
   progress: 0
-  updated_at: '2026-02-20T17:57:53'
+  updated_at: '2026-03-02T13:08:50'
   blocked_by: null
-  note: 'completed: cmd_104 P4B-1 自動ファイリング完了'
+  note: 'completed: cmd_151完了'
 - id: 6
   name: ashigaru6
-  current_task: cmd_041 obsidian-note-creator スキル作成中
+  current_task: null
   task_id: null
-  progress: 10
-  updated_at: '2026-02-13T19:14:12'
+  progress: 0
+  updated_at: '2026-03-02T15:24:04'
   blocked_by: null
-  note: 'completed: cmd_037 セキュリティ診断完了'
+  note: 'completed: cmd_156完了'
 - id: 7
   name: ashigaru7
   current_task: null
@@ -62,6 +62,6 @@ betsudoutai:
   current_task: null
   task_id: null
   progress: 0
-  updated_at: '2026-02-20T18:15:35'
+  updated_at: '2026-03-02T15:24:55'
   blocked_by: null
-  note: 'completed: cmd_104完了'
+  note: 'completed: cmd_156完了'

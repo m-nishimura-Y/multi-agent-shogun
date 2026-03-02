@@ -1,0 +1,130 @@
+# ============================================================
+# 足軽雑談会 記録
+# 初回開催: 2026-02-27
+# ============================================================
+
+session_id: chat_20260227
+timestamp: "2026-02-27T13:03:33"
+facilitator: gunshi
+
+# === 参加者 ===
+participants:
+  - ashigaru5  # 回答完了
+  - ashigaru6  # 回答完了
+  - ashigaru7  # 回答完了
+  - ashigaru8  # 回答完了
+
+# === トピック別発言 ===
+topics:
+  # === 今日学んだこと ===
+  learned:
+    - speaker: ashigaru5
+      content: "Prisma 7 の AuditLog: details ではなく newValues、ID は手動生成が必要"
+      knowledge_worthy: true  # K-BE-008 として登録済み
+
+    - speaker: ashigaru5
+      content: "スキル作成効率化: 既存スキルのフォーマットを参考にすると迷わない"
+      knowledge_worthy: false  # 運用知見として共有
+
+    - speaker: ashigaru6
+      content: "pdfkit の CommonJS モジュール問題。import ではなく require を使う"
+      knowledge_worthy: true  # K-BE-006 として登録済み
+
+    - speaker: ashigaru7
+      content: "NestJSのdist問題: rm -rf dist && npm run build で解決"
+      knowledge_worthy: false  # K-BE-004 に既存
+
+    - speaker: ashigaru8
+      content: "全銀協FBフォーマット仕様習得。120バイト固定長レコード構成"
+      knowledge_worthy: false  # zengin-fb-format-generator スキルに収録済み
+
+  # === ここでハマった ===
+  struggled:
+    - speaker: ashigaru5
+      content: "IapUser の型: user.id が存在せず email/sub のみ"
+      cause: "GCP IAP認証固有の構造"
+      solution: "型定義を事前確認"
+      knowledge_worthy: true  # K-GEN-003 として登録済み
+
+    - speaker: ashigaru6
+      content: "Docker権限問題（dist/フォルダ）"
+      cause: "Docker内ビルドでdist/がroot所有に"
+      solution: "sudo chown または npx tsc --noEmit で回避"
+      knowledge_worthy: true  # K-BE-007 として登録済み
+
+    - speaker: ashigaru7
+      content: "本番vs開発の差異"
+      cause: "本番環境にデプロイされていなかった"
+      solution: "E2Eテスト時は両環境を確認"
+      knowledge_worthy: true  # K-BE-009 として登録済み
+
+    - speaker: ashigaru8
+      content: "BE dist権限エラー"
+      cause: "root所有のdist/"
+      solution: "sudo rm -rf dist/ で解消"
+      knowledge_worthy: true  # K-BE-007 に統合
+
+  # === こうした方が良いと思った ===
+  improvements:
+    - speaker: ashigaru8
+      content: "スキルフォーマット統一の推奨。全スキルで同一構成を使うべき"
+      proposal_worthy: false  # すでに skill-creator で対応済み
+
+  # === 他の人に共有したいパターン ===
+  patterns:
+    - speaker: ashigaru5
+      content: "コードレビューの4観点: 命名規則→コンポーネント構造→型定義→パフォーマンス"
+      skill_candidate: false  # react-code-review-checklist に収録済み
+
+    - speaker: ashigaru6
+      content: "NestJSでのPDFダウンロードレスポンス（Buffer + res.send）"
+      code_example: |
+        const pdfBuffer = await this.pdfService.generate();
+        res.set({
+          'Content-Type': 'application/pdf',
+          'Content-Disposition': `attachment; filename="${filename}"`,
+          'Content-Length': pdfBuffer.length,
+        });
+        res.send(pdfBuffer);
+      skill_candidate: false  # nestjs-pdf-export-service に収録済み
+
+# === 知見まとめ ===
+knowledge_items:
+  - id: K-BE-006
+    title: "pdfkit: CommonJSモジュールとして require せよ"
+    discovered_by: ashigaru6
+
+  - id: K-BE-007
+    title: "Docker環境: dist/フォルダのroot所有権問題"
+    discovered_by: ashigaru6
+
+  - id: K-BE-008
+    title: "Prisma AuditLog: details ではなく newValues、ID は手動生成"
+    discovered_by: ashigaru5
+
+  - id: K-BE-009
+    title: "E2Eテスト: 本番と開発の両環境を確認せよ"
+    discovered_by: ashigaru7
+
+  - id: K-GEN-003
+    title: "GCP IapUser: user.id は存在しない（email/sub のみ）"
+    discovered_by: ashigaru5
+
+# === スキル化候補 ===
+skill_candidates: []
+# 今回は新規スキル候補なし（既存スキルで対応済み）
+
+# === Obsidian登録 ===
+obsidian_worthy: true
+obsidian_category: "知見/足軽雑談会"
+obsidian_title: "chat_20260227: 初回雑談会（知見5件）"
+
+# === 所感 ===
+facilitator_notes: |
+  初回雑談会を開催。別働隊全員（足軽5-8）が参加。
+  知見5件を収集（K-BE-006〜009, K-GEN-003）。
+  Docker権限問題は複数名から報告があり、重要度高。
+  Prisma AuditLog、IapUser型など実務で即役立つ知見が得られた。
+
+# === 終了 ===
+duration_minutes: 15
