@@ -15,6 +15,10 @@ test_output/
 *.tmp
 *.bak
 
+# Playwright MCP (local test data)
+.playwright-mcp/
+playwright-test.png
+
 # Demo/analysis outputs (generated during tasks)
 demo_output/
 
