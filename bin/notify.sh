@@ -20,6 +20,7 @@ resolve_target() {
     case "$alias" in
         shogun)     echo "shogun:0" ;;
         gunshi)     echo "gunshi:0" ;;
+        bugyo)      echo "bugyo:0" ;;
         karo)       echo "multiagent:0.0" ;;
         ashigaru1)  echo "multiagent:0.1" ;;
         ashigaru2)  echo "multiagent:0.2" ;;

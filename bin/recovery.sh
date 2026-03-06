@@ -25,6 +25,10 @@ case "$SESSION_NAME" in
         ROLE="軍師"
         INSTRUCTION_FILE="gunshi.md"
         ;;
+    bugyo)
+        ROLE="奉行"
+        INSTRUCTION_FILE="bugyo.md"
+        ;;
     multiagent)
         if [ "$PANE_INDEX" = "0" ]; then
             ROLE="家老"

@@ -66,6 +66,7 @@ tmux send-keys + Enter を確実に実行する。エイリアス対応。
 |-----------|--------|
 | shogun | shogun:0 |
 | gunshi | gunshi:0 |
+| bugyo | bugyo:0 |
 | karo | multiagent:0.0 |
 | ashigaru1 (a1) | multiagent:0.1 |
 | ashigaru2 (a2) | multiagent:0.2 |

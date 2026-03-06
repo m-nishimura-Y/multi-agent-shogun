@@ -21,6 +21,7 @@ NC='\033[0m' # No Color
 declare -A AGENTS=(
     ["shogun"]="shogun:0"
     ["karo"]="multiagent:0.0"
+    ["bugyo"]="bugyo:0"
     ["gunshi"]="gunshi:0"
     ["ashigaru1"]="multiagent:0.1"
     ["ashigaru2"]="multiagent:0.2"
@@ -33,7 +34,7 @@ declare -A AGENTS=(
 )
 
 # エージェントの順序
-AGENT_ORDER=("shogun" "karo" "gunshi" "ashigaru1" "ashigaru2" "ashigaru3" "ashigaru4" "ashigaru5" "ashigaru6" "ashigaru7" "ashigaru8")
+AGENT_ORDER=("shogun" "karo" "bugyo" "gunshi" "ashigaru1" "ashigaru2" "ashigaru3" "ashigaru4" "ashigaru5" "ashigaru6" "ashigaru7" "ashigaru8")
 
 # ペインの状態を判定
 check_status() {

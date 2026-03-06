@@ -24,6 +24,7 @@ NC='\033[0m' # No Color
 declare -A AGENTS=(
     ["shogun"]="shogun:0"
     ["gunshi"]="gunshi:0"
+    ["bugyo"]="bugyo:0"
     ["karo"]="multiagent:0.0"
     ["ashigaru1"]="multiagent:0.1"
     ["ashigaru2"]="multiagent:0.2"
@@ -39,7 +40,7 @@ declare -A AGENTS=(
 HONTAI=("ashigaru1" "ashigaru2" "ashigaru3" "ashigaru4")
 BETSUDOUTAI=("ashigaru5" "ashigaru6" "ashigaru7" "ashigaru8")
 ALL_ASHIGARU=("${HONTAI[@]}" "${BETSUDOUTAI[@]}")
-ALL_AGENTS=("shogun" "gunshi" "karo" "${ALL_ASHIGARU[@]}")
+ALL_AGENTS=("shogun" "gunshi" "bugyo" "karo" "${ALL_ASHIGARU[@]}")
 
 # ============================================================
 # ヘルプ表示

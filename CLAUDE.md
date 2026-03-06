@@ -1,7 +1,7 @@
 # multi-agent-shogun システム構成
 
-> **Version**: 1.7.0
-> **Last Updated**: 2026-02-26
+> **Version**: 2.0.0
+> **Last Updated**: 2026-03-05
 
 ## 概要
 multi-agent-shogunは、Claude Code + tmux を使ったマルチエージェント並列開発基盤である。
@@ -38,6 +38,7 @@ multi-agent-shogunは、Claude Code + tmux を使ったマルチエージェン�
 2. **自分のpane名を確認**: `tmux display-message -p '#W'`
 3. **対応する instructions を読む**:
    - shogun → instructions/shogun.md
+   - bugyo (bugyo:0) → instructions/bugyo.md
    - gunshi → instructions/gunshi.md
    - karo (multiagent:0.0) → instructions/karo.md
    - ashigaru (multiagent:0.1-8) → instructions/ashigaru.md
@@ -46,7 +47,7 @@ multi-agent-shogunは、Claude Code + tmux を使ったマルチエージェン�
 
 ## 階層構造
 
-<!-- v1.4.0: チーム分割導入 -->
+<!-- v2.0.0: 奉行新設 -->
 ```
 上様（人間 / The Lord）
   │
@@ -62,30 +63,27 @@ multi-agent-shogunは、Claude Code + tmux を使ったマルチエージェン�
 │   (家老)     │
 └──┬───────┬───┘
    │       │
-   │       ▼
-   │  ┌──────────────┐
-   │  │   GUNSHI     │ ← 軍師（参謀・秘書・別働隊指揮）
-   │  │   (軍師)     │
-   │  └──────┬───────┘
-   │         │ 別働隊指揮
-   │         ▼
-   │    ┌───┬───┬───┬───┐
-   │    │A5 │A6 │A7 │A8 │ ← 別働隊（複雑タスク）
-   │    └───┴───┴───┴───┘
-   │ 本隊直轄（緊急時）
-   ▼
-┌───┬───┬───┬───┐
-│A1 │A2 │A3 │A4 │ ← 本隊（簡易タスク・緊急対応）
-└───┴───┴───┴───┘
+   ▼       ▼
+┌──────────────┐  ┌──────────────┐
+│   BUGYO      │  │   GUNSHI     │ ← 軍師（参謀・秘書・別働隊指揮）
+│  (奉行)      │  │   (軍師)     │
+└──────┬───────┘  └──────┬───────┘
+       │ 本隊指揮         │ 別働隊指揮
+       ▼                  ▼
+  ┌───┬───┬───┬───┐  ┌───┬───┬───┬───┐
+  │A1 │A2 │A3 │A4 │  │A5 │A6 │A7 │A8 │ ← 別働隊（複雑タスク）
+  └───┴───┴───┴───┘  └───┴───┴───┴───┘
+   ↑ 本隊（実装タスク）
 ```
 
-**組織改編（v1.6.3）**: チーム分割＋報告先分離＋スキル評価一元化。
-- **本隊（足軽1-4）**: 家老が指示・報告受領
+**組織改編（v2.0.0）**: 奉行新設＋本隊指揮権委譲。
+- **奉行（新設）**: 本隊（足軽1-4）の指揮・報告受領を担当
+- **本隊（足軽1-4）**: 奉行が指示・報告受領
 - **別働隊（足軽5-8）**: 軍師が指示・報告受領
-- **軍師の負荷軽減**: 4名の指揮・報告受領に集中
-- **スキル評価は軍師に一元化**: 本隊からのスキル候補は家老が軍師に転送
+- **家老の負荷軽減**: 奉行・軍師への指示に集中
+- **スキル評価は軍師に一元化**: 本隊からのスキル候補は奉行が軍師に転送
 - **14点以上のスキルは自動承認**: 軍師の裁量で別働隊に作成指示可
-- **12-13点は条件付き承認**: 条件クリア判断も軍師裁量でOK（v1.6.3〜）
+- **12-13点は条件付き承認**: 条件クリア判断も軍師裁量でOK
 
 ## 通信プロトコル
 
@@ -94,21 +92,29 @@ multi-agent-shogunは、Claude Code + tmux を使ったマルチエージェン�
 - 指示・報告内容はYAMLファイルに書く
 - 通知は tmux send-keys で相手を起こす（必ず Enter を使用、C-m 禁止）
 
-### 通信フロー（v1.3.0: 指示・報告ともに軍師経由に統一）
+### 通信フロー（v2.0.0: 奉行経由を追加）
 
-**通常指示フロー**（v1.3.0〜）
+**通常指示フロー**（v2.0.0〜）
 ```
-将軍 → 家老 → 軍師 → 足軽（YAML + send-keys）
+将軍 → 家老 → 奉行/軍師 → 足軽（YAML + send-keys）
+  - 本隊（足軽1-4）: 家老 → 奉行 → 足軽
+  - 別働隊（足軽5-8）: 家老 → 軍師 → 足軽
 ```
 
 **通常報告フロー**
 ```
-足軽 → 軍師（要約+スキル評価）→ 家老 → dashboard.md
+本隊: 足軽 → 奉行（要約）→ 家老 → dashboard.md
+別働隊: 足軽 → 軍師（要約+スキル評価）→ 家老 → dashboard.md
+```
+
+**奉行への指示**
+```
+queue/karo_to_bugyo.yaml + notify.sh bugyo:0
 ```
 
 **緊急通信フロー**（ブロック事項、致命的エラー）
 ```
-家老 ↔ 足軽（直接）
+家老 ↔ 奉行/足軽（直接）
 ```
 
 - **下→上への報告**: dashboard.md 更新のみ（将軍へのsend-keys 禁止）
@@ -123,6 +129,7 @@ status/karo_context.yaml          # v1.4.0: 家老用ステータスキャッシ
 status/gunshi_context.yaml        # v1.6.3: 軍師用ステータスキャッシュ
 status/current_task.yaml          # v1.6.0: 現在タスク状況（復帰用）
 queue/shogun_to_karo.yaml         # Shogun → Karo 指示
+queue/karo_to_bugyo.yaml          # Karo → Bugyo 指示（v2.0.0〜）
 queue/karo_to_gunshi.yaml         # Karo → Gunshi 指示（v1.1.0〜）
 queue/tasks/ashigaru{N}.yaml      # Gunshi → Ashigaru 割当（v1.4.0: 別働隊5-8のみ軍師作成）
 queue/reports/ashigaru{N}_report.yaml  # Ashigaru → Gunshi 報告（v1.4.0: 別働隊は軍師経由）
@@ -131,6 +138,10 @@ queue/reports/gunshi_summary.yaml # Gunshi → Karo 報告（足軽報告集約�
 queue/reports/archive/            # v1.4.0: cmd別サマリ永続化
 dashboard.md                      # 人間用ダッシュボード
 ```
+
+**v2.0.0 新規ファイル**:
+- `queue/karo_to_bugyo.yaml`: 家老→奉行への指示キュー
+- `instructions/bugyo.md`: 奉行の指示書
 
 **v1.6.3 新規ファイル**:
 - `status/gunshi_context.yaml`: 軍師用ステータスキャッシュ（コンパクション復帰用）
@@ -151,6 +162,9 @@ dashboard.md                      # 人間用ダッシュボード
 
 ### shogunセッション（1ペイン）
 - Pane 0: SHOGUN（将軍）
+
+### bugyoセッション（1ペイン）
+- Pane 0: BUGYO（奉行）
 
 ### gunshiセッション（1ペイン）
 - Pane 0: GUNSHI（軍師）
@@ -185,6 +199,7 @@ language: ja  # ja, en, es, zh, ko, fr, de 等
 
 ## 指示書
 - instructions/shogun.md - 将軍の指示書
+- instructions/bugyo.md - 奉行の指示書（v2.0.0〜）
 - instructions/gunshi.md - 軍師の指示書
 - instructions/karo.md - 家老の指示書
 - instructions/ashigaru.md - 足軽の指示書
@@ -276,10 +291,10 @@ PDFから金額・支払方法・取引先名等を自動抽出する。
   - current_task.yaml だけ更新して dashboard.md を忘れるな
   - 殿は dashboard.md を見て状況を把握する（current_task.yaml は見ない）
 
-### 2. 指揮系統の遵守（v1.4.0更新）
-- 将軍 → 家老 → 軍師/足軽 の順で指示
-- 将軍が直接足軽・軍師に指示してはならない
-- **本隊（足軽1-4）**: 家老が緊急時に直接指示可
+### 2. 指揮系統の遵守（v2.0.0更新）
+- 将軍 → 家老 → 奉行/軍師 → 足軽 の順で指示
+- 将軍が直接足軽・軍師・奉行に指示してはならない
+- **本隊（足軽1-4）**: 奉行経由で指示
 - **別働隊（足軽5-8）**: 軍師経由で指示
 
 ### 3. 報告ファイルの確認
