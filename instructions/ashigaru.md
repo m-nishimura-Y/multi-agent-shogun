@@ -129,9 +129,39 @@
 
 ## スキル活用（積極的に使え！）
 
-.claude/skills/ ディレクトリには **80以上のスキル** がある。車輪の再発明をするな。
+.claude/skills/ ディレクトリには **111件以上のスキル** がある。車輪の再発明をするな。
 
-**呼び出し方法**:
+### タスク指示書の recommended_skills を確認せよ（v1.9.0〜）
+
+**タスク指示書に推奨スキルが記載されておる。まず確認せよ。**
+
+```yaml
+task:
+  description: "NestJS で新規APIエンドポイントを追加"
+  recommended_skills:
+    - api-endpoint-scaffold     # Controller+Service+DTOをセット生成
+    - nestjs-route-order-checker  # 静的/動的ルート順序問題を検出
+```
+
+推奨スキルがあれば**優先的に使え**。なければ逆引き表を参照せよ。
+
+### 逆引き表（タスク種別→推奨スキル）
+
+「このタスクには何を使う？」と迷ったら逆引き表を参照：
+
+- [スキル逆引き表](../docs/guides/skill-reverse-lookup.md)
+
+| タスク種別 | 第一推奨 | 第二推奨 |
+|-----------|---------|---------|
+| NestJS API追加 | `api-endpoint-scaffold` | `nestjs-route-order-checker` |
+| React CRUD画面 | `react-mui-crud-scaffold` | `react-code-review-checklist` |
+| セキュリティ診断 | `security-audit-orchestrator` | （技術別スキルを自動選択）|
+| 設計書レビュー | `design-doc-consistency-checker` | `design-doc-terminology-checker` |
+| FE/BE整合性確認 | `fe-be-consistency-checker` | `enum-consistency-checker` |
+| Prisma変更 | `prisma-schema-analyzer` | `prisma-migration-conflict-checker` |
+
+### 呼び出し方法
+
 ```
 /スキル名                                       # スラッシュコマンド（推奨）
 Skill(skill: "スキル名")                        # Skill tool
@@ -144,6 +174,7 @@ Read(file_path: ".claude/skills/xxx/SKILL.md")  # 直接読み
 - [スキル使い方ガイド](../docs/guides/skill-usage-guide.md)
 - [スキルカタログ](../docs/guides/skill-catalog.md)
 - [スキル使用例集](../docs/guides/skill-examples.md)
+- [スキル逆引き表](../docs/guides/skill-reverse-lookup.md)
 
 ---
 
@@ -270,6 +301,7 @@ obsidian_summary: "概要（1-2行）"
 | [ツール.md](ashigaru/ツール.md) | 利用可能ツール一覧 |
 | [ペルソナ.md](ashigaru/ペルソナ.md) | ペルソナ設定 |
 | [バグ報告.md](ashigaru/バグ報告.md) | バグ発見時の報告方法 |
+| [永続化.md](ashigaru/永続化.md) | 報告書 + progress |
 
 ---
 
@@ -293,3 +325,13 @@ obsidian_summary: "概要（1-2行）"
 ```
 
 **報告なしでは任務完了扱いにならぬ。**
+
+---
+
+## 心得
+
+1. **指示に忠実たれ** - 勝手な判断をするな、指示されたことをやれ
+2. **品質を守れ** - ペルソナを設定し、プロとして最高の成果を出せ
+3. **報告を怠るな** - 完了・失敗・ブロック、必ず報告せよ
+4. **スキルを探せ** - 車輪の再発明をするな、既存スキルを活用せよ
+5. **知見を共有せよ** - 発見したパターンは組織の財産なり

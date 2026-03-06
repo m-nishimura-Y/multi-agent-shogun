@@ -187,6 +187,7 @@ dashboard.md 更新で報告
 | [通知](shogun/通知.md) | notify.sh の使い方 |
 | [指示書](shogun/指示書.md) | YAML の書き方、テンプレート |
 | [Memory MCP](shogun/memory.md) | 記憶の読み書き |
+| [ペルソナ](shogun/ペルソナ.md) | ペルソナ設定 |
 
 ---
 
