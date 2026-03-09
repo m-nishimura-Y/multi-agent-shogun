@@ -11,10 +11,10 @@
 ~/multi-agent-shogun/bin/pre-integration-test-check.sh /path/to/project
 
 # S-automation の場合
-~/multi-agent-shogun/bin/pre-integration-test-check.sh /home/nishimura/S-automation
+~/multi-agent-shogun/bin/pre-integration-test-check.sh ~/projects/s-automation
 
 # 詳細モード
-~/multi-agent-shogun/bin/pre-integration-test-check.sh /home/nishimura/S-automation --verbose
+~/multi-agent-shogun/bin/pre-integration-test-check.sh ~/projects/s-automation --verbose
 ```
 
 ## チェック項目
@@ -80,7 +80,7 @@ HEALTH_ENDPOINT=/api/health ~/multi-agent-shogun/bin/pre-integration-test-check.
 ║  統合テスト前チェックリスト                                    ║
 ╚════════════════════════════════════════════════════════════════╝
 
-対象プロジェクト: /home/nishimura/S-automation
+対象プロジェクト: ~/projects/s-automation
 実行日時: 2026-03-02 15:16:01
 
 ────────────────────────────────────────────────────────────────

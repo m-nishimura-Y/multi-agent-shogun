@@ -6,11 +6,13 @@
 # 作成: 足軽6号（cmd_031対応）
 #
 # 使用例:
-#   ./bin/search-skills.sh "generator"      # キーワード検索
-#   ./bin/search-skills.sh --list           # 全スキル一覧
-#   ./bin/search-skills.sh --list --verbose # 詳細一覧
-#   ./bin/search-skills.sh --category       # カテゴリ別一覧
-#   ./bin/search-skills.sh --help           # ヘルプ表示
+#   ./bin/search-skills.sh "generator"           # キーワード検索
+#   ./bin/search-skills.sh --list                # 全スキル一覧
+#   ./bin/search-skills.sh --list --verbose      # 詳細一覧
+#   ./bin/search-skills.sh --category            # カテゴリ別一覧
+#   ./bin/search-skills.sh --category NestJS     # NestJSカテゴリでフィルタ
+#   ./bin/search-skills.sh prisma --category Analysis  # キーワード+カテゴリ
+#   ./bin/search-skills.sh --help                # ヘルプ表示
 # ============================================================
 
 set -euo pipefail
@@ -38,30 +40,38 @@ show_help() {
   ./bin/search-skills.sh [オプション] [キーワード]
 
 【オプション】
-  --help, -h        このヘルプを表示
-  --list, -l        全スキル一覧を表示
-  --verbose, -v     詳細情報を表示（--listと併用）
-  --category, -c    カテゴリ別に一覧表示
-  --count           スキル数のみ表示
+  --help, -h              このヘルプを表示
+  --list, -l              全スキル一覧を表示
+  --verbose, -v           詳細情報を表示（--listと併用）
+  --category, -c          カテゴリ別に一覧表示
+  --category <NAME>       指定カテゴリでフィルタ（キーワードと併用可）
+  --count                 スキル数のみ表示
 
 【キーワード検索】
   キーワードを指定すると、スキル名と説明文から検索
 
 【使用例】
-  ./bin/search-skills.sh generator       # "generator"を含むスキル検索
-  ./bin/search-skills.sh --list          # 全スキル一覧
-  ./bin/search-skills.sh --list -v       # 詳細付き一覧
-  ./bin/search-skills.sh --category      # カテゴリ別一覧
-  ./bin/search-skills.sh api             # "api"を含むスキル検索
-  ./bin/search-skills.sh "react mui"     # 複数キーワード（AND検索）
+  ./bin/search-skills.sh generator          # "generator"を含むスキル検索
+  ./bin/search-skills.sh --list             # 全スキル一覧
+  ./bin/search-skills.sh --list -v          # 詳細付き一覧
+  ./bin/search-skills.sh --category         # カテゴリ別一覧
+  ./bin/search-skills.sh --category NestJS  # NestJSカテゴリのスキル一覧
+  ./bin/search-skills.sh prisma --category Analysis  # prisma + Analysisカテゴリ
+  ./bin/search-skills.sh --category Security         # セキュリティ系スキル一覧
 
-【カテゴリ】
-  - analyzer    : 分析系スキル
-  - generator   : 生成系スキル
-  - checker     : チェック系スキル
-  - converter   : 変換系スキル
-  - template    : テンプレート系スキル
-  - other       : その他
+【カテゴリ（12種類）】
+  - Security    : セキュリティ・監査系
+  - Analysis    : 分析・チェック系
+  - Generation  : 生成・スキャフォールド系
+  - React       : React関連
+  - NestJS      : NestJS/TypeORM/Prisma関連
+  - Python      : FastAPI/Python関連
+  - .NET        : ASP.NET/Blazor関連
+  - GCP         : Google Cloud Platform関連
+  - MCP         : MCP (Model Context Protocol)関連
+  - PHP         : Laravel/PHP関連
+  - Meta        : スキル管理・リカバリ系
+  - Utility     : その他汎用
 
 ============================================================
 EOF
@@ -80,26 +90,24 @@ get_skill_description() {
     sed -n '3,10p' "$file" | head -n 3 | tr '\n' ' ' | cut -c1-80
 }
 
-# カテゴリを推定
+# カテゴリを推定（12カテゴリシステム）
+# generate-skill-catalog.sh と同じロジック
 detect_category() {
     local name="$1"
-    if [[ "$name" == *analyzer* ]]; then
-        echo "analyzer"
-    elif [[ "$name" == *generator* ]]; then
-        echo "generator"
-    elif [[ "$name" == *checker* ]]; then
-        echo "checker"
-    elif [[ "$name" == *converter* ]]; then
-        echo "converter"
-    elif [[ "$name" == *template* ]]; then
-        echo "template"
-    elif [[ "$name" == *extractor* ]]; then
-        echo "analyzer"
-    elif [[ "$name" == *reviewer* ]]; then
-        echo "checker"
-    else
-        echo "other"
-    fi
+    case "$name" in
+        *security*|*audit*|*secrets*|*credential*) echo "Security" ;;
+        *analyzer*|*checker*|*detector*|*reviewer*) echo "Analysis" ;;
+        *generator*|*scaffold*|*creator*|*template*) echo "Generation" ;;
+        react-*|mui-*|useEffect*) echo "React" ;;
+        nestjs-*|typeorm-*|prisma*) echo "NestJS" ;;
+        fastapi-*|python-*) echo "Python" ;;
+        dotnet-*|aspnet-*|blazor-*) echo ".NET" ;;
+        gcp-*|cloudrun-*) echo "GCP" ;;
+        mcp-*) echo "MCP" ;;
+        skill-*|recovery) echo "Meta" ;;
+        laravel-*|php-*) echo "PHP" ;;
+        *) echo "Utility" ;;
+    esac
 }
 
 # 全スキル一覧表示
@@ -138,7 +146,7 @@ list_skills() {
     echo -e "合計: ${GREEN}${count}${NC} スキル"
 }
 
-# カテゴリ別一覧
+# カテゴリ別一覧（12カテゴリシステム）
 list_by_category() {
     echo -e "${CYAN}============================================================${NC}"
     echo -e "${CYAN} カテゴリ別スキル一覧${NC}"
@@ -146,12 +154,9 @@ list_by_category() {
     echo ""
 
     declare -A categories
-    categories["analyzer"]=""
-    categories["generator"]=""
-    categories["checker"]=""
-    categories["converter"]=""
-    categories["template"]=""
-    categories["other"]=""
+    for cat in Security Analysis Generation React NestJS Python .NET GCP MCP PHP Meta Utility; do
+        categories["$cat"]=""
+    done
 
     for file in "$SKILLS_DIR"/*/SKILL.md; do
         if [[ -f "$file" ]]; then
@@ -162,8 +167,8 @@ list_by_category() {
         fi
     done
 
-    # 表示順
-    for cat in analyzer generator checker converter template other; do
+    # 表示順（12カテゴリ）
+    for cat in Security Analysis Generation React NestJS Python .NET GCP MCP PHP Meta Utility; do
         local items="${categories[$cat]}"
         if [[ -n "$items" ]]; then
             local count=$(echo -e "$items" | grep -c . || echo 0)
@@ -178,13 +183,58 @@ list_by_category() {
     done
 }
 
-# キーワード検索
-search_skills() {
-    local keywords="$1"
+# 特定カテゴリのスキル一覧
+list_by_specific_category() {
+    local target_category="$1"
     local found=0
 
     echo -e "${CYAN}============================================================${NC}"
-    echo -e "${CYAN} 検索キーワード: \"$keywords\"${NC}"
+    echo -e "${CYAN} カテゴリ: ${YELLOW}${target_category}${NC}"
+    echo -e "${CYAN}============================================================${NC}"
+    echo ""
+
+    for file in "$SKILLS_DIR"/*/SKILL.md; do
+        if [[ -f "$file" ]]; then
+            local dir=$(dirname "$file")
+            local name=$(basename "$dir")
+            local category=$(detect_category "$name")
+
+            # 大文字小文字を区別せずに比較
+            if [[ "${category,,}" == "${target_category,,}" ]]; then
+                found=$((found + 1))
+                local title=$(get_skill_title "$file")
+                local desc=$(get_skill_description "$file")
+
+                echo -e "${GREEN}[$found]${NC} ${YELLOW}$name${NC}"
+                echo -e "    タイトル: $title"
+                echo -e "    説明: ${desc}..."
+                echo ""
+            fi
+        fi
+    done
+
+    echo -e "${CYAN}------------------------------------------------------------${NC}"
+    if [[ $found -eq 0 ]]; then
+        echo -e "${RED}該当するスキルが見つかりませんでした${NC}"
+        echo ""
+        echo "利用可能なカテゴリ: Security, Analysis, Generation, React, NestJS, Python, .NET, GCP, MCP, PHP, Meta, Utility"
+    else
+        echo -e "検索結果: ${GREEN}${found}${NC} 件"
+    fi
+}
+
+# キーワード検索（カテゴリフィルタ対応）
+search_skills() {
+    local keywords="$1"
+    local category_filter="$2"  # 追加: カテゴリフィルタ
+    local found=0
+
+    echo -e "${CYAN}============================================================${NC}"
+    if [[ -n "$category_filter" ]]; then
+        echo -e "${CYAN} 検索キーワード: \"$keywords\" / カテゴリ: ${YELLOW}$category_filter${NC}"
+    else
+        echo -e "${CYAN} 検索キーワード: \"$keywords\"${NC}"
+    fi
     echo -e "${CYAN}============================================================${NC}"
     echo ""
 
@@ -193,6 +243,14 @@ search_skills() {
             local dir=$(dirname "$file")
             local name=$(basename "$dir")
             local match=true
+
+            # カテゴリフィルタチェック
+            if [[ -n "$category_filter" ]]; then
+                local category=$(detect_category "$name")
+                if [[ "${category,,}" != "${category_filter,,}" ]]; then
+                    continue
+                fi
+            fi
 
             # 複数キーワードをAND検索
             for kw in $keywords; do
@@ -259,6 +317,7 @@ main() {
     local verbose=false
     local mode=""
     local keywords=""
+    local category_filter=""
 
     # 引数解析
     while [[ $# -gt 0 ]]; do
@@ -276,8 +335,14 @@ main() {
                 shift
                 ;;
             --category|-c)
-                mode="category"
-                shift
+                # 次の引数がカテゴリ名かチェック
+                if [[ $# -gt 1 && ! "$2" =~ ^- ]]; then
+                    category_filter="$2"
+                    shift 2
+                else
+                    mode="category"
+                    shift
+                fi
                 ;;
             --count)
                 mode="count"
@@ -310,8 +375,12 @@ main() {
             show_count
             ;;
         *)
-            if [[ -n "$keywords" ]]; then
-                search_skills "$keywords"
+            # カテゴリフィルタのみ指定された場合
+            if [[ -n "$category_filter" && -z "$keywords" ]]; then
+                list_by_specific_category "$category_filter"
+            # キーワード + カテゴリフィルタ
+            elif [[ -n "$keywords" ]]; then
+                search_skills "$keywords" "$category_filter"
             else
                 show_help
             fi
