@@ -205,8 +205,8 @@ wsl --install
 |------|-----------------|------|
 | WSL2 + Ubuntu | PowerShellで `wsl --install` | Windowsのみ |
 | tmux | `sudo apt install tmux` | ターミナルマルチプレクサ |
-| Node.js v20+ | `nvm install 20` | Claude Code CLIに必要 |
-| Claude Code CLI | `npm install -g @anthropic-ai/claude-code` | Anthropic公式CLI |
+| Node.js v20+ | `nvm install 20` | 開発環境に推奨 |
+| Claude Code CLI | `curl -fsSL https://console.anthropic.com/install.sh \| sh` | Anthropic公式CLI（ネイティブ版） |
 
 </details>
 

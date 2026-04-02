@@ -202,8 +202,8 @@ If you prefer to install dependencies manually:
 |-------------|----------------|-------|
 | WSL2 + Ubuntu | `wsl --install` in PowerShell | Windows only |
 | tmux | `sudo apt install tmux` | Terminal multiplexer |
-| Node.js v20+ | `nvm install 20` | Required for Claude Code CLI |
-| Claude Code CLI | `npm install -g @anthropic-ai/claude-code` | Anthropic's official CLI |
+| Node.js v20+ | `nvm install 20` | Recommended for development |
+| Claude Code CLI | `curl -fsSL https://console.anthropic.com/install.sh \| sh` | Anthropic's official CLI (native) |
 
 </details>
 

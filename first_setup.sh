@@ -194,33 +194,30 @@ if command -v claude &> /dev/null; then
 else
     log_warn "Claude Code CLI がインストールされていません"
     echo ""
+    echo "  インストールコマンド（Anthropic公式ネイティブインストール）:"
+    echo "     curl -fsSL https://console.anthropic.com/install.sh | sh"
+    echo ""
+    read -p "  今すぐインストールしますか? [Y/n]: " REPLY
+    REPLY=${REPLY:-Y}
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        log_info "Claude Code CLI をインストール中（ネイティブ版）..."
+        curl -fsSL https://console.anthropic.com/install.sh | sh
 
-    if command -v npm &> /dev/null; then
-        echo "  インストールコマンド:"
-        echo "     npm install -g @anthropic-ai/claude-code"
-        echo ""
-        read -p "  今すぐインストールしますか? [Y/n]: " REPLY
-        REPLY=${REPLY:-Y}
-        if [[ $REPLY =~ ^[Yy]$ ]]; then
-            log_info "Claude Code CLI をインストール中..."
-            npm install -g @anthropic-ai/claude-code
+        # パスを更新（インストールスクリプトが ~/.local/bin に配置する場合）
+        export PATH="$HOME/.local/bin:$PATH"
 
-            if command -v claude &> /dev/null; then
-                log_success "Claude Code CLI インストール完了"
-                RESULTS+=("Claude Code CLI: インストール完了")
-            else
-                log_error "インストールに失敗しました。パスを確認してください"
-                RESULTS+=("Claude Code CLI: インストール失敗")
-                HAS_ERROR=true
-            fi
+        if command -v claude &> /dev/null; then
+            log_success "Claude Code CLI インストール完了"
+            RESULTS+=("Claude Code CLI: インストール完了")
         else
-            log_warn "インストールをスキップしました"
-            RESULTS+=("Claude Code CLI: 未インストール (スキップ)")
+            log_error "インストールに失敗しました。パスを確認してください"
+            log_info "手動でパスを追加: export PATH=\"\$HOME/.local/bin:\$PATH\""
+            RESULTS+=("Claude Code CLI: インストール失敗")
             HAS_ERROR=true
         fi
     else
-        echo "  npm がインストールされていないため、先に Node.js をインストールしてください"
-        RESULTS+=("Claude Code CLI: 未インストール (npm必要)")
+        log_warn "インストールをスキップしました"
+        RESULTS+=("Claude Code CLI: 未インストール (スキップ)")
         HAS_ERROR=true
     fi
 fi
