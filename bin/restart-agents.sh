@@ -36,6 +36,40 @@ declare -A AGENTS=(
     ["ashigaru8"]="multiagent:0.8"
 )
 
+# effort設定: 上位(将軍・軍師・奉行・家老)=max、足軽=high
+declare -A EFFORT_LEVELS=(
+    ["shogun"]="max"
+    ["gunshi"]="max"
+    ["bugyo"]="max"
+    ["karo"]="max"
+    ["ashigaru1"]="high"
+    ["ashigaru2"]="high"
+    ["ashigaru3"]="high"
+    ["ashigaru4"]="high"
+    ["ashigaru5"]="high"
+    ["ashigaru6"]="high"
+    ["ashigaru7"]="high"
+    ["ashigaru8"]="high"
+)
+
+# model設定（API負荷対策 2026-07-03・殿決定）
+#   将軍=判断層 / 軍師=判断層 / 家老=判断層 / 足軽=実装・レビュー実働 → Opus 維持
+#   奉行=報告集約・清書が主 → Sonnet に軽量化（本日の律速層）
+declare -A MODEL_LEVELS=(
+    ["shogun"]="opus"
+    ["gunshi"]="opus"
+    ["bugyo"]="sonnet"
+    ["karo"]="opus"
+    ["ashigaru1"]="opus"
+    ["ashigaru2"]="opus"
+    ["ashigaru3"]="opus"
+    ["ashigaru4"]="opus"
+    ["ashigaru5"]="opus"
+    ["ashigaru6"]="opus"
+    ["ashigaru7"]="opus"
+    ["ashigaru8"]="opus"
+)
+
 # グループ定義
 HONTAI=("ashigaru1" "ashigaru2" "ashigaru3" "ashigaru4")
 BETSUDOUTAI=("ashigaru5" "ashigaru6" "ashigaru7" "ashigaru8")
@@ -73,6 +107,7 @@ show_help() {
     echo "  - 再起動順序: 足軽 → 軍師 → 家老 → 将軍（指揮系統の逆順）"
     echo "  - 各エージェント間に${RESTART_INTERVAL}秒の待機を入れる"
     echo "  - 将軍の再起動は別セッションのため、通常は含まない"
+    echo "  - effort設定: 上位(将軍/軍師/奉行/家老)=max、足軽=high（自動適用）"
 }
 
 # ============================================================
@@ -106,19 +141,28 @@ restart_agent() {
 
     # Step 2: claude コマンド送信（再起動）
     # --dangerously-skip-permissions で自動承認モードで起動
-    tmux send-keys -t "$target" "claude --dangerously-skip-permissions" 2>/dev/null
+    # --model は役職別（MODEL_LEVELS）。起動時 shutsujin_departure.sh と配分を揃える
+    local model="${MODEL_LEVELS[$name]:-opus}"
+    tmux send-keys -t "$target" "claude --model $model --dangerously-skip-permissions" 2>/dev/null
     sleep 0.3
     tmux send-keys -t "$target" Enter 2>/dev/null
     sleep 5  # Claude Code起動完了を待つ
 
-    # Step 3: /recovery 呼び出し（コンテキスト再注入）
+    # Step 3: /effort 設定（起動直後に設定）
+    local effort="${EFFORT_LEVELS[$name]:-high}"
+    tmux send-keys -t "$target" "/effort $effort" 2>/dev/null
+    sleep 0.3
+    tmux send-keys -t "$target" Enter 2>/dev/null
+    sleep 2
+
+    # Step 4: /recovery 呼び出し（コンテキスト再注入）
     tmux send-keys -t "$target" "/recovery" 2>/dev/null
     sleep 0.3
     tmux send-keys -t "$target" Enter 2>/dev/null
     sleep 1
 
     if [ "$quiet" != "true" ]; then
-        echo -e "${GREEN}[DONE] $name restarted${NC}"
+        echo -e "${GREEN}[DONE] $name restarted (model: $model, effort: $effort)${NC}"
     fi
 
     return 0
@@ -240,6 +284,12 @@ main() {
     echo -e "${GREEN}========================================${NC}"
     echo -e "${GREEN}  再起動完了: ${success}名成功 / ${failed}名失敗${NC}"
     echo -e "${GREEN}========================================${NC}"
+
+    # paneラベル＋色分け再適用
+    if [ -x "$SCRIPT_DIR/pane-labels.sh" ]; then
+        echo ""
+        "$SCRIPT_DIR/pane-labels.sh"
+    fi
 
     if [ $failed -gt 0 ]; then
         exit 1
