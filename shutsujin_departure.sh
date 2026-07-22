@@ -357,6 +357,17 @@ log_success "  └─ 軍師の陣、構築完了"
 echo ""
 
 # ═══════════════════════════════════════════════════════════════════════════════
+# STEP 5.6: bugyoセッション作成（1ペイン）
+# ═══════════════════════════════════════════════════════════════════════════════
+log_war "⚖️  奉行の陣を構築中..."
+tmux new-session -d -s bugyo
+tmux send-keys -t bugyo "cd $(pwd) && export PS1='(\[\033[1;35m\]奉行\[\033[0m\]) \[\033[1;32m\]\w\[\033[0m\]\$ ' && clear" Enter
+tmux select-pane -t bugyo:0.0 -P 'bg=#2d1b3d'  # 奉行の紫系
+
+log_success "  └─ 奉行の陣、構築完了"
+echo ""
+
+# ═══════════════════════════════════════════════════════════════════════════════
 # STEP 6: Claude Code 起動（--setup-only でスキップ）
 # ═══════════════════════════════════════════════════════════════════════════════
 if [ "$SETUP_ONLY" = false ]; then
@@ -370,20 +381,27 @@ if [ "$SETUP_ONLY" = false ]; then
     # 少し待機（安定のため）
     sleep 1
 
-    # 軍師
-    tmux send-keys -t gunshi "claude --dangerously-skip-permissions"
+    # 軍師（判断層ゆえ Opus 維持）
+    tmux send-keys -t gunshi "claude --model opus --dangerously-skip-permissions"
     tmux send-keys -t gunshi Enter
-    log_info "  └─ 軍師、召喚完了"
+    log_info "  └─ 軍師、召喚完了（opus）"
+
+    sleep 1
+    # 奉行（報告集約・清書が主の層ゆえ Sonnet に軽量化。API負荷対策 2026-07-03）
+    tmux send-keys -t bugyo "claude --model sonnet --dangerously-skip-permissions"
+    tmux send-keys -t bugyo Enter
+    log_info "  └─ 奉行、召喚完了（sonnet）"
 
     # 少し待機（安定のため）
     sleep 1
 
     # 家老 + 足軽（9ペイン）
+    # 家老=判断層 / 足軽=実装・レビュー実働 ゆえ全員 Opus 維持
     for i in {0..8}; do
-        tmux send-keys -t "multiagent:0.$i" "claude --dangerously-skip-permissions"
+        tmux send-keys -t "multiagent:0.$i" "claude --model opus --dangerously-skip-permissions"
         tmux send-keys -t "multiagent:0.$i" Enter
     done
-    log_info "  └─ 家老・足軽、召喚完了"
+    log_info "  └─ 家老・足軽、召喚完了（opus）"
 
     log_success "✅ 全軍 Claude Code 起動完了"
     echo ""
@@ -474,6 +492,13 @@ NINJA_EOF
     tmux send-keys -t gunshi "instructions/gunshi.md を読んで役割を理解せよ。"
     sleep 0.5
     tmux send-keys -t gunshi Enter
+
+    # 奉行に指示書を読み込ませる
+    sleep 2
+    log_info "  └─ 奉行に指示書を伝達中..."
+    tmux send-keys -t bugyo "instructions/bugyo.md を読んで役割を理解せよ。"
+    sleep 0.5
+    tmux send-keys -t bugyo Enter
 
     # 家老に指示書を読み込ませる
     sleep 2

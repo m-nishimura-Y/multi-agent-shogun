@@ -23,7 +23,7 @@ multi-agent-shogun で使用するシェルスクリプト集。
 ### restart-agents.sh
 **🚫 殿専用 - 他のエージェントを再起動**
 
-エージェントを `/exit` → `claude --dangerously-skip-permissions` → `/recovery` の順で再起動する。
+エージェントを `/exit` → `claude --permission-mode auto` → `/recovery` の順で再起動する。
 
 ```bash
 # 足軽全員（1-8）

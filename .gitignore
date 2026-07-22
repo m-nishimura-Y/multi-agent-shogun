@@ -4,6 +4,17 @@ claude-shogun-orders.md
 # Claude Code settings (個人設定のみ除外、チーム設定は共有)
 .claude/settings.local.json
 
+# 🔒 Local secrets / credentials (never commit) — cmd_311 obs_key.txt 等
+obs_key.txt
+*_key.txt
+*.key
+*.pem
+*-credentials.json
+secrets/
+credentials/
+.env
+.env.*
+
 # Test outputs (generated during testing)
 test_output/
 
