@@ -140,10 +140,11 @@ restart_agent() {
     sleep 5  # /exit完了を待つ（Claude Code終了に時間がかかる）
 
     # Step 2: claude コマンド送信（再起動）
-    # --dangerously-skip-permissions で自動承認モードで起動
+    # --permission-mode auto で auto モード起動（分類器が安全操作を自動承認・危険操作のみ確認）
+    # ※ 旧: --dangerously-skip-permissions（全バイパス）→ auto へ変更（2026-07-16・殿指示）
     # --model は役職別（MODEL_LEVELS）。起動時 shutsujin_departure.sh と配分を揃える
     local model="${MODEL_LEVELS[$name]:-opus}"
-    tmux send-keys -t "$target" "claude --model $model --dangerously-skip-permissions" 2>/dev/null
+    tmux send-keys -t "$target" "claude --model $model --permission-mode auto" 2>/dev/null
     sleep 0.3
     tmux send-keys -t "$target" Enter 2>/dev/null
     sleep 5  # Claude Code起動完了を待つ
